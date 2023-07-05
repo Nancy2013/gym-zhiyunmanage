@@ -1,0 +1,23 @@
+<template>
+    <div class="package">分包服务创建成功!</div>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    setup() {
+        return {
+
+        }
+    }
+})
+</script>
+<style lang="less" scoped>
+.package {
+    margin: 20px;
+    font-size: 20px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: #4CAF50;
+}
+</style>

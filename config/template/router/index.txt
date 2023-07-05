@@ -1,0 +1,9 @@
+import { createRouter, createWebHashHistory } from 'vue-router';
+import { _Authority } from './config';
+
+export default createRouter({
+    history: createWebHashHistory(),
+    routes: [
+        ..._Authority
+    ]
+})

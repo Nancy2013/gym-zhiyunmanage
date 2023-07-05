@@ -1,0 +1,151 @@
+.certificationAudit {
+    margin: 20px 10px;
+    padding: 10px;
+    background: #fff;
+    min-height: calc(100vh - 120px);
+    &-tables {
+        padding: 20px;
+        padding: 20px;
+        &-search {
+           overflow: hidden;
+           .search-left {
+              float: left;
+              &-inline {
+                  display: inline-block;
+                  padding: 0 10px 0 0;
+              }
+              margin-bottom: 25px;
+           }
+           .search-right {
+              float: right;
+              &-inline {
+                  display: inline-block;
+                  padding: 0 0 0 10px;
+              }
+           }
+        }
+        .shzt {
+          > span {
+            &:first-child {
+              display: inline-block;
+              width: 6px;
+              height: 6px;
+              border-radius: 50%;
+              margin: 0 15px 0 0;
+            }
+          }
+        }
+        // 待审核
+        .shzt-1 {
+          color: #FF8814;
+          > span {
+            &:first-child {
+              background: #FF8814;
+            }
+          }
+        }
+        // 已认证
+        .shzt-2 {
+          color:#4970E0;
+          > span {
+            &:first-child {
+              background: #4970E0;
+            }
+          }
+        }
+        // 已驳回
+        .shzt-3 {
+          color:#D81E06;
+          > span {
+            &:first-child {
+              background: #D81E06;
+            }
+          }
+        }
+        .action {
+          text-align: left;
+        }
+    }
+    // 覆盖table样式
+    :deep  .ant-table-thead > tr > th{
+      background: #EBF3FF;
+    };
+    :deep .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
+      background-color: transparent;
+    }
+    :deep .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > thead > tr > th{
+      border: none;
+    }
+    :deep .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > thead > tr > .ant-table-cell-fix-right-first::after{
+      border:none;
+    }
+}
+.modal{  // TODO 优化Modal显示
+  border: 1px solid transparent;
+}
+.modal-content {
+  text-align: center;
+  margin: 10px;
+  background: #fff;
+  padding:10px 26px;
+  p{
+    font-size: 16px;
+  }
+  .modalCompanyName-tip{
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+  .modal-img{
+   text-align: center;
+    img{
+      width: 166px;
+      height: 158px;
+    }
+  }
+  .textarea{
+    resize: none;
+    background: #F7F7F7;
+    outline: none;
+    border: none;
+    padding:20px 15px;
+    font-size: 14px;
+  }
+
+  // 企业码
+  .modal-code{
+    width: 357px;
+    height: 347px;
+    background: url(@/assets/image/code_bg.png) no-repeat;
+    position: relative;
+    background-size: contain;
+    display: inline-block;
+    img{
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      top:50%;
+      left: 50%;
+      transform: translate(-50%,calc( -50% - 36px));
+    }
+    .bottom{
+      position: absolute;
+      left:50%;
+      transform: translate(-50%,0);
+      bottom: 33px;
+      width: 100%;
+      .text{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+.modal-btns {
+  text-align: right;
+  background: #fff;
+   button {
+      margin: 10px;
+   }
+}

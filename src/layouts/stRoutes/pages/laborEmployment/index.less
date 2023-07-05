@@ -1,0 +1,176 @@
+.laborEmployment {
+  &-pannel {
+    margin: 20px 10px;
+    padding: 10px;
+    background: #fff;
+    height: calc(100vh - 120px);
+    .pannel-cards {
+      padding: 20px 10px;
+      &-item {
+        display: inline-block;
+        margin: 0 10px;
+        padding: 20px;
+        width: calc(100% / 3 - 20px);
+        border: 1px solid #d8d8d8;
+        border-radius: 4px;
+        .item-top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-weight: 600;
+          &-progress {
+            display: inline-flex;
+            align-items: center;
+            color: #629b88;
+            .progress-dots {
+              position: relative;
+              width: 150px;
+              height: 8px;
+              margin: 0 10px 0 0;
+              background: rgb(98 155 136 / 20%);
+              border-radius: 4px;
+              &-select {
+                width: 80%;
+                height: 8px;
+                border-radius: 8px;
+                background: #629b88;
+              }
+            }
+          }
+        }
+        .item-bottom {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px 0 0;
+          &-left {
+            margin: 0 0 10px 0;
+            img {
+              width: 20px;
+              vertical-align: -2px;
+            }
+            label {
+              font-size: 36px;
+              padding: 0 10px 0 0;
+              vertical-align: -6px;
+            }
+            span {
+              padding: 0 10px;
+              font-weight: 600;
+            }
+          }
+          &-right {
+            .right-yrz {
+              display: flex;
+              > p {
+                margin: 0 0 10px 0;
+                > label {
+                  margin: 0 10px;
+                  display: inline-block;
+                  vertical-align: -2px;
+                  width: 15px;
+                  height: 15px;
+                  background: #00bde4;
+                }
+                &:first-child {
+                  > span {
+                    padding: 0 30px 0 0;
+                    opacity: 0.6;
+                  }
+                }
+                &:last-child {
+                  > span {
+                    font-weight: 600;
+                  }
+                }
+              }
+            }
+            .right-drz {
+              display: flex;
+              > p {
+                margin: 0 0 10px 0;
+                > label {
+                  margin: 0 10px;
+                  display: inline-block;
+                  vertical-align: -2px;
+                  width: 15px;
+                  height: 15px;
+                  background: #ff903f;
+                }
+                &:first-child {
+                  > span {
+                    padding: 0 30px 0 0;
+                    opacity: 0.6;
+                  }
+                }
+                &:last-child {
+                  > span {
+                    font-weight: 600;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .pannel-tables {
+      padding: 20px;
+      &-search {
+         overflow: hidden;
+         .search-left {
+            float: left;
+            &-inline {
+                display: inline-block;
+                padding: 0 10px 0 0;
+            }
+         }
+         .search-right {
+            float: right;
+            &-inline {
+                display: inline-block;
+                padding: 0 0 0 10px;
+            }
+         }
+      }
+      .shzt {
+        > span {
+          &:first-child {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: 0 15px 0 0;
+          }
+        }
+      }
+      // 待审核
+      .shzt-1 {
+        > span {
+          &:first-child {
+            background: #ff903f;
+          }
+        }
+      }
+      // 已通过
+      .shzt-2 {
+        > span {
+          &:first-child {
+            background: #00bde4;
+          }
+        }
+      }
+      // 已驳回
+      .shzt-3 {
+        > span {
+          &:first-child {
+            background: #ff89bf;
+          }
+        }
+      }
+      .action {
+        text-align: left;
+      }
+    }
+  }
+}

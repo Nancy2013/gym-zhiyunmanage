@@ -1,0 +1,286 @@
+.teaGardenProperty {
+    position: relative;
+    height: 100%;
+
+    &-tables {
+        padding: 20px 32px;
+
+        &-search {
+            overflow: hidden;
+
+            .search-left {
+                float: left;
+
+                &-inline {
+                    display: inline-block;
+                    padding: 0 10px 0 0;
+                }
+            }
+
+            .search-right {
+                float: right;
+
+                &-inline {
+                    display: inline-block;
+                    padding: 0 0 0 10px;
+                }
+            }
+        }
+
+        .shzt {
+            >span {
+                &:first-child {
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    margin: 0 15px 0 0;
+                }
+            }
+        }
+
+        // 待审核
+        .shzt-0 {
+            >span {
+                &:first-child {
+                    background: #ff903f;
+                }
+            }
+        }
+
+        // 已通过
+        .shzt-1 {
+            >span {
+                &:first-child {
+                    background: #00bde4;
+                }
+            }
+        }
+
+        // 已驳回
+        .shzt-2 {
+            >span {
+                &:first-child {
+                    background: #ff89bf;
+                }
+            }
+        }
+
+        .action {
+            text-align: left;
+        }
+    }
+}
+
+.modal {
+    text-align: center;
+
+    >p {
+        margin: 15px 0;
+    }
+}
+
+.teaGardenProperty-table {
+    position: absolute;
+    left: 32px;
+    right: 32px;
+    top: 77px;
+    bottom: 0;
+
+    :deep .ant-table-cell {
+        padding: 16px 8px;
+    }
+
+    :deep .ant-table .ant-table-thead .ant-table-cell {
+        border-right: none;
+        background-color: #EBF3FF;
+    }
+
+    :deep .ant-table .ant-table-thead .ant-table-cell::before {
+        display: none;
+    }
+
+    :deep .ant-table-cell-fix-right-first::after {
+        border-right: none;
+    }
+
+    :deep .ant-btn {
+        padding: 0 0;
+    }
+
+    :deep .ant-divider-vertical {
+        border-color: #E9E9E9;
+    }
+
+}
+
+.teaConfirmStatus {
+    div {
+        vertical-align: middle;
+    }
+    div:nth-child(1) {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-right: 8px;
+        border-radius: 50%;
+    }
+    div:nth-child(2) {
+        display: inline-block;
+    }
+}
+
+.teaConfirmStatus-0 {
+    div:nth-child(1) {
+        background-color: #c8c9cc;
+    }
+    div:nth-child(2) {
+        color: #c8c9cc;
+    }
+}
+
+.teaConfirmStatus-1 {
+    div:nth-child(1) {
+        background-color: #FF8814;
+    }
+    div:nth-child(2) {
+        color: #FF8814;
+    }
+}
+
+.teaConfirmStatus-2 {
+    div:nth-child(1) {
+        background-color: #4970E0;
+    }
+    div:nth-child(2) {
+        color: #4970E0;
+    }
+}
+
+.teaConfirmStatus-3 {
+    div:nth-child(1) {
+        background-color: #D81E06;
+    }
+    div:nth-child(2) {
+        color: #D81E06;
+    }
+}
+
+
+body {
+    :deep .ant-modal-body {
+        background-color: #D81E06;
+    }
+}
+
+.teaCode-modal-box {
+    background-color: #fff;
+}
+
+.teaCode-modal-content {
+    position: relative;
+    width: 357px;
+    height: 346px;
+    margin: 0px auto;
+    background-image: url('@/assets/image/shitai/teaGardenProperty/teaCode-bg.png');
+    background-size: 100% 100%;
+    .teaCode-modal-code {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 40px;
+        margin: 0 auto;
+        width: 200px;
+        height: 200px;
+    }
+    .teaCode-modal-name {
+        position: absolute;
+        bottom: 26px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        line-height: 36px;
+        font-size: 16px;
+        color: #151515;
+    }
+}
+
+.teaAudit-modal-content {
+    padding: 10px;
+    background-color: #F6F8FA;
+}
+
+.teaAudit-modal-detail {
+    position: relative;
+    height: 346px;
+    padding: 21px 26px 16px;
+    background-color: #fff;
+    img {
+        display: block;
+        margin: 0 auto;
+        width: 166px;
+        height: 158px;
+    }
+}
+
+.teaAudit-modal-title {
+    position: absolute;
+    left: 0;
+    top: 157px;
+    right: 0;
+    text-align: center;
+    font-size: 16px;
+    line-height: 34px;
+    color: #151515;
+}
+
+.teaAudit-modal-name {
+    position: absolute;
+    left: 0;
+    top: 191px;
+    right: 0;
+    text-align: center;
+    font-size: 16px;
+    line-height: 34px;
+    color: #151515;
+}
+
+.teaAudit-modal-remark {
+    position: absolute;
+    left: 26px;
+    right: 26px;
+    top: 245px;
+    :deep .ant-input {
+        height: 85px;
+        padding: 17px 20px;
+        background-color: #F7F7F7;
+        resize: none;
+    }
+    :deep .ant-form-item {
+        margin-bottom: 0;
+    }
+    .teaAudit-modal-placeholder {
+        position: absolute;
+        left: 20px;
+        top: 17px;
+        font-size: 14px;
+        color: #878787;
+        pointer-events: none;
+        >span {
+            color: #185EF0;
+        }
+    }
+}
+
+.modal-btns {
+    height: 52px;
+    padding-right: 10px;
+    button {
+        float: right;
+        margin: 10px 0 10px 13px;
+    }
+}
+
+// .teaAudit-modal-content {
+//     background-color: #fff;
+// }

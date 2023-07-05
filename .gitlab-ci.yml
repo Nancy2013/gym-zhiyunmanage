@@ -1,0 +1,23 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+deploystage:
+  stage: deploy
+  only:
+    - master
+    - developer
+  tags:
+    - 185shell
+  script:
+    - cp -r -f dist/ /data/gym/scanfe
+
+

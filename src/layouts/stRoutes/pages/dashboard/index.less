@@ -1,0 +1,220 @@
+.dashboard {
+  padding: 0 24px;
+  background-color: #F7F8FA;
+  .video-modalScreen {
+    position: absolute;
+    bottom: calc(10vw / 16);
+    right: calc(10vw / 16);
+    padding: calc(10vw / 16);
+    background: #333;
+    border-radius: calc(10vw / 16);
+    cursor: pointer;
+    pointer-events: fill;
+  }
+  .v-video-player {
+    border-radius: 10px;
+  }
+  .dzIcon-box{
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    background: #F6F7FB;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 35px;
+    margin-right: 10px;
+  }
+  .dzIcon {
+    width: 20px;
+    height: 20px;
+  }
+
+  // 卡片
+  &-cards {
+    margin-top: 24px;
+    background-color: #fff;
+    .card-item {
+      display: flex;
+
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      height: 131px;
+      color: #222;
+      background-size: cover !important;
+      background-repeat: no-repeat !important;
+      letter-spacing: 1px;
+      border-radius: 4px;
+      >img {
+        width: 60px;
+        height: 60px;
+      }
+      &-content {
+        display: flex;
+        flex-direction: column;
+        margin-left: 21px;
+      }
+      &-title {
+        padding: 0 0 8px;
+        line-height: 22px;
+      }
+      &-footer {
+        text-align: left;
+        .footer-span {
+          font-size: 30px;
+          line-height: 42px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+  // 面板
+  &-panels {
+    margin: 16px 0;
+    position: relative;
+    
+   
+    .panel-item-flex {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    .panel-item {
+      height: 170px;
+      padding-bottom: 10px;
+      background: #fff;
+      &-logo {
+        margin-left: 24px;
+        margin-right: 48px;
+        width: 100px;
+        height: 100px;
+        line-height: 96px;
+        text-align: center;
+        background: #151515;
+        border: 1px solid #ffffff;
+        opacity: 0.2;
+        border-radius: 50%;
+        > span {
+          font-size: 30px;
+          color: #fff;
+        }
+      }
+      &-description {
+        padding: 10px 0;
+        > p {
+          position: relative;
+          margin: 0 0 8px 0;
+          font-size: 18px;
+          > span {
+            &:first-child {
+              padding: 0 52px 0 0;
+              font-size: 24px;
+              line-height: 34px;
+              font-weight: 600;
+            } 
+          }
+          > button {
+          }
+          > label {
+            padding: 0 10px 0 0;
+            color: #151515;
+            opacity: 0.6;
+          }
+        }
+        .description-code {
+          > span {
+            font-weight: 600;
+          }
+        }
+      }
+      &-btns {
+        flex: 1;
+        text-align:right;
+        align-self: flex-end;
+        margin-bottom: 18px;
+        &:deep(.ant-btn) {
+          padding: 0 20px;
+          font-size: 18px;
+        }
+        button{
+          margin: 0 24px;
+        }
+        .useHistory{
+          margin-bottom: 10px;
+        }
+      }
+      &-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #151515;
+        padding: 10px 24px;
+        border: 1px solid #DCDEE0;
+      }
+      &-config {
+        display: flex;
+        justify-content: space-around;
+        text-align: center;
+        padding: 20px 24px;
+        .config-item {
+          position: relative;
+          &-count {
+            opacity: 0.8;
+            font-size: 29px;
+            font-weight: 600;
+          }
+          &-tip {
+            opacity: 0.72;
+            letter-spacing: 1px;
+          }
+        }
+      }
+    }
+  }
+  // 我的常用
+  &-used {
+    margin: 20px 0px;
+    background: #fff;
+    position: relative;
+    .used-title {
+      padding: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #151515;
+    }
+    .used-cards {
+      padding: 0 20px;
+      .card-item {
+        display: inline-block;
+        margin: 0 0 20px 0;
+        padding: 0 20px;
+        text-align: center;
+        &-img {
+          width: 80px;
+          height: 80px;
+          line-height: 80px;
+          text-align: center;
+          border-radius: 8px;
+          background: rgba(216,216,216,0.2468);
+          > img {
+            width: 50%;
+          }
+        }
+        &-label {
+          padding: 10px 0;
+          letter-spacing: 1px;
+        }
+      }
+    }
+    .used-right {
+      position: absolute;
+      color: #1EBC5D;
+      top: 23px;
+      right: 25px;
+    }
+  }
+
+  // ant-design-vue 样式覆盖
+  :deep .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
+    width: 0;
+  }
+}

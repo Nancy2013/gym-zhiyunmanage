@@ -1,0 +1,137 @@
+.application {
+    .dzIcon {
+        padding: 0 10px 0 0;
+        width: 30px;
+        vertical-align: -3px;
+    }
+    &-panels {
+        margin: 20px 10px;
+        position: relative;
+        .panel-item-flex {
+            display: flex;
+            justify-content: flex-start;
+        }
+        .panel-item {
+            padding: 10px;
+            background: #fff;
+            &-logo {
+                margin: 20px;
+                width: 96px;
+                height: 96px;
+                line-height: 96px;
+                text-align: center;
+                background: #151515;
+                border: 1px solid #FFFFFF;
+                opacity: 0.2;
+                border-radius: 4px;
+                > span {
+                    font-size: 30px;
+                    color: #fff;
+                }
+            }
+            &-description {
+                padding: 25px 0;
+                > p {
+                    margin: 0 0 10px 0;
+                    > span {
+                        &:first-child {
+                            padding: 0 10px 0 0;
+                            font-weight: 600;
+                        }
+                    }
+                    > label {
+                        padding: 0 10px 0 0;
+                        color: #151515;
+                        opacity: 0.6;
+                    }
+                }
+                .description-tags {
+                    > span {
+                        padding: 0 !important;
+                        font-weight: 400 !important;
+                        color: #629B88;
+                    }
+                }
+            }
+            &-absoulute {
+                position: absolute;
+                right: 30px;
+                top: 20px;
+                > label {
+                    padding: 0 10px;
+                    opacity: 0.6;
+                }
+                > span {
+                    padding: 0 2px;
+                }
+            }
+        }
+    }
+    &-content {
+        margin: 20px 10px;
+        background: #fff;
+        position: relative;
+        .cards-item-gray {
+            background: #cccccc1a !important;
+            .cards-item-icon {
+                background: #1515151a !important;
+            }
+            .cards-item-absoulte {
+                > span {
+                    color: #15151580 !important
+                }
+            }
+        }
+        .content-item {
+            &-title {
+                padding: 20px;
+                font-size: 18px;
+                font-weight: bold;
+                color: #151515;
+            }
+            &-cards {
+                display: flex;
+                .cards-item {
+                    margin: 20px;
+                    padding: 20px 40px 20px 20px;
+                    position: relative;
+                    border: 1px solid #e9e4e4;
+                    border-radius: 8px;
+                    display: flex;
+                    width: 350px;
+                    &-icon {
+                        width: 80px;
+                        height: 80px;
+                        background: #00DCC5;
+                        border-radius: 8px;
+                        margin: 0 20px 0 0;
+                        line-height: 80px;
+                        text-align: center;
+                        > img {
+                            width: 50%;
+                        }
+                    }
+                    &-label {
+                        line-height: 40px;
+                        > p {
+                            margin: 0;
+                            &:last-child {
+                                color: #151515;
+                                opacity: 0.6;
+                            }
+                        }
+                    }
+                    &-absoulte {
+                        position: absolute;
+                        right: 20px;
+                        top: 10px;
+                        > span {
+                            color: #629B88;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1"><link rel=icon href=/favicon.ico><script src="https://webapi.amap.com/maps?v=1.4.15&key=ada7265cb1754f8eee9ba04cb1620eb3"></script><script src=https://res2.wx.qq.com/open/js/jweixin-1.6.0.js></script><title></title><style>#initial-loading {
+            top: 50%;
+            left: 50%;
+            position: absolute;
+            transform: translateY(-50%) translateX(-50%);
+            z-index: 100;
+            text-align: center;
+            color: #409FFF;
+        }
+
+        @keyframes loading-animation {
+            50% {
+                opacity: 0.2;
+                transform: scale(0.75);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .initial-loading-animate>div {
+            background-color: #409FFF;
+            width: 15px;
+            height: 15px;
+            border-radius: 100% !important;
+            margin: 2px;
+            display: inline-block;
+            animation: loading-animation 0.7s 0s infinite both linear;
+        }
+
+        .initial-loading-animate>div:nth-child(2) {
+            animation-delay: 0.1s !important;
+        }
+
+        .initial-loading-animate>div:nth-child(3) {
+            animation-delay: 0.2s !important;
+        }
+
+        .initial-loading-animate>div:nth-child(4) {
+            animation-delay: 0.3s !important;
+        }
+
+        body {
+            background-color: #f4f5f5;
+        }</style><link href=/css/chunk-0b938e26.95951973.css rel=prefetch><link href=/css/chunk-13171c86.3c4045ad.css rel=prefetch><link href=/css/chunk-15a88705.c34445c6.css rel=prefetch><link href=/css/chunk-25eaee7b.44e97683.css rel=prefetch><link href=/css/chunk-377468ba.b5ca1873.css rel=prefetch><link href=/css/chunk-5bfad6c8.1ad339eb.css rel=prefetch><link href=/css/chunk-63c51b56.75f173b6.css rel=prefetch><link href=/css/chunk-714dd520.64d64c6c.css rel=prefetch><link href=/css/chunk-959921fc.1d294681.css rel=prefetch><link href=/css/chunk-aec164ea.fa9499b0.css rel=prefetch><link href=/css/chunk-c29c0e2e.81bb2e10.css rel=prefetch><link href=/js/chunk-0b938e26.c843fb91.js rel=prefetch><link href=/js/chunk-0ddb0739.90eb49df.js rel=prefetch><link href=/js/chunk-13171c86.7410de20.js rel=prefetch><link href=/js/chunk-15a88705.6283a5e8.js rel=prefetch><link href=/js/chunk-25eaee7b.cb2f0384.js rel=prefetch><link href=/js/chunk-33fa3d1c.cec85e1d.js rel=prefetch><link href=/js/chunk-377468ba.9d568d5e.js rel=prefetch><link href=/js/chunk-5bfad6c8.23f3a116.js rel=prefetch><link href=/js/chunk-63c51b56.fe0b8be5.js rel=prefetch><link href=/js/chunk-714dd520.801c9946.js rel=prefetch><link href=/js/chunk-959921fc.548f3776.js rel=prefetch><link href=/js/chunk-aec164ea.7ffade68.js rel=prefetch><link href=/js/chunk-c29c0e2e.823cd3b9.js rel=prefetch><link href=/js/chunk-e16a593e.8a5f208e.js rel=prefetch><link href=/css/chunk-vendors.7bea50ba.css rel=preload as=style><link href=/css/weixin.d1df2fff.css rel=preload as=style><link href=/js/chunk-vendors.167a6ee2.js rel=preload as=script><link href=/js/weixin.e7eae22d.js rel=preload as=script><link href=/css/chunk-vendors.7bea50ba.css rel=stylesheet><link href=/css/weixin.d1df2fff.css rel=stylesheet></head><body><noscript><strong>很抱歉, 如果没有启用javascript, vue-cli3无法正常工作. 请启用它以继续.</strong></noscript><div id=app><div id=""><div id=initial-loading><div class=initial-loading-animate><div></div><div></div><div></div><div></div></div><p>载入中</p></div></div></div><script src=/js/chunk-vendors.167a6ee2.js></script><script src=/js/weixin.e7eae22d.js></script></body></html>

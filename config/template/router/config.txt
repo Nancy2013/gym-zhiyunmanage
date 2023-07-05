@@ -1,0 +1,6 @@
+export const _Authority = [{
+    level: 0,
+    path: '/_',
+    name: 'index',
+    component: () => import("@/layouts/_Routes/pages/index.vue")
+}];

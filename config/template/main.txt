@@ -1,0 +1,15 @@
+import { App, createApp, Plugin } from "vue";
+import Main from "@/Main.vue";
+import router from "./router";
+import store from "@/store";
+
+const app: App<Element> = createApp(Main);
+
+// 配置路由
+app.use(router as Plugin);
+
+// 配置vuex
+app.use(store);
+
+// 绑定节点
+app.mount("#app");

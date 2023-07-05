@@ -1,0 +1,58 @@
+{
+  "name": "gym-zhiyunmanage",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "server": "node ./config/viteModule.ts",
+    "package": "node ./config/buildModule.ts"
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue-jsx": "^1.3.10",
+    "@vue/compiler-sfc": "^3.2.37",
+    "axios": "^0.27.2",
+    "babel-eslint": "^10.1.0",
+    "js-cookie": "^3.0.5",
+    "js-md5": "^0.7.3",
+    "less": "^4.1.3",
+    "less-loader": "^11.1.3",
+    "svg-sprite-loader": "^6.0.11",
+    "ts-node": "^10.9.1",
+    "tslint": "^6.1.3",
+    "vite-plugin-components": "^0.13.3",
+    "vite-plugin-style-import": "^2.0.0",
+    "vue": "^3.2.25",
+    "vue-router": "^4.2.2",
+    "vuex": "^4.1.0",
+    "vuex-persistedstate": "^4.1.0"
+  },
+  "devDependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
+    "@babel/plugin-syntax-jsx": "^7.22.5",
+    "@types/jquery": "^3.5.16",
+    "@types/node": "^18.16.18",
+    "@types/qrcode": "^1.5.0",
+    "@vitejs/plugin-vue": "^2.3.4",
+    "ant-design-vue": "^3.2.20",
+    "consola": "^2.15.3",
+    "dayjs": "^1.11.7",
+    "echarts": "^5.4.2",
+    "glob": "^10.3.0",
+    "html-tags": "^3.3.1",
+    "inquirer": "^8.0.0",
+    "jquery": "^3.7.0",
+    "moment": "^2.29.4",
+    "qrcode": "^1.5.3",
+    "qrcodejs2-fix": "0.0.1",
+    "svg-tags": "^1.0.0",
+    "typescript": "^4.9.5",
+    "uppercamelcase": "^3.0.0",
+    "video.js": "^8.0.4",
+    "vite": "^2.9.16",
+    "vue-svg-loader": "^0.16.0",
+    "vue-tsc": "^0.34.7",
+    "vue-video-player": "^6.0.0"
+  }
+}

@@ -1,0 +1,52 @@
+.message {
+  margin: 20px 10px;
+  padding: 10px;
+  background: #fff;
+  min-height: calc(100vh - 120px);
+  &-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    &-left {
+      display: inline-flex;
+      > P {
+        margin: 0;
+        padding: 0 10px;
+        border-right: 1px solid #d8d8d8;
+        &:last-child {
+          border: none;
+        }
+      }
+    }
+    &-right {
+      > button {
+        margin: 0 10px;
+      }
+    }
+  }
+  &-list {
+    padding: 20px;
+    .messageIcon {
+      width: 20px;
+      vertical-align: -5px;
+      margin: 0 10px;
+    }
+    &:deep(.ant-list-item-meta-description) {
+        padding: 0 0 0 40px;
+    }
+    .messageColor-1 {
+       color: #FF903F
+    }
+    .messageColor-2 {
+        color: #3fffb5
+    }
+    .messageColor-3 {
+        color: #3f9cff
+    }
+  }
+  &-pagination {
+    padding: 20px;
+    text-align: right;
+  }
+}
