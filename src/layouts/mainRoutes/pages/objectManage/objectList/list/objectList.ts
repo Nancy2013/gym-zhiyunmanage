@@ -2,53 +2,9 @@ import { reactive, toRefs, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
-import { sourceFlagDict, syncStatusDict } from "@/utils/dict"
+import { sourceFlagDict, syncStatusDict, objectAndProductDataTypeDict } from "@/utils/dict"
+import { tableColumns } from './config'
 
-
-const columns = [
-	{
-		dataIndex: "name",
-		key: "name",
-		align: "center",
-		title: "对象名称",
-	},
-	{
-		dataIndex: "categoryName",
-		key: "categoryName",
-		align: "center",
-		title: "对象分类名称",
-	},
-	{
-		key: "sourceFlag",
-		title: "是否可溯源",
-		align: "center",
-		dataIndex: "sourceFlag",
-	},
-	{
-		key: "syncStatus",
-		title: "同步状态",
-		align: "center",
-		dataIndex: "syncStatus",
-	},
-	{
-		key: "creator",
-		title: "创建人",
-		align: "center",
-		dataIndex: "creator",
-	},
-	{
-		key: "createdTime",
-		title: "创建时间",
-		align: "center",
-		dataIndex: "createdTime",
-	},
-	{
-		key: "action",
-		title: "操作",
-		align: "center",
-		dataIndex: "action",
-	},
-];
 
 
 const rules = {
@@ -58,14 +14,15 @@ const rules = {
 }
 
 export default function () {
+	const dataType = objectAndProductDataTypeDict.object
 	const formRef = ref();
 	const router = useRouter();
 	const state = reactive({
-		searchData: { name: "", categoryId: null },
+		searchData: {  } as any,
 		formData: { fieldA: "", fieldB: null },
 		objectClassOptions: [] as any,
 		visible: false,
-		columns,
+		columns: tableColumns,
 		rules,
 		labelCol: { span: 6 },
 		wrapperCol: { span: 14 },
@@ -75,6 +32,7 @@ export default function () {
 			current: 1,
 			pageSize: 10,
 		},
+		objectInfo: {} as any,
 		syncStatusColor: {
 			[syncStatusDict.notSync]: 'processing',
 			[syncStatusDict.synchronized]: "success",
@@ -83,25 +41,58 @@ export default function () {
 	});
 
 	onMounted(() => {
-		getObjectClassList();
+		getObjectClassList().then((options) => {
+			state.objectClassOptions = options
+		}).catch(() => {
+			state.objectClassOptions = []
+		})
 		getTableList();
 	});
 
-	const getObjectClassList = () => {
-		request({
-			url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/pageQuery",
-			type: "json",
-			method: "post",
-			data: { pageSize: 9999 },
-		}).then((res) => {
-			state.objectClassOptions = res.rows.map((item: any) => {
-				return {
-					label: item.categoryName,
-					value: item.id,
-				};
+	/**
+	 * 获取对象分类
+	 * @param { String } parentId 分类id
+	 * @return
+	 */
+	const getObjectClassList = (parentId = 0) => {
+		return new Promise((resolve, reject) => {
+			request({
+				url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/getByParentId",
+				params: { parentId, dataType },
+			}).then((res) => {
+				if (Array.isArray(res.data) && res.data.length) {
+					resolve(res.data.map((item: any) => {
+						return {
+							label: item.categoryName,
+							value: item.id,
+							isLeaf: Boolean(parentId)
+						};
+					}))
+				} else {
+					reject([])
+				}
+
 			});
-		});
+		})
+
 	};
+
+	/**
+	 * 加载数据
+	 * @param { Array } selectedOptions
+	 * @return
+	 */
+	const loadData = (selectedOptions: any) => {
+		console.log(selectedOptions)
+		const targetOption = selectedOptions[selectedOptions.length - 1];
+		targetOption.loading = true;
+		getObjectClassList(targetOption.value).then((options) => {
+			targetOption.loading = false
+			targetOption.children = options
+		}).catch(() => {
+			targetOption.children = []
+		})
+	}
 
 	/**
 	 * 获取对象列表
@@ -109,14 +100,17 @@ export default function () {
 	 * @return
 	 */
 	const getTableList = () => {
-		const {
-			pagination: { current, pageSize },
-		} = state;
+		const { pagination: { current, pageSize } } = state;
+		const paramsData = { ...state.searchData }
+		if (Array.isArray(paramsData.categoryId) && paramsData.categoryId.length) {
+			paramsData.treeLevel = paramsData.categoryId.length
+			paramsData.categoryId = paramsData.categoryId[paramsData.categoryId.length - 1]
+		}
 		request({
-			url: import.meta.env.VITE_NODE_URL + "/businessObject/pageQuery",
+			url: import.meta.env.VITE_NODE_URL + "/businessObject/pageQueryBO",
 			type: "json",
 			method: "post",
-			data: { ...state.searchData, pageNum: current, pageSize },
+			data: { ...paramsData, pageNum: current, pageSize },
 		}).then((res) => {
 			state.dataSource = res.rows as any;
 			state.pagination = {
@@ -171,14 +165,19 @@ export default function () {
 	 * @param
 	 * @return
 	 */
-	const handleEdit = (column: any) => {
-		router.push({
-			path: "/objectManage/addObject",
-			query: {
-				id: column.id
-			},
-			title: '编辑对象'
-		} as any);
+	const handleView = (column: any) => {
+		request({
+			url: import.meta.env.VITE_NODE_URL + "/businessObject/detail",
+			params: { id: column.id, dataType }
+		}).then((res: any) => {
+			if (Array.isArray(res.data.businessObjectAttrBOList) && res.data.businessObjectAttrBOList.length) {
+				state.objectInfo = res.data
+				state.visible = true
+			} else {
+				message.warning('暂无对象详情数据')
+			}
+			
+		})
 	};
 
 	/**
@@ -188,37 +187,6 @@ export default function () {
 	 */
 	const handleAdd = () => {
 		router.push({ path: "/objectManage/addObject" });
-	};
-
-	/**
-	 * 点击删除按钮时触发
-	 * @param { Object } record 删除的列表项
-	 * @return
-	 */
-	const handleDelete = (record: any) => {
-		Modal.confirm({
-			title: "提示",
-			content: "确认要删除该条数据",
-			centered: true,
-			onOk() {
-				return new Promise((resolve, reject) => {
-					request({
-						url: import.meta.env.VITE_NODE_URL + "/businessObject/del",
-						type: "json",
-						method: "get",
-						params: { id: record.id },
-					})
-						.then(() => {
-							resolve(true);
-							message.success("删除成功");
-							getTableList();
-						})
-						.catch(() => {
-							reject();
-						});
-				});
-			},
-		});
 	};
 
 	/**
@@ -245,11 +213,11 @@ export default function () {
 		...toRefs(state),
 		sourceFlagDict,
 		syncStatusDict,
-		handleDelete,
 		formRef,
 		handleSubmit,
 		handleCancel,
-		handleEdit,
+		handleView,
+		loadData,
 		handleAdd,
 		handleSearch,
 		paginationChange,

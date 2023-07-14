@@ -1,4 +1,5 @@
-import { defineComponent, reactive, toRefs, ref, onMounted } from "vue";
+import { defineComponent, reactive, toRefs, ref, onMounted, watch } from "vue";
+import { convertTree } from "@/utils/function";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
 import { platformTypeDict, terminalTypeDict } from "@/utils/dict";
@@ -43,6 +44,19 @@ const rules = {
   terminalType: [{ required: true, message: "请选择终端", trigger: "blur" }],
 };
 
+const platforms = [
+  { label: "Sass平台", value: 1 },
+  { label: "硒茶平台", value: 2 },
+];
+
+const terminals = {
+  1: [{ label: "PC端", value: 1 }],
+  2: [
+    { label: "PC端", value: 1 },
+    { label: "小程序", value: 2 },
+  ],
+};
+
 export default defineComponent({
   setup() {
     const formRef = ref();
@@ -56,6 +70,8 @@ export default defineComponent({
       columns,
       rules,
       ruleOptions: [] as any,
+      platformOptions: platforms,
+      terminalOptions: [] as any,
       pageSize: 20,
       pageNum: 1,
       labelCol: { span: 6 },
@@ -250,13 +266,21 @@ export default defineComponent({
           params: { roleId: roleId },
         }).then((res) => {
           if (Array.isArray(res.data) && res.data.length) {
-            state.authTreeData = res.data[0].treeNodes as any;
-            state.allAuthorityList = res.data.map((item: any) => {
-               let platformType = item.platformType;
-               let terminalType = item.terminalType;
-               let menuIds = item.treeNodes.filter((e: any) => e.checked).map((v: any) => v.id) || [];
-               return { platformType, terminalType, menuIds }
+            state.authTreeData = convertTree(res.data[0].treeNodes, {
+              id: "id",
+              pid: "pid",
             });
+            state.allAuthorityList = res.data.map((item: any) => {
+              let platformType = item.platformType;
+              let terminalType = item.terminalType;
+              let menuIds =
+                item.treeNodes
+                  .filter((e: any) => e.checked)
+                  .map((v: any) => v.id) || [];
+              return { platformType, terminalType, menuIds };
+            });
+            state.terminalOptions =
+              terminals[state.allAuthorityList[0].platformType];
             resolve(true);
           } else {
             state.authTreeData = [];
@@ -278,7 +302,9 @@ export default defineComponent({
         type: "json",
         method: "post",
         data: {
-          menuPlatformReqList: state.allAuthorityList.filter((item: any) => item.menuIds.length != 0),
+          menuPlatformReqList: state.allAuthorityList.filter(
+            (item: any) => item.menuIds.length != 0
+          ),
           roleId: state.roleId,
         },
       }).then((res) => {
@@ -299,23 +325,96 @@ export default defineComponent({
      * @param
      * @return
      */
-    const addAuthorityList = () => {
-      if (state.allAuthorityList.length < 4) {
+    const addAuthorityList = (count: number) => {
+      if (state.allAuthorityList.length < count) {
         state.allAuthorityList.push({
           platformType: null,
           terminalType: null,
-          menuIds: []
+          menuIds: [],
         });
       } else {
-        message.warning("最多只能添加四条数据!");
+        message.warning(`最多只能添加${count}条数据!`);
       }
     };
+
+    /**
+     * 删除权限数据项
+     * @param
+     * @return
+     */
+    const deleteAuthorityList = () => {
+      Modal.confirm({
+        title: "提示",
+        content: "确认要删除该条数据",
+        centered: true,
+        onOk() {
+          if (state.allAuthorityList.length == 1) {
+            message.error("当前数据不能删除!");
+          } else {
+            state.allAuthorityList.splice(state.selectedMenuKeys[0], 1);
+            state.selectedMenuKeys[0] = state.allAuthorityList.length - 1;
+            state.allAuthorityList.map((item: any, index: number) => {
+              if (index == state.selectedMenuKeys[0] && item.platformType)
+                reactSelect(item.platformType);
+            });
+          }
+        },
+      });
+    };
+
+    /**
+     * 多级联动数据
+     */
+    const reactSelect = (key: number, option?: any) => {
+      state.terminalOptions = [];
+      let obj = { [key]: terminals[key] },
+        getTargetIndexArr: any = [];
+      // 更改联动值
+      option &&
+        state.allAuthorityList.map((v: any, index: number) => {
+          if (index == state.selectedMenuKeys[0]) v.terminalType = null;
+          return v;
+        });
+      // 获取目标值
+      state.allAuthorityList
+        .filter(
+          (v1: any, i: number) =>
+            i != state.selectedMenuKeys[0] &&
+            [v1.platformType, v1.terminalType].every((v2: any) => v2 != null)
+        )
+        .map((v3: any) => `${v3.platformType}${v3.terminalType}`)
+        // 获取目标索引
+        .forEach((v4: any) => {
+          let targetIndex = obj[key]
+            .map((v5: any) => v5.value)
+            .findIndex((item: any) => `${key}${item}` == v4);
+          targetIndex != -1 && getTargetIndexArr.push(targetIndex);
+        });
+      // 获取联动值
+      state.terminalOptions = obj[key].filter((_: any, index: number) =>
+        getTargetIndexArr.every((v: any) => v != index)
+      );
+    };
+
+    // 级联选择监听
+    watch(
+      () => state.selectedMenuKeys,
+      (next: any) => {
+        state.allAuthorityList.forEach((item: any, index: number) => {
+          if (index == next[0]) {
+            item.platformType
+              ? reactSelect(item.platformType)
+              : (state.terminalOptions = []);
+          }
+        });
+      }
+    );
 
     /**
      *表格刷新
      *
      */
-     const handleFresh = () => {
+    const handleFresh = () => {
       state.searchData = {} as any;
       state.pageNum = 1;
       getTableList();
@@ -340,7 +439,9 @@ export default defineComponent({
       handleSearch,
       handleFresh,
       handleDelete,
-      addAuthorityList
+      addAuthorityList,
+      deleteAuthorityList,
+      reactSelect,
     };
   },
 });

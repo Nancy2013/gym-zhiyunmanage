@@ -11,11 +11,11 @@ interface InputFilter {
 	/**
 	 * 小数位
 	 */
-	decimalPlaces?: Number
+	decimalPlaces?: number
 
 }
 
-import { filterWord } from '@/utils/filter'
+import { filterWord, filterFloat, filterNum } from '@/utils/filter'
 
 
 export default function (formData: any, value: any, inputFilter: InputFilter) {
@@ -23,6 +23,12 @@ export default function (formData: any, value: any, inputFilter: InputFilter) {
 		switch (inputFilter.type) {
 			case 'notSymbol': 
 				formData[value] = filterWord(event.target.value)
+				break
+			case 'float':
+				formData[value] = filterFloat(event.target.value, inputFilter.decimalPlaces)
+				break
+			case 'int':
+				formData[value] = filterNum(event.target.value)
 				break
 		}
 	}

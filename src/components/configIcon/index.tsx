@@ -11,12 +11,20 @@ export default defineComponent({
         color: {
             type: String,
             default: ''
+        },
+        width: {
+            type: String,
+            default: ''
+        },
+        height: {
+            type: String,
+            default: ''
         }
     },
 
     setup(props) {
         
-        const { name, color } = toRefs(props);
+        const { name, color, width, height } = toRefs(props);
 
         let state = reactive({ 
             iconName: `#icon-${name.value}`,
@@ -32,7 +40,7 @@ export default defineComponent({
 
         return () => (
             // @ts-ignore #
-            <svg class={[styles['svg-icon'], state.svgClass.replace('svg-icon', '')]} style={{ color: color.value }}>
+            <svg class={[styles['svg-icon'], state.svgClass.replace('svg-icon', '')]} style={{ color: color.value, height: height.value, width: width.value }}>
                 
                 <use xlinkHref={state.iconName} />
             </svg>

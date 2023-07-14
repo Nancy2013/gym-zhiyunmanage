@@ -5,7 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useAction } from "@/hooks";
 import {approvalStatusOptions} from "./config";
 import audit from '@/assets/image/audit.png'
-
+import {showTime} from '@/utils/function'
 // 表格数据
 const columns = [
   {
@@ -16,8 +16,8 @@ const columns = [
     width: 100,
   },
   {
-    key: "companyName",
-    dataIndex: "companyName",
+    key: "tenantName",
+    dataIndex: "tenantName",
     align: "center",
     title: "企业名称",
     width: 200,
@@ -37,36 +37,36 @@ const columns = [
     width: 200,
   },
   {
-    key: "plantingArea",
-    dataIndex: "plantingArea",
+    key: "plantArea",
+    dataIndex: "plantArea",
     align: "center",
     title: "种植面积(亩)",
     width: 200,
   },
   {
-    key: "production",
-    dataIndex: "production",
+    key: "annualOutput",
+    dataIndex: "annualOutput",
     align: "center",
     title: "年产量(kg)",
     width: 200,
   },
   {
-    key: "productionLineNum",
-    dataIndex: "productionLineNum",
+    key: "productNum",
+    dataIndex: "productNum",
     align: "center",
     title: "产线数",
     width: 200,
   },
   {
-    key: "contactsName",
-    dataIndex: "contactsName",
+    key: "contact",
+    dataIndex: "contact",
     align: "center",
     title: "联系人",
     width: 200,
   },
   {
-    key: "contactsPhone",
-    dataIndex: "contactsPhone",
+    key: "contactPhone",
+    dataIndex: "contactPhone",
     align: "center",
     title: "联系电话",
     width: 200,
@@ -77,6 +77,16 @@ const columns = [
     align: "center",
     title: "申请时间",
     width: 200,
+    defaultSortOrder: 'descend',
+    sorter: (a: any, b: any) => {
+      if(a.createdTime > b.createdTime){
+        return 1;
+      }
+      if(a.createdTime < b.createdTime){
+        return -1;
+      }
+      return 0;
+    },
   },
 
   {
@@ -129,37 +139,38 @@ export default defineComponent({
       },
       statusOptions:getStatusOptions(),
       search: {
-        companyName: "",
+        keyWords: "",
         approvalStatus: "",
       },
       visible: false,
-      modalCompanyName: "",
-      id: "",
-      reason: "",
+      formData:{
+        id: "",
+        tenantName:'',
+        reason: "",
+        enterpriseCode:'',
+      },
       isCode:false,
-      code:'',
       audit,
     });
 
     onMounted(() => {
       query();
-      const { asyncUpdateIsStBreamub,asyncUpdateApprovalStatus } = storeAction
+      const { asyncUpdateIsStBreamub } = storeAction
       asyncUpdateIsStBreamub({isStBreamub: true})
-      asyncUpdateApprovalStatus({approvalStatus:-1})
     });
 
     // 查询
     const query = async () => {
       state.loading = true
-      let { pagination: { pageSize, current }, search: { companyName, approvalStatus } } = state
+      let { pagination: { pageSize, current }, search: { keyWords, approvalStatus } } = state
       const params={
         pageNum:current,
         pageSize,
         approveStatus:approvalStatus,
-        keyWords:companyName,
+        keyWords,
       };
       let res: any = await request({
-        url: `${import.meta.env.VITE_XICHA_URL}/page-query`,
+        url: `${import.meta.env.VITE_XICHA_URL}/auth/page-query`,
         type: "json",
         method: "post",
         data: params,
@@ -200,11 +211,11 @@ export default defineComponent({
      *
      */
     const cancel = async() => {
-      if (state.reason) {
-        const {id,reason}=state;
+      const {reason,id}=state.formData;
+      if (reason) {
         const params={ id, approve: 3,reason }    
         let res: any = await request({
-          url:`${import.meta.env.VITE_XICHA_URL}/approve`,
+          url:`${import.meta.env.VITE_XICHA_URL}/auth/approve`,
           type: "json",
           method: "post",
           data:params,
@@ -212,7 +223,7 @@ export default defineComponent({
         const {code}=res
         if (code == 200) {
           query();
-          state.visible = false;
+          hideModal();
           message.success("认证审核已驳回");
         }
       } else {
@@ -226,9 +237,10 @@ export default defineComponent({
      *
      */
     const ok = async() => {
-      const params={ id: state.id, approve: 2, }
+      const {id}=state.formData;
+      const params={ id, approve: 2, }
       let res: any = await request({
-        url:`${import.meta.env.VITE_XICHA_URL}/approve`,
+        url:`${import.meta.env.VITE_XICHA_URL}/auth/approve`,
         type: "json",
         method: "post",
         data:params,
@@ -236,7 +248,7 @@ export default defineComponent({
       const {code}=res
       if (code == 200) {
         query();
-        state.visible = false;
+        hideModal();
         message.success("认证审核成功");
       }
     };
@@ -247,11 +259,27 @@ export default defineComponent({
      *
      * @param {*} [item] 当前企业申请
      */
-    const showModal = (item?:any) => {
-      state.visible = true;
-      state.id = item.id;
-      state.modalCompanyName = item.companyName;
-      state.reason = "";
+    const showModal = (item:any,flag:string) => {
+      state[`${flag}`] = true;
+      state.formData={
+        ...item,
+        reason:'',
+      };
+    };
+     
+    /**
+     * 关闭弹窗
+     */
+    const hideModal=()=>{
+      state.visible = false;
+      state.isCode = false;
+    };
+
+    /**
+     * 关闭弹窗后事件
+     */
+    const handleClose = () => {
+      state.formData={} as any;
     };
 
 
@@ -276,26 +304,6 @@ export default defineComponent({
       query();
     }
 
-
-    /**
-     *显示企业码
-     *
-     */
-    const showCode=(item?:any)=>{
-      state.id = item.id;
-      state.code=item.identificationCode;
-      state.modalCompanyName = item.companyName;
-      state.isCode=true;
-    };
-
-    /**
-     * 关闭企业码
-     *
-     */
-    const cancelCode=()=>{
-      state.isCode=false;
-    }
-
     
     return {
       ...toRefs(state),
@@ -306,8 +314,9 @@ export default defineComponent({
       ok,
       enterDetail,
       paginationChange,
-      showCode,
-      cancelCode,
+      hideModal,
+      showTime,
+      handleClose,
     };
   },
 });

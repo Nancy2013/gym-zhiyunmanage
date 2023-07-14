@@ -49,19 +49,20 @@ export const baseInfoRenderList: detailRenderItem[] = [
 	},
 	{
 		label: '茶园图片：',
-		key: 'teaCategoryList',
+		key: 'imageUrl',
 		type: 'img',
 		width: '100%'
 	}
 ]
 
+export const breedRenderData: detailRenderItem = {
+	label: '茶树品种数量：',
+	key: 'teaCategoryNum',
+	type: 'text',
+	width: '100%'
+}
+
 export const coreInfoRenderList: detailRenderItem[] = [
-	{
-		label: '茶树品种数量：',
-		key: 'teaCategoryNum',
-		type: 'text',
-		width: '100%'
-	},
 	{
 		label: '品种：',
 		key: 'teaTreeCategory',

@@ -41,6 +41,7 @@ export default defineConfig(({ mode }) => {
     ],
     root: subModule('root', 'src/layouts', mode, __dirname),
     publicDir: getPublicDir(mode, __dirname),
+    
     base: "./",
     css: {
       //* css 模块化
@@ -51,7 +52,13 @@ export default defineConfig(({ mode }) => {
       
       // 配置主题
       preprocessorOptions: {
-        less: Object.assign({}, subModule('theme', 'src/layouts', mode, __dirname), { javascriptEnabled: true })
+        less: {
+          javascriptEnabled: true,
+          ...subModule('theme', 'src/layouts', mode, __dirname),
+          modifyVars: {
+            hack: `true; @import (reference) "${resolve(__dirname, 'src/layouts/mainRoutes/base.less')}";`,
+          }
+        }  
       },
     },
     resolve: {
@@ -72,8 +79,8 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/fcapi/, ""),
         },
         "/api": {
-          target: "http://192.168.110.60:8072",
-          // target: "https://op.cn88555.com/api",
+          // target: "http://192.168.110.77:8090",
+          target: "https://op.cn88555.com/api",   //"https://xi.cn88555.com/api",   //"https://op.cn88555.com/api",
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },

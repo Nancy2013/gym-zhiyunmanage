@@ -5,9 +5,9 @@ import { useRouter, useRoute } from "vue-router";
 import CodeBgimg from "@/assets/image/codeBgimg.png";
 import QrCodeBgimg from "@/assets/image/qrCodeBgimg.png";
 import ImgLogo from "@/assets/image/logo_img_Industrycode.png";
-import { defineComponent, reactive, toRefs, onMounted, ref } from "vue";
+import { defineComponent, reactive, toRefs, onMounted, ref, computed } from "vue";
 import { Empty } from 'ant-design-vue'
-
+import { objectAndProductDataTypeDict } from "@/utils/dict";
 export default defineComponent({
   components: {
     Empty
@@ -24,14 +24,21 @@ export default defineComponent({
         categoryName: "",
         templateName: "",
         businessObjectAttrBOList: ref<any>(""),
+        dataType: undefined,
       },
+      objectAndProductDataTypeDict,
     });
-
+    const qrcodeKey =  ref(Math.random() as any)
     onMounted(() => {
       state.idisCode = route.query.idisCode as unknown as string;
       codeInfo(state.idisCode);
     });
-
+    
+    const getLabel=computed(()=>{
+      const {dataType}=state.formState;
+      const label=dataType===objectAndProductDataTypeDict.product?'产品':'对象';
+      return label;
+    });
     
     /**
      * 获取对象详情
@@ -53,6 +60,7 @@ export default defineComponent({
           templateName,
           businessObjectAttrBOList,
           codeUrl,
+          dataType,
         } = res.data;
         state.formState = {
           idisCode,
@@ -60,6 +68,7 @@ export default defineComponent({
           categoryName,
           templateName,
           businessObjectAttrBOList,
+          dataType,
         };
         drawCanvas(idisCode, boName, codeUrl);
       }
@@ -182,10 +191,12 @@ export default defineComponent({
 
     return {
       ...toRefs(state),
+      qrcodeKey,
       back,
       downloadCode,
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
+      getLabel,
     };
 
   },

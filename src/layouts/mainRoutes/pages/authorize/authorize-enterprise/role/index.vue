@@ -69,32 +69,35 @@
         <a-row>
             <a-col :span="6">
                 <div class="authority-add">
-                    <a-button type="primary" @click="addAuthorityList">新增</a-button>
+                    <a-space>
+                        <a-button type="text" primary @click="addAuthorityList(4)">新增</a-button>
+                        <a-button type="text" danger @click="deleteAuthorityList">删除</a-button>
+                    </a-space>
                 </div>
                 <div class="authority-list">
                     <a-menu mode="inline" v-model:selectedKeys="selectedMenuKeys">
                         <a-menu-item v-for="(item, index) in allAuthorityList" :key="index">第{{ index + 1
-                        }}条数据</a-menu-item>
+                            }}条数据</a-menu-item>
                     </a-menu>
                 </div>
             </a-col>
             <a-col :span="18">
                 <a-form v-for="(item, index) in allAuthorityList" :key="index" :label-col="labelCol"
                     :wrapper-col="wrapperCol">
-                 <div v-if="selectedMenuKeys[0] == index">
-                    <a-form-item label="选择平台">
-                        <a-select v-model:value="item.platformType" placeholder="请选择平台"
-                            :options="[{ label: 'Sass', value: 1 }, { label: '硒茶', value: 2 }]"></a-select>
-                    </a-form-item>
-                    <a-form-item label="终端类型">
-                        <a-select v-model:value="item.terminalType" placeholder="请选择终端类型"
-                            :options="[{ label: 'pc', value: 1 }, { label: 'h5', value: 2 }]"></a-select>
-                    </a-form-item>
-                    <a-form-item label="功能权限">
-                        <a-tree :key="roleId" v-model:checkedKeys="item.menuIds" checkable :tree-data="authTreeData"
-                            :fieldNames="{ title: 'name', key: 'id' }"></a-tree>
-                    </a-form-item>
-                 </div>
+                    <div v-if="selectedMenuKeys[0] == index">
+                        <a-form-item label="选择平台">
+                            <a-select v-model:value="item.platformType" placeholder="请选择平台" :options="platformOptions"
+                                @change="reactSelect"></a-select>
+                        </a-form-item>
+                        <a-form-item label="终端类型">
+                            <a-select v-model:value="item.terminalType" placeholder="请选择终端类型"
+                                :options="terminalOptions"></a-select>
+                        </a-form-item>
+                        <a-form-item label="功能权限">
+                            <a-tree :key="roleId" v-model:checkedKeys="item.menuIds" checkable :tree-data="authTreeData"
+                                :fieldNames="{ title: 'name', key: 'id' }"></a-tree>
+                        </a-form-item>
+                    </div>
                 </a-form>
             </a-col>
         </a-row>

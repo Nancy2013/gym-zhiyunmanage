@@ -1,6 +1,7 @@
 <template>
   <div class="identity-strategy-action">
-    <config-page title="返回" sub-title="返回到标识策略页">
+    <a-spin :spinning="loading">
+      <config-page title="返回" sub-title="返回到标识策略页">
       <div class="strategy-action-content">
         <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol" :rules="rules"
           @finish="submit">
@@ -13,7 +14,7 @@
               </a-form-item>
               <a-form-item ref="ruleType" name="ruleType" label="生码类型">
                 <a-select v-model:value="formState.ruleType" placeholder="请选择生码类型" style="width: 300px"
-                  :options="typeOptions" @change="typeChange"></a-select>
+                  :options="typeOptions" @change="typeChange" :getPopupContainer="getPopupContainer"></a-select>
               </a-form-item>
               <template v-if="judgeType">
                 <a-form-item ref="generateNode" name="generateNode" label="生码节点">
@@ -22,6 +23,18 @@
                     <a-radio :value="2">对象认证通过时</a-radio>
                   </a-radio-group>
                 </a-form-item>
+                <template v-if="formState.generateNode === 1">
+                  <a-form-item ref="categoryId" name="categoryId" label="适用对象分类">
+                    <a-cascader style="width: 300px;" v-model:value="formState.categoryId" :options="categoryOptions" :load-data="loadData"
+                      placeholder="请选择对象分类" :fieldNames="fieldCategoryNames" @change="handleCategoryChange" :getPopupContainer="getPopupContainer"/>
+                  </a-form-item>
+                </template>
+                <template v-if="formState.generateNode === 2">
+                  <a-form-item ref="generateTypeId" name="generateTypeId" label="选择审核模块">
+                    <a-select v-model:value="formState.generateTypeId" placeholder="请选择审核模块" style="width: 300px"
+                  :options="moduleOptions" :fieldNames="fieldModuleNames" :getPopupContainer="getPopupContainer"></a-select>
+                  </a-form-item>
+                </template>
               </template>
             </div>
           </div>
@@ -82,6 +95,7 @@
         </a-form>
       </div>
     </config-page>
+    </a-spin>
   </div>
 </template>
 <script lang="ts">

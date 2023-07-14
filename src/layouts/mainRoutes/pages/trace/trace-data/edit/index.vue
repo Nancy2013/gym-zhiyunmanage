@@ -1,5 +1,9 @@
 <template>
-    <div class="trace-data-add">编辑数据</div>
+    <div class="trace-data-add">
+        <config-page title="返回" sub-title="返回到流程管理页">
+            更新数据
+        </config-page>
+    </div>
 </template>
 <script lang="ts">
 import Index from './index'

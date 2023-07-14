@@ -208,24 +208,32 @@ export default defineComponent({
      * 启用停用企业
      * @param
      */
-    const modifyEnterpriseStatus = async (
+    const modifyEnterpriseStatus = (
       enterpriseId: number,
       status: string
     ) => {
-      let res = await request({
-        url: import.meta.env.VITE_BASE_URL + "/enterprise/modify/status",
-        type: "json",
-        method: "post",
-        params: {
-          enterpriseId,
-          status,
+      let text = status == "DISABLE" ? "停用" : "启用";
+      Modal.confirm({
+        title: "提示",
+        content: `确认要${text}吗？`,
+        centered: true,
+        async onOk() {
+          let res = await request({
+            url: import.meta.env.VITE_BASE_URL + "/enterprise/modify/status",
+            type: "json",
+            method: "post",
+            params: {
+              enterpriseId,
+              status,
+            },
+          });
+          if (res.code == 200) {
+            message.success(`企业${text}成功!`);
+            getEnterpriseList();
+          }
         },
       });
-      if (res.code == 200) {
-        let text = status == "DISABLE" ? "停用" : "启用";
-        message.success(`企业${text}成功!`);
-        getEnterpriseList();
-      }
+      
     };
 
     /**

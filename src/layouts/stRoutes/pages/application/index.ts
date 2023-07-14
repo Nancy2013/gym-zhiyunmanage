@@ -31,9 +31,9 @@ const services = {
         {
             icon: sqshIcon,
             color: 'rgb(165 174 41 / 30%)',
-            title: '授权审核',
+            title: '码量授权',
             label: '对各角色的码量申请进行审核',
-            path: '/stPublic/application/authorizationReview'
+            path: '/stPublic/application/codeAuthorize'
         }
     ],
     ppfw: [

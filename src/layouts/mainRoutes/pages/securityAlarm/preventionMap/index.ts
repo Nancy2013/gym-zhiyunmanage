@@ -1,7 +1,7 @@
 import { defineComponent, reactive, toRefs, onMounted } from "vue";
 import service from "@/service/mainRoutes";
 import Mapview from "@/layouts/mainRoutes/pages/securityAlarm/components/map/index.vue";
-import dayjs from "dayjs";
+import {sendTime} from '@/utils/function'
 const productFieldNames = {
   value: "id",
   label: "productName",
@@ -54,12 +54,8 @@ export default defineComponent({
       const params = {
         productId,
         batchId,
-        beginTime: beginTime
-          ? dayjs(beginTime).format("YYYY-MM-DD")
-          : "",
-        endTime: endTime
-          ? dayjs(endTime).format("YYYY-MM-DD")
-          : "",
+        beginTime: beginTime?sendTime(beginTime,'startOf'):'',
+        endTime: endTime?sendTime(endTime,'endOf'):'',
       };
       const { queryRecordCoord } = service.securityAlarmReq;
       queryRecordCoord(params)
@@ -98,7 +94,7 @@ export default defineComponent({
         });
     };
 
-    // 选择产品
+    // 过滤产品
     const productFilterOption = (input: string, option: any) => {
       return option.productName.indexOf(input) >= 0;
     };
@@ -121,7 +117,7 @@ export default defineComponent({
         });
     };
 
-     // 选择批次
+     // 过滤批次
      const batchFilterOption = (input: string, option: any) => {
       return option.batchTitle.indexOf(input) >= 0;
     };

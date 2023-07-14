@@ -2,28 +2,30 @@
     <div class="identity-generate">
         <!-- 表格 -->
         <div class="identity-generate-tables">
-            <div class="generate-tables-search">
-                <div class="search-left">
+            <div class="operate">
+                <a-form layout="inline" :model="query">
                     <template v-if="type == 0">
-                        <div class="search-left-inline">
-                            <a-input style="width: 200px" placeholder="对象名称/绑定模板" v-model:value="query.condition" />
-                        </div>
-                        <div class="search-left-inline">
-                            <a-select style="width: 200px" placeholder="请选择" :options="statusOptions"
-                                v-model:value="query.status"></a-select>
-                        </div>
+                        <a-form-item label="">
+                            <a-input style="width: 200px" placeholder="产品名称" v-model:value="query.condition" />
+                        </a-form-item>
+                        <a-form-item label="">
+                            <a-select style="width: 200px" placeholder="请选择状态" :options="statusOptions"
+                                v-model:value="query.status" :getPopupContainer="getPopupContainer"></a-select>
+                        </a-form-item>
                     </template>
+
                     <template v-else>
-                        <div class="search-left-inline">
-                            <a-range-picker style="width: 300px" @change="rangeDateChange" :value="query.rangeTime" />
-                        </div>
+                        <a-form-item label="">
+                            <a-range-picker style="width: 300px" @change="rangeDateChange" :value="query.rangeTime" :getPopupContainer="getPopupContainer"/>
+                        </a-form-item>
                     </template>
-                    <div class="search-left-inline">
+
+                    <a-form-item label="">
                         <a-button type="primary" @click="queryList">搜索</a-button>
                         <a-divider type="vertical" />
                         <a-button type="default" @click="reset">重置</a-button>
-                    </div>
-                </div>
+                    </a-form-item>
+                </a-form>
             </div>
             <div class="generate-tables-action">
                 <div class="action-left">
@@ -80,12 +82,14 @@
                     </template>
                     <template v-if="column.key === 'action'">
                         <div class="action">
+                            <a-button type="link" size="small" @click="showDetailModal(record)"> 详情 </a-button>
+                            <a-divider type="vertical" />
                             <a-button type="link" size="small" @click="showModal('download', record)"
                                 :disabled="record.status == 6 ? true : false"> 下载 </a-button>
                             <a-divider type="vertical" />
                             <a-button type="link" size="small" @click="showModal('assign', record)"
                                 :disabled="record.status == 6 ? true : false"> 赋值 </a-button>
-                            <template v-if="type == 0">
+                            <template v-if="type == 0 && record.boId">
                                 <a-divider type="vertical" />
                                 <a-button type="link" size="small" @click="showModal('bind', record)"
                                     :disabled="record.status == 6 ? true : false"> 模板绑定
@@ -97,8 +101,8 @@
         </div>
         <!-- 弹框 -->
         <a-modal v-model:visible="visible" :title="title" :afterClose="destroyInfo"
-            :footer="Object.is(title, '下载') ? null : undefined"
-            :width="title == '赋值' && type ? `1000px` : undefined" @ok="submit">
+            :footer="Object.is(title, '下载') ? null : undefined" :width="title == '赋值' && type ? `1000px` : undefined"
+            @ok="submit" :maskClosable="false">
             <div class="modal-content">
                 <!-- 添加标识信息 -->
                 <template v-if="title == '添加标识信息'">
@@ -121,7 +125,8 @@
                                 </a-radio-group>
                             </a-form-item>
                             <a-form-item ref="count" name="count" label="生码数量">
-                                <a-input v-model:value="addFormState.count" placeholder="请输入生码数量 (码量)" />
+                                <a-input v-model:value.number="addFormState.count" type="number" placeholder="请输入生码数量 (码量)"
+                                    @change="handleCountChange" />
                             </a-form-item>
                             <a-form-item ref="ruleId" name="ruleId" label="标识策略">
                                 <a-select v-model:value="addFormState.ruleId" placeholder="请选择标识策略"
@@ -172,24 +177,25 @@
                                         un-checked-children="否" disabled />
                                 </a-form-item>
                             </template>
-                            <a-form-item ref="boId" name="boId" label="绑定对象">
-                                <a-select v-model:value="assignFormState.boId" placeholder="请选择需要绑定的对象" :options="objects"
-                                    @change="selectChange('objects', true)"></a-select>
+                            <a-form-item ref="boId" name="boId" label="绑定产品">
+                                <a-select v-model:value="assignFormState.boId" placeholder="请选择产品" :options="objects"
+                                    @change="selectChange('objects', 'assignFormState', true)"></a-select>
                             </a-form-item>
-                            <a-form-item ref="templateId" name="templateId" label="绑定模板">
-                                <a-select v-model:value="assignFormState.templateId" placeholder="请选择需要绑定的模板"
-                                    :options="templates" @change="selectChange('templates')"></a-select>
+                            <a-form-item ref="templateId" name="templateId" label="绑定产品模板">
+                                <a-select v-model:value="assignFormState.templateId" placeholder="请选择产品模板"
+                                    :options="templates" @change="selectChange('templates', 'assignFormState')"></a-select>
                             </a-form-item>
-                            <a-form-item ref="batchId" name="batchId" label="绑定批次">
-                                <a-select v-model:value="assignFormState.batchId" placeholder="请选择需要绑定的批次" :options="batchs"
-                                    @change="selectChange('batchs')"></a-select>
+                            <a-form-item ref="batchId" name="batchId" label="产品批次">
+                                <a-select v-model:value="assignFormState.batchId" placeholder="请选择产品批次" :options="batchs"
+                                    @change="selectChange('batchs', 'assignFormState')"></a-select>
                             </a-form-item>
                             <a-form-item ref="remark" name="remark" label="备注">
                                 <a-input v-model:value="assignFormState.remark" placeholder="请输入备注" />
                             </a-form-item>
                             <template v-if="type">
                                 <a-form-item label="已赋值流水号段">
-                                    <a-table :columns="segModalColumns" :bordered="true" :pagination="false" :dataSource="segModalDataSource">
+                                    <a-table :columns="segModalColumns" :bordered="true" :pagination="false"
+                                        :dataSource="segModalDataSource">
                                         <template #bodyCell="{ column, record }">
                                             <template v-if="column.key == 'index'">
                                                 <span>{{ `${record.indexStart} ~ ${record.indexEnd}` }}</span>
@@ -206,13 +212,13 @@
                     <div class="modal-content-bind">
                         <a-form ref="formRef" :model="bindFormState" :label-col="labelCol" :wrapper-col="wrapperCol"
                             :rules="bindRules">
-                            <a-form-item ref="boId" name="boId" label="绑定对象">
-                                <a-select v-model:value="bindFormState.boId" placeholder="请选择需要绑定的对象" :options="objects"
-                                    @change="selectChange('bindObjects')" disabled></a-select>
+                            <a-form-item ref="boId" name="boId" label="绑定产品">
+                                <a-select v-model:value="bindFormState.boId" placeholder="请选择产品" :options="objects"
+                                    @change="selectChange('objects', 'bindFormState', true)" disabled></a-select>
                             </a-form-item>
-                            <a-form-item ref="templateId" name="templateId" label="绑定模板">
-                                <a-select v-model:value="bindFormState.templateId" placeholder="请选择需要绑定的模板"
-                                    :options="templates" @change="selectChange('bindTemplate')"></a-select>
+                            <a-form-item ref="templateId" name="templateId" label="绑定产品模板">
+                                <a-select v-model:value="bindFormState.templateId" placeholder="请选择产品模板"
+                                    :options="templates" @change="selectChange('templates', 'bindFormState')"></a-select>
                             </a-form-item>
                         </a-form>
                     </div>
@@ -232,6 +238,58 @@
                             @click="downloadTemplate('zip', downloadFormState.recordId, 'link')">无防伪码链接二维码</a-button>
                     </div>
                 </template>
+            </div>
+        </a-modal>
+
+        <!-- 详情弹窗 -->
+        <a-modal v-model:visible="detailVisible" :title="title" :afterClose="destroyInfo" :footer="null"
+            :width="type ? `1000px` : undefined" :maskClosable="false">
+            <div class="modal-content-detail">
+                <a-form ref="formRef" :model="detailFormState" :label-col="labelCol" :wrapper-col="wrapperCol"
+                    :rules="detailRules">
+                    <a-form-item name="index" label="流水号">
+                        <span>{{ detailFormState.index }}</span>
+                    </a-form-item>
+                    <a-form-item v-if='!type' name="status" label="状态">
+                        <span>{{ getStatus(detailFormState.status) }}</span>
+                    </a-form-item>
+                    <a-form-item name="count" label="生码数量">
+                        <span>{{ detailFormState.count }}</span>
+                    </a-form-item>
+                    <a-form-item ref="hasCheckCode" name="hasCheckCode" label="防伪码">
+                        <a-switch :checked="detailFormState.hasCheckCode ? true : false" checked-children="是"
+                            un-checked-children="否" disabled />
+                    </a-form-item>
+                    <template v-if="!type && detailFormState.boId">
+                        <a-form-item name="boName" label="绑定产品">
+                            <span>{{ detailFormState.boName }}</span>
+                        </a-form-item>
+                        <a-form-item name="templateName" label="绑定产品模板">
+                            <span>{{ detailFormState.templateName }}</span>
+                        </a-form-item>
+                        <a-form-item name="batchNo" label="产品批次">
+                            <span>{{ detailFormState.batchNo }}</span>
+                        </a-form-item>
+                        <a-form-item name="remark" label="备注">
+                            <span>{{ detailFormState.remark }}</span>
+                        </a-form-item>
+                    </template>
+                    <template v-if="type">
+                        <a-form-item name="remark" label="备注">
+                            <span>{{ detailFormState.remark }}</span>
+                        </a-form-item>
+                        <a-form-item label="已赋值流水号段">
+                            <a-table :columns="segModalColumns" :bordered="true" :pagination="false"
+                                :dataSource="segModalDataSource">
+                                <template #bodyCell="{ column, record }">
+                                    <template v-if="column.key == 'index'">
+                                        <span>{{ `${record.indexStart} ~ ${record.indexEnd}` }}</span>
+                                    </template>
+                                </template>
+                            </a-table>
+                        </a-form-item>
+                    </template>
+                </a-form>
             </div>
         </a-modal>
     </div>

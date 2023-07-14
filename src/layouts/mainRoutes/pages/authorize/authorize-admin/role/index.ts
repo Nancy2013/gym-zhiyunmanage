@@ -1,4 +1,5 @@
 import { defineComponent, reactive, toRefs, ref, onMounted } from "vue";
+import { convertTree } from "@/utils/function";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
 import { platformTypeDict, terminalTypeDict } from "@/utils/dict";
@@ -244,7 +245,7 @@ export default defineComponent({
       if (state.globalMessage) {
         state.globalMessage = message.loading("正在获取权限信息...", 0);
       }
-      Promise.all([getMenuList(recode.id), getUserSelectMenu(recode.id)])
+      Promise.all([getMenuList(recode.id)])
         .then(() => {
           state.visibleAuth = true;
           state.roleId = recode.id;
@@ -275,44 +276,22 @@ export default defineComponent({
     const getMenuList = (roleId: any) => {
       return new Promise((resolve, reject) => {
         request({
-          url: import.meta.env.VITE_BASE_URL + "/menu/treelistByRoleId",
+          url: import.meta.env.VITE_BASE_URL + "/menu/menuTreeListByRoleId",
           type: "json",
           method: "get",
           params: { roleId: roleId },
         }).then((res) => {
           if (Array.isArray(res.data) && res.data.length) {
-            state.authTreeData = res.data as any;
+            state.authTreeData = convertTree(res.data, { id: 'id', pid: 'pid' });
+            state.selectAuthList = res.data.filter((element: any) => element.checked).map((item) => {
+              return item.id;
+            });
             resolve(true);
           } else {
             state.authTreeData = [];
             message.error("菜单数据为空");
             reject();
           }
-        });
-      });
-    };
-
-    /**
-     * 获取用户已选择的菜单
-     * @param
-     * @return
-     */
-    const getUserSelectMenu = (roleId: any) => {
-      return new Promise((resolve, reject) => {
-        request({
-          url: import.meta.env.VITE_BASE_URL + "/menu/menulistByRoleId",
-          type: "json",
-          method: "get",
-          params: { roleId: roleId },
-        }).then((res) => {
-          if (Array.isArray(res.data) && res.data.length) {
-            state.selectAuthList = res.data.map((item) => {
-              return item.menuId;
-            });
-          } else {
-            state.selectAuthList = [];
-          }
-          resolve(true);
         });
       });
     };
@@ -369,7 +348,6 @@ export default defineComponent({
       handleAuthCancel,
       handleSubmit,
       getMenuList,
-      getUserSelectMenu,
       handleCancel,
       handleEdit,
       handleSearch,

@@ -1,61 +1,82 @@
-import { defineComponent, onMounted,onBeforeUnmount, reactive, toRefs } from "vue";
+import {
+  defineComponent,
+  onMounted,
+  reactive,
+  toRefs,
+} from "vue";
 import request from "@/utils/axios";
-import { useRoute,useRouter } from "vue-router";
-import Panel from './../components/panel/index.vue';
-import baseIcon from '@/assets/image/baseIcon.png';
-import coreIcon from '@/assets/image/coreIcon.png';
-import contactIcon from '@/assets/image/contactIcon.png';
-import {approvalStatusOptions} from '../list/config'
-import { useAction, useState } from '@/hooks';
+import { useRoute, useRouter } from "vue-router";
+import Panel from "./../components/panel/index.vue";
+import baseIcon from "@/assets/image/baseIcon.png";
+import coreIcon from "@/assets/image/coreIcon.png";
+import contactIcon from "@/assets/image/contactIcon.png";
+import { approvalStatusOptions } from "../list/config";
 
 export default defineComponent({
-  components:{
+  components: {
     Panel,
   },
   setup() {
     const route = useRoute();
-    const router = useRouter()
-    const storeAction = useAction('stModule',['asyncUpdateApprovalStatus', 'asyncUpdateReason'])
+    const router = useRouter();
     const state = reactive({
       info: "" as any,
-      id:'' as any,
-      loading:true,
-      dataSource:{} as any,
+      id: "" as any,
+      loading: true,
+      dataSource: {} as any,
       approvalStatusOptions,
+      dicts: {} as any,
     });
 
-    onMounted(() => {
+    onMounted(async () => {
       state.id = route.query.id;
+      await queryDicts();
       detail();
     });
 
     // 详情
     const detail = () => {
-      const params={
-        id:state.id,
-      }
-      
+      const params = {
+        id: state.id,
+      };
+
       request({
-        url: `${import.meta.env.VITE_XICHA_URL}/query`,
+        url: `${import.meta.env.VITE_XICHA_URL}/auth/query`,
         type: "json",
         method: "post",
-        data:params,
-      }).then(res=>{
-        console.log("res.data", res);
-        const {code,data}=res;
-      if (code == 200) {
-        state.info = data;
-        formatData(state.info);
-        const {approvalStatus,reason=''}=data as any;
-        const { asyncUpdateApprovalStatus, asyncUpdateReason } = storeAction
-        asyncUpdateApprovalStatus({approvalStatus})
-        asyncUpdateReason({reason,})
+        data: params,
+      })
+        .then((res) => {
+          console.log("res.data", res);
+          const { code, data } = res;
+          if (code == 200) {
+            state.info = data;
+            formatData(state.info);
+          }
+          state.loading = false;
+        })
+        .catch((e) => {
+          console.error(e);
+          state.loading = false;
+        });
+    };
 
+    // 查询企业类型 获取某个字典类型下的所有字典
+    const queryDicts = async () => {
+      const params = {
+        dictTypeCode: "COMPANY_TYPE",
+      };
+      const { code, data } = await request({
+        url: `${import.meta.env.VITE_BASE_URL}/dict/listDictsByCode`,
+        type: "json",
+        method: "get",
+        params,
+      });      
+      if (code == 200) {
+        (data as any).forEach((item: any) => {
+          state.dicts[item.code] = item.name;
+        });
       }
-      state.loading=false;
-      }).catch(e=>{
-        state.loading=false;
-      });
     };
 
     /**
@@ -63,148 +84,163 @@ export default defineComponent({
      *
      * @param {*} info
      */
-    const formatData=(info:any)=>{
-      const {companyName,shortName,organizeType,address,identityPortraitUrl,nationalEmblemUrl,businessLicense,permitUrl,seleniumContentReport}=info;
-      const {provinceName='',cityName='',districtName='',detailAddress=''}=address;
-      const registerAddress=`${provinceName}${cityName}${districtName}${detailAddress}`;
-      
+    const formatData = (info: any) => {
+      const {
+        tenantName,
+        shortName,
+        orgType,
+        address,
+        frontImg,
+        reverseImg,
+        businessLicense,
+        permitUrl,
+        seleniumContent,
+      } = info;
+      const {
+        provinceName = "",
+        cityName = "",
+        districtName = "",
+        detailAddress = "",
+      } = address;
+      const registerAddress = `${provinceName}${cityName}${districtName}${detailAddress}`;
+
       // 企业基本信息
-      const baseInfo=[
+      const baseInfo = [
         {
-          label:'企业名称',
-          value:companyName,
+          label: "企业名称",
+          value: tenantName,
           required: true,
         },
         {
-          label:'企业简称',
-          value:shortName,
+          label: "企业简称",
+          value: shortName,
           required: true,
         },
         {
-          label:'组织类型',
-          value:organizeType,
+          label: "组织类型",
+          value: state.dicts[orgType] || orgType,
           required: true,
         },
         {
-          label:'注册地址',
-          value:registerAddress,
-
+          label: "注册地址",
+          value: registerAddress,
         },
         {
-          label:'法人身份证',
-          value:[identityPortraitUrl,nationalEmblemUrl],
+          label: "法人身份证",
+          value: [frontImg, reverseImg],
           required: true,
-          type:'img',
+          type: "img",
         },
         {
-          label:'营业执照',
-          value:[businessLicense],
+          label: "营业执照",
+          value: [businessLicense],
           required: true,
-          type:'img',
+          type: "img",
         },
         {
-          label:'硒含量检测报告',
-          value:[seleniumContentReport],
+          label: "硒含量检测报告",
+          value: [seleniumContent],
           required: true,
-          type:'img',
-          key:'report',
+          type: "img",
+          key: "report",
         },
         {
-          label:'生产许可证',
-          value:[permitUrl],
-          type:'img',
+          label: "生产许可证",
+          value: [permitUrl],
+          type: "img",
         },
       ];
 
-      const {teaGardenSelf,plantingArea=0,productionLineNum,brandSelf,brandUrl='',brandName='',staffNum}=info;
-      const teaGardenSelfValue=teaGardenSelf===1?`种植面积 ${plantingArea} 亩`:'否';
-      
-      const brand=brandName?`品牌名称 ${brandName}`:'';
-      const brandText=brandSelf===1?brand:'否';
+      const {
+        teaGardenSelf,
+        plantArea = '',
+        productNum,
+        brandSelf,
+        brandUrl = "",
+        brandName = "",
+        workerNum,
+        annualOutput,
+      } = info;
+      const teaGardenSelfValue =
+        teaGardenSelf === 1 ? `种植面积 ${plantArea?plantArea:'  '} 亩` : "否";
+
+      const brand = brandName ? `品牌名称 ${brandName}` : "";
+      const brandText = brandSelf === 1 ? brand : "否";
       // 核心信息
-      const coreInfo=[
+      const coreInfo = [
         {
-          label:'是否自有茶园',
-          value:teaGardenSelfValue,
+          label: "是否自有茶园",
+          value: teaGardenSelfValue,
         },
         {
-          label:'年产量',
-          value:`${plantingArea} kg`,
-          required: true,
+          label: "年产量",
+          value: `${annualOutput} kg`,
         },
         {
-          label:'产线数',
-          value:productionLineNum,
-          required: true,
+          label: "产线数",
+          value: productNum,
         },
         {
-          label:'工人数',
-          value:staffNum,
-          required: true,
+          label: "工人数",
+          value: workerNum,
         },
         {
-          label:'是否自有品牌',
-          value:brandSelf===1?[brandUrl]:brandText,
-          text:brandText,
-          type:brandSelf===1?'img':'',
-          key:'brandUrl',
+          label: "是否自有品牌",
+          value: brandSelf === 1 ? [brandUrl] : brandText,
+          text: brandText,
+          type: brandSelf === 1 ? "img" : "",
+          key: "brandUrl",
         },
       ];
 
-      const {contactsName,contactsPhone,wechatId}=info;
+      const { contact, contactPhone, wechatId } = info;
       // 联系信息
-      const contactInfo=[
+      const contactInfo = [
         {
-          label:'联系人',
-          value:contactsName,
+          label: "联系人",
+          value: contact,
           required: true,
         },
         {
-          label:'联系电话',
-          value:contactsPhone,
+          label: "联系电话",
+          value: contactPhone,
           required: true,
         },
         {
-          label:'微信号',
-          value:wechatId,
+          label: "微信号",
+          value: wechatId,
         },
       ];
 
-      const dataSource={
-        baseInfo:{
-          title:'企业基本信息',
-          img:baseIcon,
-          data:baseInfo,
+      const dataSource = {
+        baseInfo: {
+          title: "企业基本信息",
+          img: baseIcon,
+          data: baseInfo,
         },
-        coreInfo:{
-          title:'核心信息',
-          img:coreIcon,
-          data:coreInfo,
+        coreInfo: {
+          title: "核心信息",
+          img: coreIcon,
+          data: coreInfo,
         },
-        contactInfo:{
-          title:'联系信息',
-          img:contactIcon,
-          data:contactInfo,
+        contactInfo: {
+          title: "联系信息",
+          img: contactIcon,
+          data: contactInfo,
         },
       };
 
-      state.dataSource=dataSource;
-    }
+      state.dataSource = dataSource;
+    };
 
     /**
      *返回
      *
      */
-    const back=()=>{
+    const back = () => {
       router.back();
     };
 
-    onBeforeUnmount(()=>{
-      // 重置审核状态
-      const { asyncUpdateApprovalStatus, asyncUpdateReason } = storeAction
-      asyncUpdateApprovalStatus({approvalStatus:-1})
-      asyncUpdateReason({reason:''})
-    });
 
     return {
       ...toRefs(state),

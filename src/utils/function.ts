@@ -1,4 +1,4 @@
-
+import dayjs from "dayjs";
 // 随机生成多位数
 export const randomInter = (num: number) => {
    let str = Math.random().toString().slice(-num);  // 随机生成多位数
@@ -36,3 +36,32 @@ export const convertTree = (arr: any, { id , pid }: any) => {
     })
     return newArr;
 }
+
+/**
+ *格式化时间显示
+ *
+ * @param {string} time 时间
+ * @param {string} [format="YYYY-MM-DD HH:mm:ss"] 显示格式
+ * @return {*} 
+ */
+ export const showTime=(time:string,format:string="YYYY-MM-DD HH:mm:ss")=>{
+ if(time){
+    return dayjs(time).format(format);
+ }
+
+ return dayjs().format(format);
+}
+
+/**
+ *
+ *格式化时间参数
+ * @param {*} time 时间
+ * @param {string} flag 日首 | 日尾
+ * @param {string} [format="YYYY-MM-DD HH:mm:ss"] 格式
+ */
+export const sendTime=(time:any,flag:string,format:string="YYYY-MM-DD HH:mm:ss")=>{
+    if(time){
+        return dayjs(time)[`${flag}`]("day").format(format);
+    }
+    return '';
+};

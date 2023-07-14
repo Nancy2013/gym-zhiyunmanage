@@ -78,7 +78,7 @@
                     </a-form-item>
                     <a-form-item ref="pcode" name="pcode" label="父级编号">
                         <a-tree-select v-model:value="formState.pcode" :tree-data="treeSelect" placeholder="请选择父级编号"
-                        tree-data-simple-mode tree-default-expand-all @select="selectTreeChange" />
+                            tree-data-simple-mode tree-default-expand-all @select="selectTreeChange" />
                     </a-form-item>
                     <a-form-item ref="menuFlag" name="menuFlag" label="是否是菜单">
                         <a-radio-group v-model:value="formState.menuFlag">
@@ -106,6 +106,17 @@
                     <a-form-item ref="sort" name="sort" label="排序">
                         <a-input v-model:value="formState.sort" placeholder="请输入排序" />
                     </a-form-item>
+                    <a-form-item ref="icon" name="icon" label="选择图标">
+                        <a-radio-group v-model:value="formState.icon">
+                            <div class="select-icons">
+                                <p class="select-icon" v-for="(item, index) in icons" :key="index">
+                                    <a-radio :value="item">
+                                        <config-icon :name="item" class="svgClass" style="margin: 0;" />
+                                    </a-radio>
+                                </p>
+                            </div>
+                        </a-radio-group>
+                    </a-form-item>
                 </a-form>
             </div>
         </a-modal>
@@ -115,4 +126,6 @@
 import Index from './index';
 export default Index
 </script>
-<style lang="less" scoped>@import url('./index.less');</style>
+<style lang="less" scoped>
+@import url('./index.less');
+</style>

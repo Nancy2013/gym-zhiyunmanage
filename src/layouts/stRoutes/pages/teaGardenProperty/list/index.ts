@@ -143,6 +143,7 @@ export default defineComponent({
                 }
             })
             let { rows, total } = res.data;
+            
             if (Array.isArray(rows) && rows.length) {
                 state.dataSource = rows.map((row, index) => {
                     row.tableIndex = limit * (current - 1) + index + 1

@@ -9,6 +9,9 @@
                     <a-range-picker v-model:value="searchData.time" />
                 </a-form-item>
                 <a-form-item>
+                    <a-select style="width:200px" v-model:value="searchData.status" placeholder="请选择状态" :options="[{ label: '启用', value: 'ENABLE' }, { label: '停用', value: 'DISABLE' }]"></a-select>
+                </a-form-item>
+                <a-form-item>
                     <a-space>
                         <a-button type="default" @click="handleFresh">重置</a-button>
                         <a-button type="primary" @click="handleSearch">查询</a-button>

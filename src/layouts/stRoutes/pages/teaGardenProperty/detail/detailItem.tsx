@@ -21,10 +21,10 @@ export default defineComponent({
 					props.item?.type == 'text' ? <div class={styles['detail-text']}>{props.value}</div> : props.item?.type == 'img' ? (
 						Array.isArray(props.value) ? (props.value.map((img) => {
 							return <div>
-								<Image width={100} height={60} src={img}></Image>
+								<Image width={100} height={100} src={img}></Image>
 							</div>
 						})) : <div>
-							<Image width={100} height={60} src={props.value}></Image>
+							<Image width={100} height={100} src={props.value}></Image>
 						</div>
 					) : ''
 				}

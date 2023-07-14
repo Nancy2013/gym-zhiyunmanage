@@ -78,7 +78,7 @@ export default defineComponent({
               const opts = {
                 gridSize: 80, // 聚合计算时网格的像素大小
                 maxZoom: 10, // 最大的聚合级别
-                minClusterSize: 2, // 聚合的最小数量
+                minClusterSize: 10, // 聚合的最小数量
                 styles, // 聚合图标
               };
               cluster = new AMap.MarkerClusterer(map, markers, opts);

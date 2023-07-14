@@ -78,7 +78,7 @@ export default defineComponent({
       key: "id",
     };
     const state = reactive({
-      searchData: { name: "", time: [] },
+      searchData: { name: "", time: [], status: undefined },
       formData: {
         id: null,
         account: "",
@@ -159,7 +159,6 @@ export default defineComponent({
       repeat: [
         { required: true, trigger: "change", validator: validateRepeat },
       ],
-      email: [{ required: true, message: "请输入邮箱", type: "email" }],
       phone: [{ required: true, validator: validateMobile, trigger: "change" }],
     });
 
@@ -176,7 +175,7 @@ export default defineComponent({
         pagination: { current, pageSize },
         searchData,
       } = state;
-      const { name } = searchData;
+      const { name, status } = searchData;
       const time = searchData.time ? searchData.time : [];
       const [beginTime, endTime] = time;
       const params = {
@@ -189,6 +188,7 @@ export default defineComponent({
         endTime: endTime
           ? dayjs(endTime).endOf("day").format("YYYY-MM-DD HH:mm:ss")
           : "",
+        status
       };
       state.loading = true;
       request({
@@ -275,20 +275,28 @@ export default defineComponent({
      *
      */
     const handleUpdate = (column: any) => {
-      const status = column.status === "ENABLE" ? "DELETED" : "ENABLE"; // 正常：ENABLE   冻结：DELETED
-      request({
-        url: import.meta.env.VITE_BASE_URL + `/user/edit`,
-        type: "json",
-        method: "post",
-        data: { id: column.id, status },
-      })
-        .then((res: any) => {
-          message.success("操作成功");
-          getTableList();
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      const status = column.status === "ENABLE" ? "DISABLE" : "ENABLE"; // 正常：ENABLE   冻结：DELETED
+      const statusText = column.status === "ENABLE" ? "停用" : "启用"; // 正常：ENABLE   冻结：DELETED
+      Modal.confirm({
+        title: "提示",
+        content: `确认要${statusText}吗？`,
+        centered: true,
+        onOk() {
+          request({
+            url: import.meta.env.VITE_BASE_URL + `/user/modify/status`,
+            type: "json",
+            method: "post",
+            params: { id: column.id, status },
+          })
+            .then((res: any) => {
+              message.success("操作成功");
+              getTableList();
+            })
+            .catch((e) => {
+              console.error(e);
+            });
+        },
+      });
     };
 
     /**
@@ -500,15 +508,15 @@ export default defineComponent({
         content: `是否重置密码为${DEFAULT_PASS}？`,
         centered: true,
         onOk() {
-          const params = {
-            id: column.id,
-            password: DEFAULT_PASS,
-          };
+          // const params = {
+          //   id: column.id,
+          //   password: DEFAULT_PASS,
+          // };
           request({
-            url: import.meta.env.VITE_BASE_URL + `/user/edit`,
+            url: import.meta.env.VITE_BASE_URL + `/user/reset/password/${column.id}`,
             type: "json",
             method: "post",
-            data: params,
+            // data: params,
           })
             .then((res) => {
               message.success("操作成功");

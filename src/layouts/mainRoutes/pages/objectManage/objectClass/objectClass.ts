@@ -2,93 +2,71 @@ import { defineComponent, reactive, toRefs, ref, onMounted } from "vue";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
 import filterInputHook from '@/hooks/useFilterInput'
-const columns = [
-	{
-		dataIndex: "categoryName",
-		key: "categoryName",
-		align: "center",
-		title: "对象分类名称",
-	},
-	{
-		key: "boCount",
-		title: "对象数",
-		align: "center",
-		dataIndex: "boCount",
-	},
-	{
-		key: "ruleName",
-		title: "标识策略",
-		align: "center",
-		dataIndex: "ruleName",
-	},
-	{
-		key: "creator",
-		title: "创建人",
-		align: "center",
-		dataIndex: "creator",
-	},
-	{
-		key: "createdTime",
-		title: "创建时间",
-		align: "center",
-		dataIndex: "createdTime",
-	},
-	{
-		key: "action",
-		title: "操作",
-		align: "center",
-		dataIndex: "action",
-	},
-];
+import { tableColumns, formRules } from './config'
+import { objectAndProductDataTypeDict } from '@/utils/dict'
 
 
-const rules = {
-	categoryName: [
-		{ required: true, message: '请输入对象分类名称', trigger: 'blur' },
-	]
-}
+
 
 export default function () {
+	const dataType = objectAndProductDataTypeDict.object
 	const formRef = ref();
 	const state = reactive({
-		searchData: { name: "" },
-		formData: { categoryName: "", idisPolicy: null, id: null },
+		searchData: {} as any,
+		formData: { treeLevel: 1 } as any,
 		visible: false,
-		columns,
-		rules,
+		columns: tableColumns,
+		formRules,
 		ruleOptions: [] as any,
 		pageSize: 10,
 		pageNum: 1,
 		total: 0,
-		labelCol: { span: 6 },
-		wrapperCol: { span: 14 },
 		dataSource: [],
-		
+		IdNameOptions: [] as any
 	});
 
 	const filterInputCategoryName = filterInputHook(state.formData, 'categoryName', { type: 'notSymbol' })
 
 	onMounted(() => {
-		getRuleList()
+		getObjectClassLevel1List()
 		getTableList()
 	})
 
 	/**
-	 * 获取标识策略列表
+	 * 获取机构列表
 	 * @param
 	 * @return
 	 */
-	const getRuleList = () => {
+	const getIdNameMap = () => {
 		request({
-			url: import.meta.env.VITE_NODE_URL + "/rule/pageQuery",
-			type: "json",
-			method: "post",
-			data: { pageSize: 9999, ruleType: 2 }
+			url: import.meta.env.VITE_BASE_URL + "/enterprise/getIdNameMap",
+			
+		}).then((res: any) => {
+			state.IdNameOptions = Object.keys(res.data).map((item) => {
+				return {
+					label: res.data[item],
+					value: item
+				}
+			})
+		})
+	}
+
+	getIdNameMap()
+
+	/**
+	 * 获取一级分类列表
+	 * @param
+	 * @return
+	 */
+	const getObjectClassLevel1List = () => {
+		request({
+			url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/getByParentId",
+			params: { parentId: 0, dataType }
 		}).then((res) => {
-			if (Array.isArray(res.rows) && res.rows.length) {
-				state.ruleOptions = res.rows.map((item) => {
+			if (Array.isArray(res.data) && res.data.length) {
+				state.ruleOptions = res.data.map((item) => {
 					return {
-						label: item.ruleName,
+						label: item.categoryName,
 						value: item.id
 					}
 				})
@@ -103,13 +81,17 @@ export default function () {
 	 * @return
 	 */
 	const getTableList = () => {
+		const { searchData, pageNum, pageSize } = state
 		request({
 			url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/pageQuery",
 			type: "json",
 			method: "post",
-			data: { ...state.searchData, pageNum: state.pageNum, pageSize: state.pageSize }
+			data: { ...searchData, pageNum, pageSize, dataType }
 		}).then((res) => {
-			state.dataSource = res.rows as any
+			state.dataSource = res.rows.map((item: any, key: number) => {
+				item.tableIndex = (pageNum - 1) * pageSize + key + 1
+				return item
+			}) as any
 			state.total = res.total
 		}).catch(() => {
 			state.dataSource = []
@@ -133,18 +115,25 @@ export default function () {
 	 */
 	const handleSubmit = () => {
 		formRef.value.validate().then((params: any) => {
+			const paramsData = { ...params }
+			if (paramsData.treeLevel == 1) {
+				paramsData.parentId = 0
+			}
 			// 编辑
 			if (state.formData.id) {
 				request({
 					url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/update",
 					type: "json",
 					method: "post",
-					data: { ...params, id: state.formData.id }
+					data: { ...paramsData, id: state.formData.id, dataType }
 				}).then((res) => {
 					message.success("编辑对象分类成功")
 					state.visible = false
 					handleCancel()
 					getTableList()
+					if (paramsData.parentId == 0) {
+						getObjectClassLevel1List()
+					}
 
 				})
 			} else {   // 新增
@@ -152,12 +141,15 @@ export default function () {
 					url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/add",
 					type: "json",
 					method: "post",
-					data: { ...params }
+					data: { ...paramsData, dataType }
 				}).then((res) => {
 					message.success("创建对象分类成功")
 					state.visible = false
 					handleCancel()
 					getTableList()
+					if (paramsData.parentId == 0) {
+						getObjectClassLevel1List()
+					}
 				})
 			}
 
@@ -170,7 +162,9 @@ export default function () {
 	 * @return
 	 */
 	const handleCancel = () => {
-		state.formData = {} as any
+		state.formData = {
+			treeLevel: 1
+		} as any
 		formRef.value.resetFields()
 	}
 
@@ -186,10 +180,12 @@ export default function () {
 			method: "get",
 			params: { id: column.id }
 		}).then((res: any) => {
+			const { categoryName, parentId } = res.data
 			state.formData = {
 				id: column.id,
-				categoryName: res.data.categoryName,
-				idisPolicy: res.data.idisPolicy
+				categoryName,
+				parentId,
+				treeLevel: parentId == 0 ? 1 : 2
 			}
 			state.visible = true
 		})
@@ -217,6 +213,9 @@ export default function () {
 						message.success("删除成功")
 						state.visible = false
 						getTableList()
+						if (column.parentId == 0) {
+							getObjectClassLevel1List()
+						}
 					}).catch(() => {
 						reject()
 					})
@@ -229,9 +228,6 @@ export default function () {
 		state.pageNum = pagination.current
 		state.pageSize = pagination.pageSize
 		getTableList()
-		// let { current, pageSize, total } = pagination
-		// state.pagination = { current, pageSize, total };
-		// codeRecord(state.convertInterface);
 	}
 
 	return {

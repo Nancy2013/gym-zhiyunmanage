@@ -1,0 +1,142 @@
+.codeAuthorize {
+    min-height: 100%;
+    &-tables {
+        padding: 20px;
+        padding: 20px;
+        &-search {
+           overflow: hidden;
+           .search-left {
+              float: left;
+              &-inline {
+                  display: inline-block;
+                  padding: 0 10px 0 0;
+
+                  .left-btn{
+                    margin-right: 10px;
+                  }
+              }
+              margin-bottom: 25px;
+           }
+           .search-right {
+              float: right;
+              &-inline {
+                  display: inline-block;
+                  padding: 0 0 0 10px;
+              }
+           }
+        }
+        .shzt {
+          > span {
+            &:first-child {
+              display: inline-block;
+              width: 6px;
+              height: 6px;
+              border-radius: 50%;
+              margin: 0 15px 0 0;
+            }
+          }
+        }
+        // 待审核
+        .shzt-0 {
+          color: #FF8814;
+          > span {
+            &:first-child {
+              background: #FF8814;
+            }
+          }
+        }
+        // 已认证
+        .shzt-1 {
+          color:#4970E0;
+          > span {
+            &:first-child {
+              background: #4970E0;
+            }
+          }
+        }
+        // 已驳回
+        .shzt-2 {
+          color:#D81E06;
+          > span {
+            &:first-child {
+              background: #D81E06;
+            }
+          }
+        }
+    }
+    // 覆盖table样式
+    :deep  .ant-table-thead > tr > th{
+      background: #EBF3FF;
+    };
+    :deep .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
+      background-color: transparent;
+    }
+    :deep .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > thead > tr > th{
+      border: none;
+    }
+    :deep .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > thead > tr > .ant-table-cell-fix-right-first::after{
+      border:none;
+    }
+}
+.modal{
+  border: 1px solid transparent;
+}
+.modal-content {
+  margin: 10px;
+  background: #fff;
+  padding:30px 26px;
+  p{
+    font-size: 16px;
+  }
+  .input{
+    position: relative;
+    .input-placeholder{
+      position: absolute;
+      color: #878787;
+      left: 11px;
+      top:5px;
+      >span {
+        color: #185EF0;
+      }
+    }
+  }
+  .textarea {
+    position: relative;
+    .textarea-placeholder {
+      position: absolute;
+      top:20px;
+      left:15px;
+      font-size: 14px;
+      color: #878787;
+      pointer-events: none;
+
+      >span {
+        color: #185EF0;
+      }
+    }
+
+  }
+
+  :deep(.ant-form-item-control-input-content){
+    textarea{
+      resize: none;
+      background: #F7F7F7;
+      outline: none;
+      border: none;
+      padding:20px 15px;
+      font-size: 14px;
+    }
+  }
+
+  :deep(.ant-form-item-has-error :not(.ant-input-disabled):not(.ant-input-borderless).ant-input:focus){
+    border-color: @primary-color;
+  }
+}
+
+.modal-btns {
+  text-align: right;
+  background: #fff;
+   button {
+      margin: 10px;
+   }
+}

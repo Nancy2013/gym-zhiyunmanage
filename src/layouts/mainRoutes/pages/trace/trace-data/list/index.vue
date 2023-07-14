@@ -13,7 +13,7 @@
                 </div>
                 <div class="search-right">
                     <div class="seach-right-inline">
-                        <a-button type="primary">添加</a-button>
+                        <a-button type="primary" @click="showAction">添加</a-button>
                     </div>
                 </div>
             </div>
@@ -57,5 +57,5 @@ import Index from './index'
 export default Index
 </script>
 <style lang="less" scoped>
-//@import url('./index.less');
+@import url('./index.less');
 </style>

@@ -9,6 +9,7 @@ import configIcon from '@/components/configIcon';
 import configTable from '@/components/configTable';
 import configUpload from '@/components/configUpload';
 import configPage from '@/components/configPage';
+import FcForm from '@/components/form/form'
 
 const app: App<Element> = createApp(Main);
 
@@ -47,6 +48,8 @@ app.component("config-upload", configUpload);
 
 // 注入config-page组件
 app.component("config-page", configPage);
+
+app.component("FcForm", FcForm);
 
 app.use(VideoPlayer)
 

@@ -36,16 +36,14 @@ instance.interceptors.request.use(
     (config: AxiosRequestConfig) => {
         removePending(config);
         const notToken = (config as any).notToken
+        const headers = config.headers as AxiosRequestHeaders;
+        headers.app_id = 1;
         config.cancelToken = new CancelToken((c: Function) => {
             let { url, method, params, data } = config;
-            
-            
             pending.push({ url, method, params, data, cancel: c });
         });
-        console.log(notToken)
         const token: string | null = localStorage.getItem('token');
         if(!notToken && token) {
-            const headers = config.headers as AxiosRequestHeaders;
             headers.Authorization = `${token}`;
         }
         return config;

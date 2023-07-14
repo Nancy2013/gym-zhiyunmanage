@@ -231,19 +231,27 @@ export default defineComponent({
      */
     const handleUpdate = (column: any) => {
       const status = column.status === "ENABLE" ? "DISABLE" : "ENABLE"; // 正常：ENABLE   冻结：DELETED
-      request({
-        url: import.meta.env.VITE_BASE_URL + `/enterprise/user/modify/status`,
-        type: "json",
-        method: "post",
-        params: { id: column.id, status },
-      })
-        .then((res: any) => {
-          message.success("操作成功");
-          getTableList();
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      const statusText = column.status === "ENABLE" ? "停用" : "启用"; // 正常：ENABLE   冻结：DELETED
+      Modal.confirm({
+        title: "提示",
+        content: `确认要${statusText}吗？`,
+        centered: true,
+        onOk() {
+          request({
+            url: import.meta.env.VITE_BASE_URL + `/enterprise/user/modify/status`,
+            type: "json",
+            method: "post",
+            params: { id: column.id, status },
+          })
+            .then((res: any) => {
+              message.success("操作成功");
+              getTableList();
+            })
+            .catch((e) => {
+              console.error(e);
+            });
+        },
+      });
     };
 
     /**

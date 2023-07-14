@@ -76,19 +76,19 @@
             <div class="modal-content">
                 <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol" :rules="rules">
                     <a-form-item ref="tenantName" name="tenantName" label="企业名称">
-                        <a-input v-model:value="formState.tenantName" placeholder="请输入" />
+                        <a-input v-model:value="formState.tenantName" placeholder="请输入" :disabled="Object.is(title, '查看') ? true : false" />
                     </a-form-item>
                     <a-form-item ref="contact" name="contact" label="企业联系人">
-                        <a-input v-model:value="formState.contact" placeholder="请输入" />
+                        <a-input v-model:value="formState.contact" placeholder="请输入" :disabled="Object.is(title, '查看') ? true : false" />
                     </a-form-item>
                     <a-form-item ref="contactPhone" name="contactPhone" label="联系电话">
-                        <a-input v-model:value="formState.contactPhone" placeholder="请输入" />
+                        <a-input v-model:value="formState.contactPhone" placeholder="请输入" :disabled="Object.is(title, '查看') ? true : false" />
                     </a-form-item>
                     <a-form-item ref="enterpriseType" name="enterpriseType" label="企业类型">
-                        <a-select v-model:value="formState.enterpriseType" placeholder="请选择" :options="options" />
+                        <a-select v-model:value="formState.enterpriseType" placeholder="请选择" :options="options" :disabled="Object.is(title, '查看') ? true : false" />
                     </a-form-item>
                     <a-form-item class="form-tree" ref="selectMenuList" name="selectMenuList" label="功能权限">
-                        <a-tree checkable v-model:checkedKeys="formState.selectMenuList" :tree-data="menuTree"
+                        <a-tree :disabled="Object.is(title, '查看') ? true : false" checkable v-model:checkedKeys="formState.selectMenuList" :tree-data="menuTree"
                             :fieldNames="{ title: 'name', key: 'id' }" />
                     </a-form-item>
                     <!-- <a-form-item ref="status" name="status" label="状态">

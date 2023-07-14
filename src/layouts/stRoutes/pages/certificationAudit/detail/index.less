@@ -1,30 +1,77 @@
-.detail{
-  min-height: calc(100vh - 120px);
-  margin: 20px 15px;
+.detail {
   background: #F6F8FA;
-  .panel{
+
+  // background: #ff0; // TODO 背景颜色显示
+  .panel {
     margin-bottom: 20px;
 
-    :deep(.report){
-      .img{
+    :deep(.report) {
+      .img {
         width: 80px;
         height: 110px;
-        }              
+      }
     }
 
-    :deep(.brandUrl){
-      .img{
+    :deep(.brandUrl) {
+      .img {
         width: 80px;
         height: 80px;
-        }      
+      }
     }
   }
-  .footer{
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    position: absolute;
+    right: 32px;
+    top: -64px;
+
+    .status-reason,
+    .status-text {
+      display: inline-block;
+    }
+
+    .status-reason {
+      margin-right: 30px;
+
+      .dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #d81e06;
+        margin-right: 10px;
+      }
+    }
+
+    .status-text {
+      padding: 6px 10px;
+
+      &.status-1 {
+        color: #ff8814;
+        background: #fbebd0;
+      }
+
+      &.status-2 {
+        color: #185ef0;
+        background: #e6ecfc;
+      }
+
+      &.status-3 {
+        color: #d81e06;
+        background: #fde6e6;
+      }
+    }
+  }
+
+  .footer {
     text-align: center;
-    .btn-bottom{
+
+    .btn-bottom {
       display: inline-block;
       width: 108px;
-      height:32px;
+      height: 32px;
       line-height: 32px;
       color: #fff;
       background: #195EF0;
@@ -34,4 +81,3 @@
     }
   }
 }
-

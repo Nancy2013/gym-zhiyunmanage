@@ -261,21 +261,29 @@ export default defineComponent({
      * 停用
      * @return
      */
-    const statusTenantMealModify = async (id: number, status: string) => {
-       let res = await request({
-         url: import.meta.env.VITE_BASE_URL + "/tenant/meal/modify/status",
-         type: 'json',
-         method: 'post',
-         params: {
-           id, 
-           status
-         }
-       })
-       if(res.code == 200) {
-          let text = status == 'DISABLE' ? '停用' : '启用';
-          message.success(`租户类型${text}成功!`);
-          getTenantMealList();
-       }
+    const statusTenantMealModify = (id: number, status: string) => {
+      let text = status == 'DISABLE' ? '停用' : '启用';
+      Modal.confirm({
+        title: "提示",
+        content: `确定要${text}吗？`,
+        centered: true,
+        async onOk() {
+          let res = await request({
+            url: import.meta.env.VITE_BASE_URL + "/tenant/meal/modify/status",
+            type: 'json',
+            method: 'post',
+            params: {
+              id, 
+              status
+            }
+          })
+          if(res.code == 200) {
+             message.success(`租户类型${text}成功!`);
+             getTenantMealList();
+          }
+        },
+      });
+       
     }
 
     /**

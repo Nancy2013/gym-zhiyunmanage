@@ -64,13 +64,12 @@ export const stAuthority = [
 					import("@/layouts/stRoutes/pages/certificationAudit/list/index.vue"),
 			},
 			{
-				level: 2,
-				path: "/stPublic/application/certificationAudit",
-				name: "certificationAudit",
-				title: "认证审核详情",
-				meta: { title: ["认证审核", '详情'] },
-				component: () =>
-					import("@/layouts/stRoutes/pages/certificationAudit/list/index.vue"),
+				level: 3,
+				path: '/stPublic/application/certificationAudit/detail',
+				name: 'detail',
+				title: '详情',
+				meta: { title: '详情' },
+				component: () => import("@/layouts/stRoutes/pages/certificationAudit/detail/index.vue")
 			},
 			{
 				level: 2,
@@ -144,13 +143,23 @@ export const stAuthority = [
 				component: () => import("@/layouts/stRoutes/pages/message/index.vue")
 			},
 			{
-				level: 3,
-				path: '/stPublic/application/detail',
-				name: 'detail',
-				title: '认证审核详情',
-				meta: { title: '详情' },
-				component: () => import("@/layouts/stRoutes/pages/certificationAudit/detail/index.vue")
-			}
+				level: 2,
+				path: "/stPublic/application/codeAuthorize",
+				name: "codeAuthorize",
+				title: "码量授权",
+				meta: { title: "码量授权" },
+				component: () =>
+					import("@/layouts/stRoutes/pages/codeAuthorize/list/index.vue"),
+			},
+			{
+				level: 2,
+				path: "/stPublic/application/enterprise/codeAuthorize",
+				name: "enterpriseCodeAuthorize",
+				title: "码量授权",
+				meta: { title: "码量授权" },
+				component: () =>
+					import("@/layouts/stRoutes/pages/enterprise/codeAuthorize/list/index.vue"),
+			},
 		],
 	},
 ];

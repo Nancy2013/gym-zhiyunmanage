@@ -75,16 +75,16 @@
             <div class="modal-content">
                 <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol" :rules="rules">
                     <a-form-item ref="tenantName" name="tenantName" label="租户企业名称">
-                        <a-input v-model:value="formState.tenantName" placeholder="请输入" />
+                        <a-input v-model:value="formState.tenantName" placeholder="请输入" :disabled="Object.is(title, '查看') ? true : false" />
                     </a-form-item>
                     <a-form-item ref="contact" name="contact" label="企业联系人">
-                        <a-input v-model:value="formState.contact" placeholder="请输入" />
+                        <a-input v-model:value="formState.contact" placeholder="请输入" :disabled="Object.is(title, '查看') ? true : false" />
                     </a-form-item>
                     <a-form-item ref="phoneNumber" name="phoneNumber" label="联系电话">
-                        <a-input v-model:value="formState.phoneNumber" placeholder="请输入" />
+                        <a-input v-model:value="formState.phoneNumber" placeholder="请输入" :disabled="Object.is(title, '查看') ? true : false" />
                     </a-form-item>
                     <a-form-item ref="setMealId" name="setMealId" label="租户类型">
-                        <a-select v-model:value="formState.setMealId" placeholder="请选择" :options="options" />
+                        <a-select v-model:value="formState.setMealId" placeholder="请选择" :options="options" :disabled="Object.is(title, '查看') ? true : false" />
                     </a-form-item>
                 </a-form>
             </div>

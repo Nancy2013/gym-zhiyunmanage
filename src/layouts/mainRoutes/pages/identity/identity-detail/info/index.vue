@@ -13,20 +13,22 @@
                                             disabled></a-input>
                                     </div>
                                     <div class="info-form-item">
-                                        <label>对象名称</label>
-                                        <a-input style="width:300px" placeholder="对象名称" v-model:value="formState.boName"
-                                            disabled></a-input>
+                                        <label>{{ getLabel }}名称</label>
+                                        <a-input style="width:300px" :placeholder="`${getLabel}名称`"
+                                            v-model:value="formState.boName" disabled></a-input>
                                     </div>
                                     <div class="info-form-item">
-                                        <label>对象分类</label>
-                                        <a-input style="width:300px" placeholder="对象分类"
+                                        <label>{{ getLabel }}分类</label>
+                                        <a-input style="width:300px" :placeholder="`${getLabel}分类`"
                                             v-model:value="formState.categoryName" disabled></a-input>
                                     </div>
-                                    <div class="info-form-item">
-                                        <label>扫码模板</label>
-                                        <a-input style="width:300px" placeholder="扫码模板"
-                                            v-model:value="formState.templateName" disabled></a-input>
-                                    </div>
+                                    <template v-if="formState.dataType === objectAndProductDataTypeDict.product">
+                                        <div class="info-form-item">
+                                            <label>{{ getLabel }}模版</label>
+                                            <a-input style="width:300px" :placeholder="`${getLabel}模版`"
+                                                v-model:value="formState.templateName" disabled></a-input>
+                                        </div>
+                                    </template>
                                 </div>
                             </a-tab-pane>
                             <a-tab-pane key="2" tab="规格/属性">
@@ -50,7 +52,7 @@
                 <a-col :span="12">
                     <div class="detail-info-canvas">
                         <div class="info-canvas-card">
-                            <canvas id="canvas" width="370" height="612"></canvas>
+                            <canvas id="canvas" width="370" height="612" :key="qrcodeKey"></canvas>
                             <div id="qrcode" class="canvas-card-qrcode" style="display: none;"></div>
                         </div>
                         <div class="info-canvs-btn">
@@ -66,4 +68,6 @@
 import Index from './index'
 export default Index
 </script>
-<style lang="less" scoped>@import url('./index.less');</style>
+<style lang="less" scoped>
+@import url('./index.less');
+</style>

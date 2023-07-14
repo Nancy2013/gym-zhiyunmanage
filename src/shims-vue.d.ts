@@ -4,3 +4,4 @@ declare interface Option {
 	label: string
 	value: number | string
 }
+declare module 'fs'

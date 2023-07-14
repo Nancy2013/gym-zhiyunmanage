@@ -67,10 +67,9 @@ export default defineComponent({
         current: 1,
         pageSize: 10,
       },
-      unbatchData: [] as any, // TODO右侧删除优化
+      unbatchData: [] as any, 
       batchData: [] as any,
       filterData:[] as any,
-      // tempDelData:[] as any,
       regionOptions: [] as any,
       regionFieldNames,
       lfLoading: false,
@@ -82,6 +81,10 @@ export default defineComponent({
       init();
     });
 
+    /**
+     *初始化
+     *
+     */
     const init = () => {
       const { id } = state;
       if (id) {
@@ -120,7 +123,7 @@ export default defineComponent({
         });
     };
 
-    // 选择产品
+    // 过滤产品
     const productFilterOption = (input: string, option: any) => {
       return option.productName.indexOf(input) >= 0;
     };
@@ -143,7 +146,7 @@ export default defineComponent({
         });
     };
 
-    // 选择批次
+    // 过滤批次
     const batchFilterOption = (input: string, option: any) => {
       return option.batchTitle.indexOf(input) >= 0;
     };
@@ -225,7 +228,7 @@ export default defineComponent({
       state[`${flag}Pagination`] = { total, current, pageSize };
     };
 
-    // 更新分页组件
+    // 监听左侧分页组件
     watch(
       () => [...filterData.value],
       (newVal: any, oldVal: any) => {
@@ -233,7 +236,7 @@ export default defineComponent({
       },
     );
 
-    // 更新分页组件
+    // 监听右侧分页组件
     watch(
       () => [...state.batchData],
       (newVal: any, oldVal: any) => {
@@ -378,6 +381,7 @@ export default defineComponent({
     const back = () => {
       router.back();
     };
+    
     return {
       ...toRefs(state),
       formRef,

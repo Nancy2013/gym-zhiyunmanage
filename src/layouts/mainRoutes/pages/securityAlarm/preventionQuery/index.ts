@@ -28,8 +28,8 @@ const columns = [
     title: "产品批次",
   },
   {
-    dataIndex: "createTime",
-    key: "createTime",
+    dataIndex: "createdTime",
+    key: "createdTime",
     align: "center",
     title: "窜货时间",
   },

@@ -9,13 +9,13 @@ export const tableColumns = [
 		key: "objectName",
 		dataIndex: "objectName",
 		align: "center",
-		title: "对象名称",
+		title: "产品名称",
 	},
 	{
 		key: "objectBatch",
 		dataIndex: "objectBatch",
 		align: "center",
-		title: "对象批次",
+		title: "产品批次",
 	},
 	{
 		key: "wxNickName",

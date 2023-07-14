@@ -2,24 +2,23 @@
     <div class="identity-strategy">
         <!-- 表格 -->
         <div class="identity-strategy-tables">
-            <div class="strategy-tables-search">
-                <div class="search-left">
-                    <div class="search-left-inline">
+            <div class="operate">
+                <a-form layout="inline" :model="query">
+                    <a-form-item label="">
                         <a-input style="width: 200px" placeholder="标识策略名称" v-model:value="query.ruleName" />
-                    </div>
-                    <div class="search-left-inline">
-                        <a-select style="width: 200px" placeholder="生码类型" :options="ruleTypeoptions" v-model:value="query.ruleType"></a-select>
-                    </div>
-                    <div class="search-left-inline">
+                    </a-form-item>
+                    <a-form-item label="">
+                        <a-select style="width: 200px" placeholder="生码类型" :options="ruleTypeoptions" v-model:value="query.ruleType" :getPopupContainer="getPopupContainer"></a-select>
+                    </a-form-item>
+                    <a-form-item label="">
                         <a-button type="primary" @click="queryList">搜索</a-button>
                         <a-divider type="vertical" />
                         <a-button type="default" @click="reset">重置</a-button>
-                    </div>
-                </div>
-                <div class="search-right">
-                    <div class="search-right-inline">
-                        <a-button type="primary" @click="showAction('add')">添加</a-button>
-                    </div>
+                    </a-form-item>
+                </a-form>
+
+                <div>
+                    <a-button type="primary" @click="showAction('add')">添加</a-button>
                 </div>
             </div>
             <config-table :configColumns="{
@@ -72,19 +71,21 @@ export default Index
 </style>
 <style lang="less">
 .full-modal {
-  .ant-modal {
-    max-width: 100%;
-    top: 0;
-    padding-bottom: 0;
-    margin: 0;
-  }
-  .ant-modal-content {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh);
-  }
-  .ant-modal-body {
-    flex: 1;
-  }
+    .ant-modal {
+        max-width: 100%;
+        top: 0;
+        padding-bottom: 0;
+        margin: 0;
+    }
+
+    .ant-modal-content {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh);
+    }
+
+    .ant-modal-body {
+        flex: 1;
+    }
 }
 </style>

@@ -5,28 +5,152 @@ import { PlusOutlined } from '@ant-design/icons-vue'
 import { antiFakeTypeDict, antiFakeAuditStatusDict, antiFakeScenarioDict } from '@/utils/dict'
 import { formRules, columns, antiFakeContentRenderList } from './config'
 import { antiFakeTemplateAuditStatusOptions, antiFakeTemplateTypeOptions, antiFakeTemplateScenarioOptions } from '@/utils/config'
-import dayjs from 'dayjs'
+import FcInput from '@/components/input/input'
+import FcForm, { RenderFormItem } from '@/components/form/form'
+import FcUpload from '@/components/upload/upload'
 
-
+const renderList: RenderFormItem[] = [
+	{
+		label: '模板类型',
+		type: 'select',
+		disabled: true,
+		key: 'name1',
+		options: [
+			{
+				label: '单次',
+				value: 0
+			},
+			{
+				label: '多次次',
+				value: 1
+			}
+		]
+	},
+	{
+		label: '模板名称',
+		type: 'input',
+		key: 'name2',
+		inputType: 'int'
+	},
+	{
+		label: '模板描述',
+		type: 'textarea',
+		key: 'name3',
+		inputType: 'int'
+	},
+	{
+		label: '演示场景',
+		type: 'radio',
+		key: 'name4',
+		options: [
+			{
+				label: '单次',
+				value: 0
+			},
+			{
+				label: '多次次',
+				value: 1
+			}
+		]
+	},
+	{
+		label: '选择日期',
+		type: 'datePicker',
+		key: 'name5',
+		datePickerType: 'datePicker'
+	},
+	{
+		label: '日期区间',
+		type: 'datePicker',
+		key: 'name6',
+		datePickerType: 'rangePicker'
+	},
+	{
+		label: '演示场景',
+		type: 'checkbox',
+		key: 'name7',
+		
+		options: [
+			{
+				label: '零次',
+				value: -1
+			},
+			{
+				label: '单次',
+				value: 0
+			},
+			{
+				label: '多次',
+				value: 1
+			}
+		]
+	},
+	{
+		label: '演示场景',
+		type: 'cascader',
+		key: 'name8',
+		placeholder: '请选择演示',
+		options: [
+			{
+				label: '零次',
+				value: -1,
+				isLeaf: true,
+				children: []
+			},
+			{
+				label: '单次',
+				value: 0,
+				isLeaf: true,
+				children: []
+			},
+			{
+				label: '多次',
+				value: 1,
+				isLeaf: false,
+				children: [],
+				
+			}
+		]
+	},
+	{
+		label: '上传',
+		type: 'upload',
+		key: 'name9',
+		uploadType: 'card',
+		maxCount: 8
+	},
+	{
+		label: '开关',
+		type: 'switch',
+		key: 'name10'
+	},
+]
 
 
 
 export default defineComponent({
 	components: {
-		PlusOutlined
+		PlusOutlined,
+		FcInput,
+		FcForm,
+		FcUpload
 	},
 	setup() {
 		const formRef = ref()
 		const state = reactive({
 			columns: columns,
-			query: {} as any,
+			query: { } as any,
 			visible: false,
 			dataSource: [],
 			formRules,
 			formData: {
-				scenario: '1'
+				scenario: '1',
+				name1: '0',
+				name5: null,
+				name6: null
 			} as any,
 			loading: true,
+			renderList: renderList,
 			pagination: {
 				total: 0,
 				current: 1,
@@ -68,12 +192,38 @@ export default defineComponent({
 
 		getTableList()
 
+		const handleCange = ( options: any, renderItem: any) => {
+			console.log('renderItem', renderItem)
+			console.log('options', options)
+			if (renderItem.key === 'name8') {
+				console.log(options)
+				const targetOption = options[options.length - 1];
+				targetOption.children = [
+					{
+						label: '3次',
+						value: 11
+					},
+					{
+						label: '4次',
+						value: 12
+					},
+					{
+						label: '5次',
+						value: 13
+					}
+				]
+			}
+		}
+
 		/**
 		 * 获取对象列表
 		 * @param
 		 * @return
 		 */
 		const handleSearch = () => {
+			console.log(state.formData)
+			//state.renderList[5].disabled = false
+			return
 			state.pagination.current = 1
 			getTableList();
 		}
@@ -210,6 +360,7 @@ export default defineComponent({
 			columns,
 			handleAdd,
 			handleSearch,
+			handleCange,
 			handleEdit,
 			handleDelete,
 			reset,

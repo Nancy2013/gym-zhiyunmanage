@@ -11,7 +11,8 @@ export default {
     isLogo: ref<Boolean>(false),
     openKeys: ref<Array<string>>([]),
     selectedKeys: ref<Array<string>>([]),
-    userInfo: ref<Object>({})
+    userInfo: ref<Object>({}),
+    menuRoutes: ref<Array<any>>([])
   },
   mutations: {
     // 更改数据状态
@@ -46,6 +47,11 @@ export default {
     updateUserInfo(state: { userInfo: any }, payload: { userInfo: any }) {
       state.userInfo = payload.userInfo;
     },
+
+    // 更改菜单数据
+    updateMenuRoutes(state: { menuRoutes: any }, payload: { menuRoutes: any }) {
+       state.menuRoutes = payload.menuRoutes;
+    }
   },
   actions: {
     // 更改数据状态
@@ -76,12 +82,18 @@ export default {
     // 更改用户数据状态
     asyncUpdateUserInfo({ commit }: any, payload: any) {
        commit("updateUserInfo", payload)
+    },
+
+    // 更改菜单数据
+    asyncUpdateMenuRoutes({ commit }: any, payload: any) {
+       commit("updateMenuRoutes", payload)
     }
   },
   getters: {
     collapsed: (state: { collapsed: any }) => state.collapsed,
     isLogo: (state: { isLogo: any }) => state.isLogo,
     breamubTitle: (state: { breamubTitle: any }) => state.breamubTitle,
-    userInfo: (state: { userInfo: any }) => state.userInfo
+    userInfo: (state: { userInfo: any }) => state.userInfo,
+    menuRoutes: (state: { menuRoutes: any }) => state.menuRoutes
   },
 };

@@ -12,7 +12,7 @@
                         <a-input style="width:200px" v-model:value="query.creatorName" placeholder="创建人" />
                     </div>
                     <div class="search-left-inline">
-                        <a-range-picker :show-time="{ format: 'HH:mm:ss' }" format="YYYY-MM-DD HH:mm:ss"
+                        <a-range-picker format="YYYY-MM-DD"
                             :placeholder="['开始时间', '结束时间']" @change="selectTimeChange" :value="query.rangeTime" />
                     </div>
                     <div class="search-left-inline">
@@ -73,10 +73,10 @@
             <div class="modal-content">
                 <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol" :rules="rules">
                     <a-form-item ref="name" name="name" label="类型名称">
-                        <a-input v-model:value="formState.name" placeholder="请输入类型名称" />
+                        <a-input v-model:value="formState.name" placeholder="请输入类型名称" :disabled="Object.is(title, '查看') ? true : false" />
                     </a-form-item>
                     <a-form-item class="form-tree" ref="selectMenulist" name="selectMenulist" label="功能权限">
-                        <a-tree checkable v-model:checkedKeys="formState.selectMenulist" :tree-data="menuTree"
+                        <a-tree :disabled="Object.is(title, '查看') ? true : false" checkable v-model:checkedKeys="formState.selectMenulist" :tree-data="menuTree"
                             :fieldNames="{ title: 'name', key: 'id' }" />
                     </a-form-item>
                 </a-form>

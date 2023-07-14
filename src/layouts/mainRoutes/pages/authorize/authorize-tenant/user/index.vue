@@ -9,6 +9,9 @@
                     <a-range-picker v-model:value="searchData.time" />
                 </a-form-item>
                 <a-form-item>
+                    <a-select style="width:200px" v-model:value="searchData.status" placeholder="请选择状态" :options="[{ label: '启用', value: 'ENABLE' }, { label: '停用', value: 'DISABLE' }]"></a-select>
+                </a-form-item>
+                <a-form-item>
                     <a-space>
                         <a-button type="default" @click="handleFresh">重置</a-button>
                         <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -37,18 +40,23 @@
             },
         }">
             <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'status'">
+                <!-- <template v-if="column.key === 'status'">
                     <a-switch :checked="record.status === 'ENABLE'" checked-children="正常" un-checked-children="冻结"
                         @click="handleUpdate(record)" />
+                </template> -->
+                <template v-if="column.key === 'status'">
+                    <template v-if="record.status == 'ENABLE'"><a-tag color="green">启用</a-tag></template>
+                        <template v-if="record.status == 'DISABLE'"><a-tag color="red">停用</a-tag></template>
                 </template>
                 <template v-if="column.key === 'action'">
                     <a-space>
+                        <a-button v-if="record.status == 'ENABLE'" type="link" size="small"
+                                @click="handleUpdate(record)">停用</a-button>
+                            <a-button v-if="record.status == 'DISABLE'" type="text" size="small"
+                                @click="handleUpdate(record)">启用</a-button>
                         <a-button type="link" size="small" @click="handleEdit(record)"> 修改 </a-button>
-                        <a-divider type="vertical" />
                         <a-button type="link" size="small" @click="handleDel(record)"> 删除 </a-button>
-                        <a-divider type="vertical" />
                         <a-button type="link" size="small" @click="bindRole(record)"> 分配角色 </a-button>
-                        <a-divider type="vertical" />
                         <a-button type="link" size="small" @click="handleReset(record)"> 重置密码 </a-button>
                     </a-space>
                 </template>

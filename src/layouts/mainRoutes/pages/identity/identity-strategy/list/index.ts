@@ -2,13 +2,19 @@ import request from "@/utils/axios";
 import { useRouter } from "vue-router";
 import { Modal, message } from "ant-design-vue";
 import { defineComponent, toRefs, reactive, onMounted } from "vue";
-
+import {getPopupContainer} from '@/hooks'
 const columns = [
   {
     key: "ruleName",
     dataIndex: "ruleName",
     align: "center",
     title: "标识策略名称",
+  },
+  {
+    key: "businessObjectCategoryName",
+    dataIndex: "businessObjectCategoryName",
+    align: "center",
+    title: "对象分类",
   },
   {
     key: "ruleType",
@@ -203,6 +209,7 @@ export default defineComponent({
       queryList,
       reset,
       paginationChange,
+      getPopupContainer,
     };
 
   },

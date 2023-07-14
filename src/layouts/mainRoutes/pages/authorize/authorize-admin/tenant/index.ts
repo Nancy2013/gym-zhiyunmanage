@@ -110,7 +110,7 @@ export default defineComponent({
         phoneNumber: [
           { required: true, message: "请输入联系电话", trigger: "blur" },
         ],
-        tenantMealId: [
+        setMealId: [
           { required: true, message: "请选择租户类型", trigger: "change" },
         ],
         status: [{ required: true, message: "请选择状态", trigger: "change" }],
@@ -207,21 +207,29 @@ export default defineComponent({
      * 启用停用租户
      * @param
      */
-    const modifyTenantStatus = async (id: number, status: string) => {
-      let res = await request({
-        url: import.meta.env.VITE_BASE_URL + "/tenant/modify/status",
-        type: "json",
-        method: "post",
-        params: {
-          id,
-          status,
+    const modifyTenantStatus = (id: number, status: string) => {
+      let text = status == "DISABLE" ? "停用" : "启用";
+      Modal.confirm({
+        title: "提示",
+        content: `确定要${text}吗？`,
+        centered: true,
+        async onOk() {
+          let res = await request({
+            url: import.meta.env.VITE_BASE_URL + "/tenant/modify/status",
+            type: "json",
+            method: "post",
+            params: {
+              id,
+              status,
+            },
+          });
+          if (res.code == 200) {
+            message.success(`租户${text}成功!`);
+            getTenantList();
+          }
         },
       });
-      if (res.code == 200) {
-        let text = status == "DISABLE" ? "停用" : "启用";
-        message.success(`租户${text}成功!`);
-        getTenantList();
-      }
+      
     };
 
     /**

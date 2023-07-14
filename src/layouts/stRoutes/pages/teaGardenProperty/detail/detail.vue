@@ -6,7 +6,10 @@
 	<div class="teaGardenProperty-space"></div>
 	<FcTitle title="核心信息" :icon="coreInfoImg"></FcTitle>
 	<div class="teaGardenProperty-detailBox">
-		<DetailItem v-for="(item, key) in coreInfoRenderList" :key="key" :item="item" :value="teaConfirmData[item.key]"></DetailItem>
+		<DetailItem  :item="breedRenderData" :value="teaConfirmData.teaCategoryNum"></DetailItem>
+		<div class="teaGardenProperty-detail-row" v-for="(breedItem, breedKey) in teaConfirmData.teaCategoryList" :key="breedKey">
+			<DetailItem v-for="(item, key) in coreInfoRenderList" :key="key" :item="item" :value="breedItem[item.key]"></DetailItem>
+		</div>
     </div>
 	<div class="teaGardenProperty-space"></div>
 	<FcTitle title="联系信息" :icon="contactInfoImg"></FcTitle>
@@ -28,7 +31,7 @@ import basicInfoImg from '@/assets/image/shitai/teaGardenProperty/basicInfo.png'
 import coreInfoImg from '@/assets/image/shitai/teaGardenProperty/coreInfo.png'
 import contactInfoImg from '@/assets/image/shitai/teaGardenProperty/contactInfo.png'
 import DetailItem from './detailItem'
-import { baseInfoRenderList, coreInfoRenderList, contactInfoRenderList } from './config'
+import { baseInfoRenderList, coreInfoRenderList, contactInfoRenderList, breedRenderData} from './config'
 import { Modal, message, Image } from 'ant-design-vue';
 import request from '@/utils/axios'
 import { useRoute } from "vue-router";
@@ -63,7 +66,7 @@ export default defineComponent({
 				} else {
 					res.data.teaCategoryNum = 0
 				}
-				res.data.authorizedStatus = 3
+				typeof res.data.imageUrl === 'string' && (res.data.imageUrl = res.data.imageUrl.split(','))
 				res.data.authorizedStatusName = teaConfirmStatusDict[res.data.authorizedStatus] || ""
 				teaConfirmData.value = res.data
 			})
@@ -80,6 +83,7 @@ export default defineComponent({
             baseInfoRenderList,
 			coreInfoRenderList,
 			contactInfoRenderList,
+			breedRenderData,
 			teaConfirmStatusDict
 		}
 
@@ -112,6 +116,14 @@ export default defineComponent({
 	flex-direction: row;
 	align-items: center;
 }
+
+.teaGardenProperty-detail-row {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
 .teaGardenProperty-tag {
 	height: 32px;
 	width: 66px;
@@ -145,5 +157,10 @@ export default defineComponent({
 .teaGardenProperty-tag-1 {
 	background-color: #FBEBD0;
 	color: #FF8814;
+}
+
+.teaGardenProperty-tag-0 {
+	color: #999;
+	background-color: #f0f2f5;
 }
 </style>

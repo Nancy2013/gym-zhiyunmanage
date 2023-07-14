@@ -68,6 +68,7 @@ export default defineComponent({
     const state = reactive({
       title: "",
       columns,
+      icons: [],
       dataSource: [],
       treeSelect: [],
       expandedRowKeys: [],
@@ -94,6 +95,7 @@ export default defineComponent({
         buyFlag: "",
         url: "",
         sort: "",
+        icon: ""
       },
       rules: {
         name: [{ required: true, message: "请输入菜单名称", trigger: "blur" }],
@@ -111,6 +113,7 @@ export default defineComponent({
 
     onMounted(() => {
       getMenuList();
+      getAllIcons();
     });
 
     /**
@@ -122,6 +125,20 @@ export default defineComponent({
     watch(state.getPcodes, (next: any, prev: any) => {
       selectMenuTreeList(next);
     });
+
+      /**
+     * 获取所有icons
+     * @return
+     */
+    const getAllIcons = () => {
+       let arr: any = [];
+       const icons = import.meta.globEager('/src/assets/svg/antDesign/**/*.svg');
+       Object.keys(icons).forEach(key => {
+           let iconPath: any = key.replace('/src/assets/svg/antDesign/', '').split('.')[0];
+           arr.push(iconPath);
+       })
+       state.icons = arr;
+    }
 
     /**
      * 获取菜单列表
@@ -304,6 +321,7 @@ export default defineComponent({
      * @return
      */
     const edit = (record: any) => {
+      console.log('编辑数据', record);
       state.title = "编辑菜单";
       state.visible = true;
       state.formState = {
@@ -316,6 +334,7 @@ export default defineComponent({
         menuFlag: record.menuFlag,
         buyFlag: record.buyFlag,
         url: record.url,
+        icon: record.icon,
         sort: 0,
       } as any;
     };

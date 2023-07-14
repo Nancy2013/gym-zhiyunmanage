@@ -94,5 +94,5 @@ import Index from './index'
 export default Index
 </script>
 <style lang="less" scoped>
-//@import url('./index.less');
+  @import url('./index.less');
 </style>

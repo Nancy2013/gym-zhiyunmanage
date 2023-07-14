@@ -4,15 +4,20 @@ import router from "./router";
 import store from "@/store";
 import VideoPlayer from 'vue-video-player'
 import 'video.js/dist/video-js.css'
-import { Tooltip, Tag, Button, Table, Divider, Input, Popover, Radio, Checkbox, Row, Col, Select, Modal, Tree, PageHeader } from 'ant-design-vue'
+import './base.less'
+import { Tooltip, Tag, Button, Table, Divider, Input, Popover, Radio, Checkbox, Row, Col, Select, Modal, Tree, PageHeader, Form } from 'ant-design-vue'
 import configIcon from '@/components/configIcon';
 import configTable from '@/components/configTable';
 import configUpload from '@/components/configUpload';
 import configPage from '@/components/configPage';
+import FcForm from '@/components/form/form'
 
 const app: App<Element> = createApp(Main);
 
+
+
 const components = [
+    Form,
     Tooltip,
     Tag,
     Button,
@@ -48,6 +53,9 @@ app.component("config-upload", configUpload);
 
 // 注入config-page组件
 app.component("config-page", configPage);
+
+//注入表单组件
+app.component("FcForm", FcForm);
 
 app.use(VideoPlayer)
 

@@ -1,5 +1,7 @@
 <template>
     <div>
+        <!-- <FcForm v-model:formData="formData" :renderList="renderList" layout="inline" @loadData="handleCange"></FcForm> -->
+
         <a-form layout="inline" :model="query">
             <a-form-item label="">
                 <a-input v-model:value="query.name" placeholder="模板名称" @pressEnter="handleSearch" />
@@ -64,7 +66,7 @@
         </config-table>
     </div>
 
-    <a-modal width="640px" v-model:visible="visible" title="添加扫码验证文字模板" @ok="handleSubmit()" @cancel="handleCancel">
+    <a-modal width="640px" v-model:visible="visible" :title="`${formData.id ? '编辑扫码验证文字模板' : '添加扫码验证文字模板'}`" @ok="handleSubmit()" @cancel="handleCancel">
         <a-form ref="formRef" layout="horizontal" :model="formData" :rules="formRules" :label-col="{ span: 4 }" :wrapper-col="{ span: 19 }">
             <a-form-item label="显示场景" name="scenario">
                 <a-radio-group v-model:value="formData.scenario">
@@ -98,6 +100,9 @@
             </a-form-item>
         </a-form>
     </a-modal>
+
+
+   
 </template>
 
 <script lang="ts">

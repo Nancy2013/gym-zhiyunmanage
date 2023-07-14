@@ -63,7 +63,7 @@ export const teaConfirmStatusDict = {
 	/**
 	 * 
 	 */
-	'0': '已确权',
+	'0': '未确权',
 	/**
 	 * 申请中
 	 */
@@ -100,5 +100,13 @@ export const antiFakeScenarioDict = {
 	'2': '多次查询',
 	'first': 1,
 	'many': 2
+}
+
+/**
+ * 对象和产品的数据类型
+ */
+export const objectAndProductDataTypeDict = {
+	object: 0,
+	product: 1
 }
 

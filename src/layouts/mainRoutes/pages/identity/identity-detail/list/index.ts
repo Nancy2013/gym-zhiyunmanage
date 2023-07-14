@@ -2,7 +2,7 @@ import { Moment } from "moment";
 import request from "@/utils/axios";
 import { useRouter } from "vue-router";
 import { defineComponent, toRefs, reactive, onMounted, ref } from "vue";
-
+import {getPopupContainer} from '@/hooks'
 const columns = [
   {
     key: "idisCode",
@@ -23,22 +23,16 @@ const columns = [
     title: "同步状态",
   },
   {
+    key: "businessObjectCategoryName",
+    dataIndex: "businessObjectCategoryName",
+    align: "center",
+    title: "对象分类",
+  },
+  {
     key: "boName",
     dataIndex: "boName",
     align: "center",
-    title: "关联对象",
-  },
-  {
-    key: "batchNo",
-    dataIndex: "batchNo",
-    align: "center",
-    title: "对象批次",
-  },
-  {
-    key: "templateName",
-    dataIndex: "templateName",
-    align: "center",
-    title: "绑定模板",
+    title: "对象名称",
   },
   {
     key: "createdTime",
@@ -52,6 +46,7 @@ const columns = [
     align: "center",
     dataIndex: "action",
     width: 200,
+    fixed: "right",
   },
 ]; // 表格数据
 
@@ -83,8 +78,7 @@ export default defineComponent({
         pageSize: 10,
       },
       query: {
-        idisCode: "",
-        boName: "",
+        idisCodeOrBoName: "",
         syncStatus: undefined,
         startTime: ref<Moment>(),
         endTime: ref<Moment>(),
@@ -93,8 +87,16 @@ export default defineComponent({
       statusOptions,
     });
 
-    onMounted(() => codePage());
+    onMounted(() => {
+      init();
+    });
 
+    /**
+     * 初始化
+     */
+    const init = () => {
+      codePage();
+    };
 
     /**
      * 标识明细
@@ -105,7 +107,7 @@ export default defineComponent({
       state.loading = true;
       let {
         pagination: { current, pageSize },
-        query: { idisCode, boName, syncStatus, startTime, endTime },
+        query: { idisCodeOrBoName, syncStatus, startTime, endTime },
       } = state;
       let res: any = await request({
         url: import.meta.env.VITE_NODE_URL + "/code/page",
@@ -114,8 +116,7 @@ export default defineComponent({
         data: {
           pageNum: current,
           pageSize,
-          idisCode,
-          boName,
+          idisCodeOrBoName,
           syncStatus,
           startTime,
           endTime,
@@ -134,7 +135,6 @@ export default defineComponent({
       }
     };
 
-
     /**
      * 时间区间处理
      * @param { Moment } value
@@ -147,7 +147,6 @@ export default defineComponent({
       state.query.rangeTime = value;
     };
 
-
     /**
      * 分页查询
      * @param { Object } pagination
@@ -158,7 +157,6 @@ export default defineComponent({
       state.pagination = { current, pageSize, total };
       codePage();
     };
-
 
     /**
      * 路由跳转
@@ -177,9 +175,9 @@ export default defineComponent({
      * @return
      */
     const queryList = () => {
-      state.pagination.current = 1 // 重置页数
+      state.pagination.current = 1; // 重置页数
       codePage();
-    }
+    };
 
     /**
      * 列表重置
@@ -187,14 +185,13 @@ export default defineComponent({
      */
     const reset = () => {
       state.query = {
-        idisCode: "",
-        boName: "",
+        idisCodeOrBoName: "",
         syncStatus: undefined,
         startTime: undefined,
         endTime: undefined,
         rangeTime: [],
       };
-      queryList()
+      queryList();
     };
 
     return {
@@ -204,7 +201,7 @@ export default defineComponent({
       rangeDateChange,
       showInfo,
       reset,
+      getPopupContainer,
     };
-    
   },
 });
