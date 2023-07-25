@@ -40,7 +40,7 @@
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: #d81e06;
+        background: @error-color;
         margin-right: 10px;
       }
     }
@@ -49,17 +49,17 @@
       padding: 6px 10px;
 
       &.status-1 {
-        color: #ff8814;
+        color: @warning-color;
         background: #fbebd0;
       }
 
       &.status-2 {
-        color: #185ef0;
+        color: @primary-color;
         background: #e6ecfc;
       }
 
       &.status-3 {
-        color: #d81e06;
+        color: @error-color;
         background: #fde6e6;
       }
     }
@@ -74,7 +74,7 @@
       height: 32px;
       line-height: 32px;
       color: #fff;
-      background: #195EF0;
+      background: @primary-color;
       margin-top: 100px;
       margin-bottom: 20px;
       cursor: pointer;

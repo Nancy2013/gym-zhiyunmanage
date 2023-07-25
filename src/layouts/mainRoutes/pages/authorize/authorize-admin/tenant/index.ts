@@ -2,61 +2,93 @@ import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import { convertTree } from "@/utils/function";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
+import { RenderFormItem } from '@/components/form/form'
 
+const searchRenderList: RenderFormItem[] = [
+  {
+    label: '租户类型',
+    key: 'tenantMealId',
+    type: 'select',
+    placeholder: '请选择租户类型',
+    options: []
+  },
+  {
+    label: '企业名称',
+    key: 'tenantName',
+    type: 'input',
+    placeholder: '企业名称'
+  },
+  {
+    label: '状态',
+    key: 'status',
+    type: 'select',
+    placeholder: '请选择状态',
+    options: [
+      {
+        label: "启用",
+        value: "ENABLE",
+      },
+      {
+        label: "停用",
+        value: "DISABLE",
+      },
+    ]
+  },
+]
 const columns = [
   {
     key: "index",
     dataIndex: "index",
-    align: "center",
     title: "序号",
+    width: 80
   },
   {
     key: "account",
     dataIndex: "account",
-    align: "center",
     title: "账号",
+    width: 160,
   },
   {
     key: "tenantName",
     dataIndex: "tenantName",
-    align: "center",
     title: "租户名称",
+    width: 120
   },
   {
     key: "tenantMealName",
     dataIndex: "tenantMealName",
-    align: "center",
     title: "租户类型",
+    width: 120
   },
   {
     key: "contact",
     dataIndex: "contact",
-    align: "center",
     title: "联系人",
+    width: 110
   },
   {
     key: "phoneNumber",
     dataIndex: "phoneNumber",
-    align: "center",
     title: "联系电话",
+    width: 140
   },
   {
     key: "status",
     dataIndex: "status",
-    align: "center",
     title: "状态",
+    width: 100,
   },
   {
     key: "createdTime",
     dataIndex: "createdTime",
-    align: "center",
     title: "创建时间",
+    width: 140
   },
   {
     key: "action",
     dataIndex: "action",
-    align: "center",
     title: "操作",
+    fixed: 'right',
     width: 200,
   },
 ];
@@ -68,18 +100,9 @@ export default defineComponent({
       loading: true,
       visible: false,
       columns,
-      dataSource: [],
       options: [],
-      statusOptions: [
-        {
-          label: "启用",
-          value: "ENABLE",
-        },
-        {
-          label: "停用",
-          value: "DISABLE",
-        },
-      ],
+      dataSource: [],
+      searchRenderList,
       isSubmit: true,
       pagination: {
         total: 0,
@@ -229,7 +252,7 @@ export default defineComponent({
           }
         },
       });
-      
+
     };
 
     /**
@@ -237,20 +260,21 @@ export default defineComponent({
      * @return
      */
     const listTenantMealChoose = async () => {
-      let res = await request({
+      let res: any = await request({
         url: import.meta.env.VITE_BASE_URL + "/tenant/meal/choose/list",
         type: "json",
         method: "get",
         params: {},
       });
       if (res.code == 200) {
-        let result = res.data as any;
-        state.options = result.map((item: any) => {
+        const options = res.data.map((item: any) => {
           return {
             label: item.name,
             value: item.id,
           };
-        });
+        })
+        state.searchRenderList[0].options = options
+        state.options = options
       }
     };
 

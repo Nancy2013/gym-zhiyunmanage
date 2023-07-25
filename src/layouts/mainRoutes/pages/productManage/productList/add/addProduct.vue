@@ -1,57 +1,11 @@
 <template>
-    <h3>基础信息</h3>
+    <h3 style="font-weight: bold;">基础信息</h3>
     <fc-form ref="formRef" boxType="page" :rules="formRules" :renderList="renderFormList" :formData="formData" labelAlign="right" :labelCol="{ style: {width: '88px'} }"></fc-form>
 
-    <!-- <a-form ref="formRef" layout="horizontal" :model="formData" :rules="formRules">
-        <a-row>
-            <a-form-item label="产品名称" name="name" style="width: 360px;">
-                <a-input v-model:value="formData.name" @change="filterWordInput(formData, 'name')" placeholder="请输入产品名称" show-count :maxlength="20" />
-            </a-form-item>
-
-            <a-form-item label="产品编号" name="productNo" style="width: 360px; margin-left: 24px;">
-                <a-input v-model:value="formData.productNo" @change="filterWordInput(formData, 'productNo')" placeholder="请输入产品编号" show-count :maxlength="20" />
-            </a-form-item>
-        </a-row>
-
-        <a-row>
-            <a-form-item label="产品分类" name="categoryId" style="width: 360px;">
-                
-                <Cascader :options="objectClassOptions" :load-data="loadData" v-model:value="formData.categoryId" placeholder="选择产品分类" change-on-select allowClear></Cascader>
-            </a-form-item>
-
-            <a-form-item label="品牌" name="brandId" style="width: 360px; margin-left: 24px;">
-                <a-select v-model:value="formData.brandId" placeholder="请选择产品分类" allowClear>
-                    <a-select-option v-for="(item, key) in objectClassOptions" :key="key" :value="item.value">{{ item.label }}</a-select-option>
-                </a-select>
-            </a-form-item>
-
-        </a-row>
-
-        <a-row>
-            <a-form-item label="产品条码" name="barCode" style="width: 360px;">
-                <a-input v-model:value="formData.barCode" placeholder="请输入产品条码" show-count :maxlength="20" />
-            </a-form-item>
-            <a-form-item label="产品单位" name="unit" style="width: 360px; margin-left: 24px;">
-                <a-input v-model:value="formData.unit" placeholder="请输入产品单位" show-count :maxlength="20" />
-            </a-form-item>
-        </a-row>
-
-        <a-row>
-            <a-form-item label="产品单价" name="price" style="width: 360px;">
-                <a-input v-model:value="formData.price" @change="filterFloatInput(formData, 'price')" placeholder="请输入产品单价" show-count :maxlength="20" />
-            </a-form-item>
-        </a-row>
-
-        <a-row>
-            <a-form-item label="产品简介" name="remark" style="width: 744px;">
-                
-                <a-textarea v-model:value="formData.remark" placeholder="请输入产品简介" show-count :maxlength="1000"></a-textarea>
-            </a-form-item>
-        </a-row>
-    </a-form> -->
-
-    <h3>规格/属性</h3>
-    <div><a-button type="primary" @click="handleAddAttribute">添加属性</a-button></div>
+    <a-row style="padding-bottom: 16px;">
+        <a-col><h3 style="font-weight: bold;">规格/属性</h3></a-col>
+        <a-col style="margin-left: 16px;"><a-button type="primary" @click="handleAddAttribute">添加属性</a-button></a-col>
+    </a-row>
     <a-form class="attributeTableForm" ref="attributeTableFormRef" layout="horizontal" :model="attributeFormData">
         <a-table :columns="attributeColumns" :data-source="attributeTableList" size="middle" :pagination="false">
             <template #bodyCell="{ column, index, record }">
@@ -100,8 +54,11 @@
         </a-table>
     </a-form>
 
-    <h3>图片信息</h3>
-    <div><a-button type="primary" @click="handleAddImage">添加图片</a-button></div>
+
+    <a-row style="padding-top: 16px; padding-bottom: 16px;">
+        <a-col><h3 style="font-weight: bold;">图片信息</h3></a-col>
+        <a-col style="margin-left: 16px;"><a-button v-if="imageTableList.length < 10" type="primary" @click="handleAddImage">添加图片</a-button></a-col>
+    </a-row>
     <a-table :columns="imageColumns" :data-source="imageTableList" size="middle" :pagination="false">
         <template #bodyCell="{ column, index, record }">
             <template v-if="column.key === 'index'">

@@ -1,6 +1,6 @@
 import { defineComponent, reactive, toRefs, ref } from "vue";
 import request from "@/utils/axios";
-import { columns, formRules } from './config'
+import { columns, formRules, searchRenderList } from './config'
 import { Modal, message } from "ant-design-vue";
 import { antiFakeTypeDict, antiFakeAuditStatusDict, antiFakeScenarioDict } from '@/utils/dict'
 import { antiFakeTemplateAuditStatusOptions, antiFakeTemplateTypeOptions } from '@/utils/config'
@@ -17,6 +17,7 @@ export default defineComponent({
 			dataSource: [],
 			validateStatus: "",
 			formData: {} as any,
+			searchRenderList,
 			loading: true,
 			pagination: {
 				total: 0,
@@ -33,7 +34,7 @@ export default defineComponent({
 		 */
 		const getTableList = async () => {
 			state.loading = true;
-			let { pagination: { current, pageSize }, query: { name, reviewStatus } } = state;
+			let { pagination: { current, pageSize }, query: { condition, reviewStatus } } = state;
 			let res: any = await request({
 				url: import.meta.env.VITE_NODE_URL + "/securityTemplate/list",
 				type: "json",
@@ -41,7 +42,7 @@ export default defineComponent({
 				data: {
 					pageNum: current,
 					pageSize,
-					name,
+					condition,
 					reviewStatus
 				},
 			});

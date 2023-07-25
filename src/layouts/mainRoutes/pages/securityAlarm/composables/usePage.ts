@@ -25,7 +25,6 @@ export const usePage = (opts: any) => {
    *
    */
   const query = () => {
-    state.loading = true;
     let {
       pagination: { pageSize, current },
     } = state;
@@ -39,17 +38,21 @@ export const usePage = (opts: any) => {
       .then((res: any) => {
         const { code, rows,total=0 } = res;
         if (code === 200) {
-          state.dataSource = rows;
-          state.loading = false;
+          state.dataSource = rows.map((item: any, key: number) => {
+            item.tableIndex = (current - 1) * pageSize + key + 1
+            return item
+          });
           state.pagination = {
             total,
             current,
             pageSize,
           };
         }
+        state.loading = false;
       })
       .catch((e: any) => {
         console.error(e);
+        state.loading = false;
       });
   };
 
@@ -106,6 +109,14 @@ export const usePage = (opts: any) => {
   };
 
   /**
+   *跳转
+   *
+   */
+  const jump = (params?: any) => {
+    router.push(params)
+  }
+
+  /**
    *删除
    *
    * @param {*} item
@@ -139,6 +150,7 @@ export const usePage = (opts: any) => {
     handleSearch,
     add,
     edit,
+    jump,
     paginationChange,
     handleFresh,
     handleDel,

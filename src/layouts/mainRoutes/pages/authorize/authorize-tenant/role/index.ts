@@ -8,41 +8,71 @@ import {
   sassTerminalTypeOptions,
   xcTerminalTypeOptions,
 } from "@/utils/config";
+import { RenderFormItem } from '@/components/form/form'
+
+
+const searchRenderList: RenderFormItem[] = [
+  {
+    label: '角色名称',
+    key: 'name',
+    type: 'input',
+    placeholder: '角色名称'
+  }
+]
+
+const renderFormList: RenderFormItem[] = [
+  {
+    label: '角色名称',
+    type: 'input',
+    key: 'name',
+    width: '100%',
+    placeholder: '请输入角色名称'
+  },
+  {
+    label: '上级名称',
+    type: 'treeSelect',
+    key: 'pid',
+    width: '100%',
+    fieldNames: { label: 'name', value: 'id' },
+    placeholder: '请选择上级名称'
+  },
+  {
+    label: '别名',
+    type: 'input',
+    width: '100%',
+    key: 'anotherName',
+    placeholder: '请输入别名'
+  },
+  {
+    label: '排序',
+    type: 'input',
+    key: 'sort',
+    width: '100%',
+    inputType: 'int',
+    placeholder: '请输入排序'
+  }
+]
+
 const columns = [
   {
     dataIndex: "name",
     key: "name",
-    align: "center",
     title: "角色名称",
   },
   {
     key: "pname",
     title: "上级角色",
-    align: "center",
     dataIndex: "pname",
   },
   {
     key: "anotherName",
     title: "别名",
-    align: "center",
     dataIndex: "anotherName",
   },
-  // {
-  //   key: "platformType",
-  //   title: "所属平台",
-  //   align: "center",
-  //   dataIndex: "platformType",
-  // },
-  // {
-  //   key: "terminalType",
-  //   title: "终端类型",
-  //   align: "center",
-  //   dataIndex: "terminalType",
-  // },
   {
     key: "action",
     title: "操作",
-    align: "center",
+    width: 200,
     dataIndex: "action",
   },
 ];
@@ -64,14 +94,17 @@ export default defineComponent({
       formData: {} as any,
       visible: false,
       visibleAuth: false,
+      searchRenderList,
+      renderFormList,
       columns,
       rules,
       ruleOptions: [] as any,
-      pageSize: 20,
-      pageNum: 1,
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
-      roleTreeList: [] as any[],
+      pagination: {
+        total: 0,
+        current: 1,
+        pageSize: 10,
+      },
+      loading: true,
       terminalTypeOptions: [] as Option[],
       selectAuthList: [] as any[],
       authTreeData: [] as any[],
@@ -96,8 +129,8 @@ export default defineComponent({
         type: "json",
         method: "get",
         data: {},
-      }).then((res) => {
-        state.roleTreeList = res.data as any;
+      }).then((res: any) => {
+        state.renderFormList[1].treeData = res.data
       });
     };
 
@@ -107,14 +140,23 @@ export default defineComponent({
      * @return
      */
     const getTableList = () => {
+      state.loading = true
+      const {
+        pagination: { current, pageSize },
+        searchData,
+      } = state;
       request({
         url: import.meta.env.VITE_BASE_URL + "/role/list",
         type: "json",
         method: "post",
-        data: { ...state.searchData },
+        data: { current, pageSize, ...searchData },
       }).then((res) => {
+        state.loading = false
         state.dataSource = res.rows as any;
-      });
+        state.pagination.total = res.total
+      }).catch(() => {
+        state.loading = false
+      })
     };
 
     /**
@@ -123,7 +165,7 @@ export default defineComponent({
      * @return
      */
     const handleSearch = () => {
-      state.pageNum = 1;
+      state.pagination.current = 1;
       getTableList();
     };
 
@@ -282,7 +324,7 @@ export default defineComponent({
           params: { roleId: roleId },
         }).then((res) => {
           if (Array.isArray(res.data) && res.data.length) {
-            state.authTreeData =  convertTree(res.data, { id: 'id', pid: 'pid' });
+            state.authTreeData = convertTree(res.data, { id: 'id', pid: 'pid' });
             state.selectAuthList = res.data.filter((element: any) => element.checked).map((item) => {
               return item.id;
             });
@@ -307,7 +349,7 @@ export default defineComponent({
           url: import.meta.env.VITE_BASE_URL + "/role/setAuthority",
           type: "json",
           method: "post",
-          data: { menuPlatformReqList: [{menuIds: state.selectAuthList}], roleId: state.roleId },
+          data: { menuPlatformReqList: [{ menuIds: state.selectAuthList }], roleId: state.roleId },
         }).then((res) => {
           message.success("菜单配置成功");
           state.visibleAuth = false;
@@ -315,7 +357,6 @@ export default defineComponent({
       } else {
         message.error("未选择任何菜单项");
       }
-      console.log(state.selectAuthList);
     };
 
     /**
@@ -323,15 +364,26 @@ export default defineComponent({
      * @param
      * @return
      */
-    const handleAuthCancel = () => {};
+    const handleAuthCancel = () => { };
+
+    /**
+     *分页
+     *
+     * @param {*} pagination
+     */
+    const paginationChange = (pagination: any) => {
+      let { current, pageSize, total } = pagination;
+      state.pagination = { current, pageSize, total };
+      getTableList();
+    };
 
     /**
      *表格刷新
      *
      */
-     const handleFresh = () => {
+    const handleFresh = () => {
       state.searchData = {} as any;
-      state.pageNum = 1;
+      state.pagination.current = 1;
       getTableList();
     };
 
@@ -343,6 +395,7 @@ export default defineComponent({
       platformTypeOptions,
       sassTerminalTypeOptions,
       xcTerminalTypeOptions,
+      paginationChange,
       handleSetAuthority,
       handleAuthSubmit,
       handleAuthCancel,

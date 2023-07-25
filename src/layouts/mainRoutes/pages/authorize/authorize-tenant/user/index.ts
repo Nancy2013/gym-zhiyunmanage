@@ -4,49 +4,131 @@ import dayjs from "dayjs";
 import { Modal, message, TreeProps } from "ant-design-vue";
 import type { Rule } from "ant-design-vue/es/form";
 const DEFAULT_PASS = "111111"; // 默认用户密码
+import { RenderFormItem } from '@/components/form/form'
+
+const renderFormList: RenderFormItem[] = [
+  {
+    label: '账号',
+    type: 'input',
+    key: 'account',
+    options: [],
+    placeholder: '请输入账号'
+  },
+  {
+    label: '姓名',
+    type: 'input',
+    key: 'name',
+    placeholder: '请输入姓名'
+  },
+  {
+    label: '出生日期',
+    type: 'datePicker',
+    key: 'birthday',
+    placeholder: '请选择出生日期'
+  },
+  {
+    label: '密码',
+    type: 'input',
+    key: 'password',
+    password: true,
+    placeholder: '请输入密码'
+  },
+  {
+    label: '重复密码',
+    type: 'input',
+    key: 'repeat',
+    password: true,
+    placeholder: '请输入重复密码'
+  },
+  {
+    label: '邮箱',
+    type: 'input',
+    key: 'email',
+    placeholder: '请输入邮箱'
+  },
+  {
+    label: '性别',
+    type: 'radio',
+    key: 'sex',
+    placeholder: '请选择性别',
+    options: [
+      {
+        label: '男',
+        value: 'man'
+      },
+      {
+        label: '女',
+        value: 'woman'
+      }
+    ]
+  },
+  {
+    label: '电话',
+    type: 'input',
+    key: 'phone',
+    inputType: 'int',
+    maxlength: 11,
+    placeholder: '请输入电话'
+  },
+]
+
+const editHideFormKeyList = ["account", "password", "repeat"]
+
+const searchRenderList: RenderFormItem[] = [
+  {
+    label: '账号/姓名/手机',
+    key: 'name',
+    type: 'input',
+    placeholder: '账号/姓名/手机'
+  },
+  {
+    label: '时间区间',
+    key: 'time',
+    type: 'datePicker',
+    datePickerType: 'rangePicker'
+  },
+  {
+    label: '状态',
+    key: 'status',
+    type: 'select',
+    placeholder: '请选择状态',
+    options: [{ label: '启用', value: 'ENABLE' }, { label: '停用', value: 'DISABLE' }]
+  }
+]
+
+
 const columns = [
   {
     dataIndex: "account",
     key: "account",
-    align: "center",
     title: "账号",
   },
   {
     dataIndex: "name",
     key: "name",
-    align: "center",
     title: "姓名",
   },
-  // {
-  //   // 暂时没有
-  //   dataIndex: "deptName",
-  //   key: "deptName",
-  //   align: "center",
-  //   title: "部门",
-  // },
   {
     dataIndex: "phone",
     key: "phone",
-    align: "center",
     title: "手机号",
   },
   {
     dataIndex: "status",
     key: "status",
-    align: "center",
     title: "状态",
   },
   {
     dataIndex: "createdTime",
     key: "createdTime",
-    align: "center",
     title: "创建时间",
   },
   {
     dataIndex: "action",
     key: "action",
-    align: "center",
     title: "操作",
+    fixed: 'right',
+    width: 280
   },
 ];
 
@@ -79,6 +161,8 @@ export default defineComponent({
     };
     const state = reactive({
       searchData: { name: "", time: [], status: undefined },
+      searchRenderList,
+      renderFormList,
       formData: {
         id: null,
         account: "",
@@ -90,12 +174,11 @@ export default defineComponent({
         sex: "",
         phone: "",
       },
+      title: "",
       loading: false,
       visible: false,
       visibleRole: false,
       columns,
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
       dataSource: [],
       roleSource: [],
       currrentData: { id: null },
@@ -121,7 +204,7 @@ export default defineComponent({
         return Promise.reject("请输入密码");
       } else {
         if (state.formData.repeat) {
-          formRef.value.validateFields("repeat");
+          formRef.value.validate("repeat");
         }
         if (value.length < 6 || value.length > 12) {
           return Promise.reject("密码长度为6~12个字符");
@@ -249,6 +332,13 @@ export default defineComponent({
      *
      */
     const handleAdd = () => {
+      state.title = "添加用户"
+      for (let i = 0; i < state.renderFormList.length; i++) {
+        const renderFormItem = state.renderFormList[i]
+        if (editHideFormKeyList.indexOf(renderFormItem.key) > -1) {
+          renderFormItem.isHide = false
+        }
+      }
       state.currrentData = { id: null };
       state.visible = true;
     };
@@ -267,6 +357,13 @@ export default defineComponent({
       state.formData.email = email;
       state.formData.sex = sex;
       state.formData.phone = phone;
+      state.title = "编辑用户"
+      for (let i = 0; i < state.renderFormList.length; i++) {
+        const renderFormItem = state.renderFormList[i]
+        if (editHideFormKeyList.indexOf(renderFormItem.key) > -1) {
+          renderFormItem.isHide = true
+        }
+      }
       state.visible = true;
     };
 

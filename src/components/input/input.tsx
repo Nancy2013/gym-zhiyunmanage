@@ -42,12 +42,21 @@ export default defineComponent({
 			default: () => {
 				return { minRows: 2, maxRows: 6 }
 			}
+		},
+		password: {
+			type: Boolean,
+			default: false
 		}
 
 	},
-	emits: ['update:value', "change"],
+	emits: ['update:value', "change", "unifyEvent", "blur", "pressEnter"],
 	setup(props, { slots, emit }) {
 		const innerValue = ref(props.value)
+		/**
+         * 输入框change事件
+         * @param
+         * @return
+         */
 		const handleChange = (event: ChangeEvent) => {
 			let value = event.target?.value || ""
 			if (props.filterFnc && typeof props.filterFnc === 'function') {
@@ -72,12 +81,38 @@ export default defineComponent({
 			innerValue.value = value
 		}
 
+		/**
+         * 输入框blur事件事件
+         * @param
+         * @return
+         */
+		const handleBlur = () => {
+			emit("unifyEvent", {
+				type: 'blur',
+				value: innerValue.value
+			})
+			emit("blur", innerValue.value)
+		}
+
+		/**
+         * 输入框回车事件事件
+         * @param
+         * @return
+         */
+		const handlePressEnter = () => {
+			emit("unifyEvent", {
+				type: 'pressEnter',
+				value: innerValue.value
+			})
+			emit("pressEnter", innerValue.value)
+		}
+
 		watch(() => props.value, (newValue) => {
 			innerValue.value = newValue
 		})
 
 		return () => (
-			props.type === 'input' ? <Input  v-model:value={innerValue.value} placeholder={props.placeholder} disabled={props.disabled} maxlength={props.maxlength} allowClear={props.allowClear} onChange={handleChange}></Input> : <Textarea v-model:value={innerValue.value} autoSize={props.autosize}  placeholder={props.placeholder} disabled={props.disabled} maxlength={props.maxlength} allowClear={props.allowClear} onChange={handleChange}></Textarea>
+			props.type === 'input' ? <Input v-model:value={innerValue.value} placeholder={props.placeholder} disabled={props.disabled} maxlength={props.maxlength} type={ props.password ? 'password' : ''  } allowClear={props.allowClear} onChange={handleChange} onblur={ handleBlur } onPressEnter={ handlePressEnter }></Input> : <Textarea v-model:value={innerValue.value} autoSize={props.autosize}  placeholder={props.placeholder} disabled={props.disabled} maxlength={props.maxlength} allowClear={props.allowClear} onChange={handleChange} onPressEnter={ handlePressEnter } onBlur={ handleBlur }></Textarea>
 		)
 	}
 })

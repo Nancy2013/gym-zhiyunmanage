@@ -1,51 +1,54 @@
+
+
 export const tableColumns = [
 	{
 		dataIndex: "tableIndex",
 		key: "tableIndex",
-		align: "center",
 		title: "序号",
+		width: 80
 	},
 	{
 		dataIndex: "parentCategoryName",
 		key: "parentCategoryName",
-		align: "center",
 		title: "一级对象分类",
+		width: 180
 	},
 	{
 		dataIndex: "categoryName",
 		key: "categoryName",
-		align: "center",
 		title: "二级对象分类",
+		width: 180
 	},
 	{
 		dataIndex: "enterpriseName",
 		key: "enterpriseName",
-		align: "center",
 		title: "所属机构",
+		width: 120
 	},
 	{
 		key: "boCount",
 		title: "对象数",
-		align: "center",
+		align: "right",
 		dataIndex: "boCount",
+		width: 100
 	},
 	{
 		key: "creator",
 		title: "创建人",
-		align: "center",
 		dataIndex: "creator",
+		width: 120
 	},
 	{
 		key: "createdTime",
 		title: "创建时间",
-		align: "center",
 		dataIndex: "createdTime",
+		width: 140
 	},
 	{
 		key: "action",
 		title: "操作",
-		align: "center",
 		dataIndex: "action",
+		width: 140
 	}
 ]
 

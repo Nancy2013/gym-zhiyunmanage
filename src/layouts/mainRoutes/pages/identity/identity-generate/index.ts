@@ -1,4 +1,4 @@
-import { Moment } from "moment";
+import dayjs from "dayjs";
 import request from "@/utils/axios";
 import { message } from "ant-design-vue";
 import {
@@ -11,67 +11,96 @@ import {
   computed,
 } from "vue";
 import service from "@/service/mainRoutes";
-import {getPopupContainer} from '@/hooks'
+import { getPopupContainer } from '@/hooks'
+import { RenderFormItem } from '@/components/form/form'
+import { identityCodeStatusOptions } from '@/utils/config'
+
+
+export const batchSearchRenderList: RenderFormItem[] = [
+  {
+    label: '产品名称',
+    key: 'condition',
+    type: 'input',
+    placeholder: '产品名称'
+  },
+  {
+    label: '状态',
+    key: 'status',
+    type: 'select',
+    placeholder: '请选择状态',
+    options: identityCodeStatusOptions
+  },
+]
+
+export const sectionSearchRenderList: RenderFormItem[] = [
+  {
+    label: '时间区间',
+    key: 'rangeTime',
+    type: 'datePicker',
+    datePickerType: 'rangePicker'
+  }
+]
+
 const codeColumns = [
   {
     key: "index",
     dataIndex: "index",
-    align: "center",
     title: "流水号",
+    width: 180
   },
   {
     key: "status",
     dataIndex: "status",
-    align: "center",
     title: "状态",
+    width: 100
   },
   {
     key: "count",
     dataIndex: "count",
-    align: "center",
+    align: "right",
     title: "生码数量",
+    width: 100
   },
   {
     key: "successCount",
     dataIndex: "successCount",
-    align: "center",
+    align: "right",
     title: "已同步数量",
+    width: 100
   },
   {
     key: "hasCheckCode",
     dataIndex: "hasCheckCode",
-    align: "center",
     title: "查验码",
+    width: 100
   },
   {
     key: "boName",
     dataIndex: "boName",
-    align: "center",
     title: "产品名称",
+    width: 180
   },
   {
     key: "remark",
     dataIndex: "remark",
-    align: "center",
     title: "备注",
+    width: 120
   },
   {
     key: "createdTime",
     dataIndex: "createdTime",
-    align: "center",
     title: "创建时间",
-    width: 200,
+    width: 140,
   },
   {
     key: "creator",
     dataIndex: "creator",
-    align: "center",
     title: "创建人",
+    width: 100
   },
   {
     key: "action",
     dataIndex: "action",
-    align: "center",
     title: "操作",
     fixed: "right",
     width: 300,
@@ -82,53 +111,52 @@ const segColumns = [
   {
     key: "index",
     dataIndex: "index",
-    align: "center",
     title: "流水号",
     width: 200,
   },
   {
     key: "count",
     dataIndex: "count",
-    align: "center",
+    align: "right",
     title: "生码数量",
+    width: 100
   },
   {
     key: "surplusCount",
     dataIndex: "surplusCount",
-    align: "center",
+    align: "right",
     title: "未激活量",
+    width: 100
   },
   {
     key: "hasCheckCode",
     dataIndex: "hasCheckCode",
-    align: "center",
     title: "查验码",
+    width: 100
   },
   {
     key: "remark",
     dataIndex: "remark",
-    align: "center",
     title: "备注",
+    width: 140
   },
   {
     key: "createdTime",
     dataIndex: "createdTime",
-    align: "center",
     title: "创建时间",
-    width: 200,
+    width: 140,
   },
   {
     key: "creator",
     dataIndex: "creator",
-    align: "center",
     title: "创建人",
+    width: 120
   },
   {
     key: "action",
     dataIndex: "action",
     align: "center",
     title: "操作",
-    fixed: "right",
     width: 300,
   },
 ]; // 表格列 (分段赋值)
@@ -178,33 +206,6 @@ const segModalColumns = [
   },
 ]; // 表格列 (弹框表单)
 
-const statusOptions = [
-  {
-    value: 1,
-    label: "生码中",
-  },
-  {
-    value: 2,
-    label: "已生码",
-  },
-  {
-    value: 3,
-    label: "同步中",
-  },
-  {
-    value: 4,
-    label: "已同步",
-  },
-  {
-    value: 5,
-    label: "同步失败",
-  },
-  {
-    value: 6,
-    label: "生码失败",
-  },
-]; // 状态码数据
-
 export default defineComponent({
   setup() {
     const formRef = ref();
@@ -228,20 +229,19 @@ export default defineComponent({
         current: 1,
         pageSize: 10,
       },
+      batchSearchRenderList,
+      sectionSearchRenderList,
       query: {
         condition: "",
         status: undefined,
-        startTime: ref<Moment>(),
-        endTime: ref<Moment>(),
-        rangeTime: ref<Moment[]>([]),
+        rangeTime: ref<any[]>([]),
       },
       visible: false,
-      statusOptions,
       addFormState: {
         otherCount: 1099880,
         count: "",
         ruleId: undefined,
-        hasCheckCode: "",
+        hasCheckCode: 0,
         remark: "",
       },
       bindFormState: {
@@ -416,8 +416,6 @@ export default defineComponent({
         state.query = {
           condition: "",
           status: undefined,
-          startTime: undefined,
-          endTime: undefined,
           rangeTime: [],
         };
         state.convertInterface = Object.is(next, 0) ? "code" : "code/seg";
@@ -453,8 +451,8 @@ export default defineComponent({
      * @return
      */
     const queryProduct = async () => {
-      const {queryProduct}=service.identity
-      const params={
+      const { queryProduct } = service.identity
+      const params = {
         pageNum: 1,
         pageSize: 99999,
       }
@@ -535,20 +533,24 @@ export default defineComponent({
         state.loading = true;
         let {
           pagination: { current, pageSize },
-          query: { condition, status, startTime, endTime },
+          query: { condition, status, rangeTime },
         } = state;
+        const params: any = {
+          pageNum: current,
+          pageSize,
+          condition,
+          status,
+        }
+        if (Array.isArray(rangeTime) && rangeTime.length) {
+          params.startTime = dayjs(rangeTime[0]).format('YYYY-MM-DD')
+          params.endTime = dayjs(rangeTime[1]).format('YYYY-MM-DD')
+        }
+
         let res: any = await request({
           url: import.meta.env.VITE_NODE_URL + `/${type}/record`,
           type: "json",
           method: "post",
-          data: {
-            pageNum: current,
-            pageSize,
-            condition,
-            status,
-            startTime,
-            endTime,
-          },
+          data: params
         });
         if (res.code == 200) {
           state.loading = false;
@@ -716,7 +718,7 @@ export default defineComponent({
           break;
         case "bind":
           state.title = "模板绑定";
-          const {id,boId,templateId,}=record
+          const { id, boId, templateId, } = record
           state.bindFormState.recordId = id;
           state.bindFormState.boId = boId;
           state.bindFormState.templateId = templateId;
@@ -741,8 +743,7 @@ export default defineComponent({
      */
     const getStatus = computed(() => {
       return function (value: number) {
-        const { statusOptions } = state;
-        const status = statusOptions.filter((item:any) => item.value === value)[0];
+        const status = identityCodeStatusOptions.filter((item: any) => item.value === value)[0];
         if (status) {
           return status.label;
         }
@@ -763,7 +764,7 @@ export default defineComponent({
         ...record,
         index: `${indexStart}~${indexEnd}`,
       };
-      if(state.type){
+      if (state.type) {
         // 分段赋值
         codeRecord("code", record.id);
       }
@@ -777,22 +778,6 @@ export default defineComponent({
       let arr = state.assignFormState.index.split("-");
       state.assignFormState.indexStart = arr[0].trim();
       state.assignFormState.indexEnd = arr[1].trim();
-      console.log(
-        "arr",
-        Number(state.assignFormState.indexStart) -
-          Number(state.assignFormState.indexEnd)
-      );
-    };
-
-    /**
-     * 选择日期区间
-     * @param { Moment } value
-     * @param { Array } dateString
-     */
-    const rangeDateChange = (value: any, dateString: any) => {
-      state.query.startTime = dateString[0];
-      state.query.endTime = dateString[1];
-      state.query.rangeTime = value;
     };
 
     /**
@@ -822,7 +807,6 @@ export default defineComponent({
             label = item.label;
           }
         });
-        console.log("获取label字段值", label);
         return label;
       };
 
@@ -862,8 +846,8 @@ export default defineComponent({
      * 清空数据
      * @return
      */
-    const destroyInfo = () => {      
-      formRef.value&&formRef.value.resetFields();
+    const destroyInfo = () => {
+      formRef.value && formRef.value.resetFields();
       state.objects = [];
       state.templates = [];
       state.batchs = [];
@@ -897,8 +881,6 @@ export default defineComponent({
       state.query = {
         condition: "",
         status: undefined,
-        startTime: undefined,
-        endTime: undefined,
         rangeTime: [],
       };
       queryList();
@@ -940,39 +922,39 @@ export default defineComponent({
           case "assign":
             state.type
               ? (() => {
-                  if (Number(indexStart) - Number(indexEnd) > 0) {
-                    message.error("结束号段应该不小于开始号段!");
-                  } else {
-                    codeRelease(
-                      {
-                        segmentRecordId: recordId,
-                        indexStart,
-                        indexEnd,
-                        boId,
-                        boName,
-                        templateId,
-                        templateName,
-                        batchId,
-                        batchNo,
-                        remark: state.assignFormState.remark,
-                      },
-                      convertInterface
-                    );
-                  }
-                })()
+                if (Number(indexStart) - Number(indexEnd) > 0) {
+                  message.error("结束号段应该不小于开始号段!");
+                } else {
+                  codeRelease(
+                    {
+                      segmentRecordId: recordId,
+                      indexStart,
+                      indexEnd,
+                      boId,
+                      boName,
+                      templateId,
+                      templateName,
+                      batchId,
+                      batchNo,
+                      remark: state.assignFormState.remark,
+                    },
+                    convertInterface
+                  );
+                }
+              })()
               : codeRelease(
-                  {
-                    recordId,
-                    boId,
-                    boName,
-                    templateId,
-                    templateName,
-                    batchId,
-                    batchNo,
-                    remark: state.assignFormState.remark,
-                  },
-                  convertInterface
-                );
+                {
+                  recordId,
+                  boId,
+                  boName,
+                  templateId,
+                  templateName,
+                  batchId,
+                  batchNo,
+                  remark: state.assignFormState.remark,
+                },
+                convertInterface
+              );
             break;
           case "bind":
             changeTemplate(
@@ -1008,11 +990,11 @@ export default defineComponent({
      * 查询剩余码量 TODO
      * @returns 返回结果
      */
-    const queryRemainCode=()=>{
-      const params={
-        id:''
+    const queryRemainCode = () => {
+      const params = {
+        id: ''
       };
-      const {queryRemainCode}=service.identity;
+      const { queryRemainCode } = service.identity;
       return queryRemainCode(params);
     }
 
@@ -1022,7 +1004,6 @@ export default defineComponent({
       showModal,
       selectAllCode,
       submit,
-      rangeDateChange,
       paginationChange,
       destroyInfo,
       selectChange,

@@ -1,10 +1,10 @@
 <template>
     <a-layout class="manage">
-        <Header />
+        <Header :routes="routes" v-model:activeKey="activeKey" @change="handleTabChange" />
         <a-layout>
-            <Sider :routes="routes" />
+            <Sider ref="sliderRef" :routeList="routeList"  :activeKey="activeKey" />
             <a-layout>
-                <Breaumb :routes="routes" />
+                <Breaumb :routeList="routeList" :activeKey="activeKey" />
                 <Content />
             </a-layout>
         </a-layout>
@@ -20,8 +20,8 @@ import {
     Content,
 } from "@/layouts/mainRoutes/conatiner";
 import { Store } from "ant-design-vue/lib/form/interface";
-import { defineComponent, reactive, ref, toRefs } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent, reactive, ref, toRefs, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import request from "@/utils/axios";
 import { message } from "ant-design-vue";
@@ -36,14 +36,36 @@ export default defineComponent({
     setup() {
         let state = reactive({
             store: ref<Store>(useStore()),
-            routes: [],
+            routes: [] as any,
+            activeKey: -1,
+            routeList: [] as any
         });
 
         const router = useRouter();
+        const route = useRoute();
+        const sliderRef = ref()
         if (isEmpty(localStorage.getItem("token"))) {
             message.error("请先登录");
             router.push({ path: "/login" });
         }
+
+        /**
+         * 获取选中的一层菜单
+         * @param { Array } routes 路由列表
+         * @param { String } firstKey 一级路由
+         * @return
+         */
+        const getActiveKey = (routes: any[], firstKey?: number) => {
+            for (let i = 0; i < routes.length; i++) {
+                const routeItem = routes[i];
+                if (routeItem.path === route.path) {
+                    state.activeKey = firstKey ? firstKey : routeItem.id;
+                }
+                if (Array.isArray(routeItem.children) && routeItem.children.length) {
+                    getActiveKey(routeItem.children, firstKey ? firstKey : routeItem.id);
+                }
+            }
+        };
 
         const getRoutes = async () => {
             let res = await request({
@@ -53,29 +75,68 @@ export default defineComponent({
             });
             if (res.code == 200) {
                 const menus = res.data as any;
-                if (menus.length) {
-                    state.routes = convertTree(
-                        menus
+                if (Array.isArray(menus) && menus.length) {
+                    const routes = convertTree(menus
                             .sort((a: any, b: any) => a.num - b.num)
-                            .map((item: any) =>
-                                Object.assign({}, item, {
+                            .map((item: any) => {
+                                return Object.assign({}, item, {
                                     path: item.url,
                                     title: item.name,
-                                })
-                            ),
-                        { id: "id", pid: "parentId" }
+                                });
+                            }),{ id: "id", pid: "parentId" }
                     );
-                    //redirectRouter(state.routes);
+                    getActiveKey(routes);
+                    state.routes = routes
                 } else {
                     router.push("/error");
                 }
             }
         };
 
-        getRoutes()
+
+        /**
+         * 处理tab改变时触发
+         * @param
+         * @return
+         */
+        const handleTabChange = (activeKey: number) => {
+            const { routes } = state
+            for (let i = 0; i < routes.length; i++) {
+                if (routes[i].id === activeKey) {
+                    const routeList = routes[i].children
+                    for (let i = 0; i < routeList.length; i++) {
+                        const routes = routeList[i]
+                        if ( Array.isArray(routes.children) && routes.children.length ) {
+                            for (let j = 0; j < routes.children.length; j++) {
+                                const routeItem = routes.children[j];
+                                if (routeItem.ismenu === "Y" && routeItem.path) {
+                                    sliderRef.value.setOpenKeys([routes.path])
+                                    router.push(routeItem.path)
+                                    return
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        getRoutes();
+
+        watch([() => state.routes, () => state.activeKey], (newValue) => {
+            const [routes, activeKey] = newValue
+            for (let i = 0; i < routes.length; i++) {
+                if (routes[i].id === activeKey) {
+                    state.routeList = routes[i].children
+                    console.log(state.routeList)
+                }
+            }
+        }, { immediate: true })
 
         return {
             ...toRefs(state),
+            sliderRef,
+            handleTabChange,
         };
     },
 });

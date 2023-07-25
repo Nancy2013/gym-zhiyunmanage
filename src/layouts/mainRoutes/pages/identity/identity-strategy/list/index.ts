@@ -2,70 +2,74 @@ import request from "@/utils/axios";
 import { useRouter } from "vue-router";
 import { Modal, message } from "ant-design-vue";
 import { defineComponent, toRefs, reactive, onMounted } from "vue";
-import {getPopupContainer} from '@/hooks'
+import { ruleTypeoptions } from '@/utils/config'
+import { getPopupContainer } from '@/hooks'
+import { RenderFormItem } from '@/components/form/form'
+
+const searchRenderList: RenderFormItem[] = [
+	{
+		label: '标识策略名称',
+		key: 'ruleName',
+		type: 'input',
+		placeholder: '标识策略名称'
+  },
+  {
+		label: '生码类型',
+		key: 'ruleType',
+		type: 'select',
+    placeholder: '生码类型',
+    options: ruleTypeoptions
+  }
+]
 const columns = [
   {
     key: "ruleName",
     dataIndex: "ruleName",
-    align: "center",
     title: "标识策略名称",
+    width: 180
   },
   {
     key: "businessObjectCategoryName",
     dataIndex: "businessObjectCategoryName",
-    align: "center",
     title: "对象分类",
+    width: 140
   },
   {
     key: "ruleType",
     dataIndex: "ruleType",
-    align: "center",
-    title: "生码类型",
+    title: "生码类型"
   },
   {
     key: "ruleDetail",
     dataIndex: "ruleDetail",
-    align: "center",
-    title: "标识规则",
+    title: "标识规则"
   },
   {
     key: "codePreview",
     dataIndex: "codePreview",
-    align: "center",
     title: "编码预览",
   },
   {
     key: "creator",
     dataIndex: "creator",
-    align: "center",
     title: "创建人",
+    width: 120
   },
   {
     key: "createdTime",
     dataIndex: "createdTime",
-    align: "center",
     title: "创建时间",
+    width: 140
   },
   {
     key: "action",
     title: "操作",
-    align: "center",
     dataIndex: "action",
     fixed: "right",
-    width: 200,
+    width: 150,
   },
 ]; // 表格数据
 
-const ruleTypeoptions = [
-  {
-    value: 1,
-    label: "手动生码",
-  },
-  {
-    value: 2,
-    label: "自动生码",
-  },
-]; // 生码类型数据
 
 export default defineComponent({
   setup() {
@@ -79,12 +83,12 @@ export default defineComponent({
         current: 1,
         pageSize: 10,
       },
+      searchRenderList,
       query: {
         ruleName: "",
         ruleType: undefined,
       },
       visible: false,
-      ruleTypeoptions,
     });
 
     onMounted(() => pageQuery());
@@ -112,10 +116,7 @@ export default defineComponent({
      * @return
      */
     const showAction = (type: string, id?: number) => {
-      router.push({
-        path: "/identity/identityStrategyAction",
-        query: { type, id }
-      });
+      router.push({ name: 'identityStrategyAction', params: { type: type }, query: id ? { id: id }: {} });
     };
 
 

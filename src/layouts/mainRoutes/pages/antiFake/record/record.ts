@@ -1,7 +1,6 @@
 import { defineComponent, reactive, toRefs, ref } from "vue";
 import request from "@/utils/axios";
-import { Modal, message } from "ant-design-vue";
-import { tableColumns } from './config'
+import { tableColumns, searchRenderList } from './config'
 import { isEmpty } from '@/utils/common'
 import { createAMap, checkLat, checkLng } from '@/utils/map'
 import { antiFakeTemplateAuditStatusOptions, antiFakeTemplateTypeOptions } from '@/utils/config'
@@ -18,6 +17,7 @@ export default defineComponent({
 				dates: []
 			} as any,
 			visible: false,
+			searchRenderList,
 			dataSource: [],
 			loading: false,
 			pagination: {
@@ -25,11 +25,10 @@ export default defineComponent({
 				current: 1,
 				pageSize: 10,
 			},
-			tabIndex: 0,
-			mapObj: null as any
+			tabIndex: 0
 		})
 
-		let markerClusterer: any = null, markers: any[] = [], markercc: any[] = [], numflag = 0, refreshflag = false, buslicdatas_show: any = [], cachep = 0, infoWindow: any = null
+		let map: any = null, markerClusterer: any = null, markers: any[] = [], markercc: any[] = [], numflag = 0, refreshflag = false, buslicdatas_show: any = [], cachep = 0, infoWindow: any = null
 
 		/**
 		 * 获取表格数据
@@ -45,8 +44,8 @@ export default defineComponent({
 				idisCode
 			}
 			if (!isEmpty(dates)) {
-				params.beginTime = dayjs(dates[0]).format('YYYY-MM-DD')
-				params.endTime = dayjs(dates[1]).format('YYYY-MM-DD')
+				params.beginTime = `${dayjs(dates[0]).format('YYYY-MM-DD')} 00:00:00`
+				params.endTime = `${dayjs(dates[1]).format('YYYY-MM-DD')} 23:59:59`
 			}
 			let res: any = await request({
 				url: import.meta.env.VITE_NODE_URL + "/checkCode/record",
@@ -79,15 +78,15 @@ export default defineComponent({
 		const initMap = () => {
 			createAMap().then(() => {
 				const AMap = (window as any).AMap
-				state.mapObj = new AMap.Map('container', {
+				map = new AMap.Map('container', {
 					//center: [116.397428, 39.90923],//地图中心点
 					//mapStyle: 'amap://styles/blue', //设置地图的显示样式
 					viewMode: '3D',//使用3D视图
 					zoom: 4 //地图显示的缩放级别
 				})
-				let geolocation = null, geocoder = null
+				let geolocation = null
 				// 加载定位插件
-				state.mapObj.plugin('AMap.Geolocation', function () {
+				map.plugin('AMap.Geolocation', function () {
 					// 初始化定位插件
 					geolocation = new AMap.Geolocation({
 						enableHighAccuracy: true, // 是否使用高精度定位，默认:true
@@ -110,20 +109,8 @@ export default defineComponent({
 					// AMap.event.addListener(geolocation, 'complete',
 					//onComplete); // 返回定位信息
 					//AMap.event.addListener(geolocation, 'error', onError); // 返回定位出错信息
-					console.log(geolocation)
 					// 调用定位
 					geolocation.getCurrentPosition();
-				});
-				if (markerClusterer) {
-					markerClusterer.setMap(null);
-				}
-				state.mapObj.plugin(["AMap.MarkerClusterer"], function () {
-					markerClusterer = new AMap.MarkerClusterer(state.mapObj, markers, {
-						gridSize: 110,
-						maxZoom: 13,
-						minClusterSize: 10
-						//设置最小聚合
-					});
 				});
 			})
 		}
@@ -141,8 +128,8 @@ export default defineComponent({
 				idisCode
 			}
 			if (!isEmpty(dates)) {
-				params.beginTime = dayjs(dates[0]).format('YYYY-MM-DD')
-				params.endTime = dayjs(dates[1]).format('YYYY-MM-DD')
+				params.beginTime = `${dayjs(dates[0]).format('YYYY-MM-DD')} 00:00:00`
+				params.endTime = `${dayjs(dates[1]).format('YYYY-MM-DD')} 23:59:59`
 			}
 
 			let res: any = await request({
@@ -167,8 +154,8 @@ export default defineComponent({
 		const handleSearch = () => {
 			state.pagination.current = 1
 			getTableList()
-			state.mapObj.remove(markers)
-			if (infoWindow.close && typeof infoWindow.close === 'function') {
+			map.remove(markers)
+			if (infoWindow && infoWindow.close && typeof infoWindow.close === 'function') {
 				infoWindow.close()
 			}
 			markerClusterer.clearMarkers();
@@ -197,7 +184,6 @@ export default defineComponent({
 						continue;
 					}
 					if (checkLng(res[i].accessLongitude) || checkLat(res[i].accessLatitude)) {
-						//console.log("污点:" + nullpointer++);//无效的经纬度为污点
 						continue;
 					}
 					//将其他坐标转换成高德坐标
@@ -207,14 +193,11 @@ export default defineComponent({
 				}
 				//处理缓存点
 				cachep += buslicdatas_show.length;
-
 				if (pointstr != '') {
 					pointstr = pointstr.substring(0, pointstr.length - 1);
 					numflag++;
 					//changePosition(pointstr);
-					console.log(pointstr)
 					AMap.convertFrom(pointstr, 'gps', function (status: string, result: any) {
-						console.log(result)
 						if ("complete" == status) {
 							positionFormat(result);
 						}
@@ -235,7 +218,6 @@ export default defineComponent({
 		 * @return
 		 */
 		const positionFormat = (res: any) => {
-			console.log(res)
 			//用来获取id
 			var getDate = res.locations
 			for (var i = 0; i < getDate.length; i++) {
@@ -272,12 +254,19 @@ export default defineComponent({
 					pointMarker.lat = tem.lat
 					pointMarker.id = tem.id
 					pointMarker.setRotation(tem.direction)
-					markercc.push(pointMarker);
 					pointMarker.on('click', onMarkerClick);
+					markercc.push(pointMarker);
+					
 					// XXX 后续功能还要测试
 					//state.mapObj.add(markercc)
 				}
-				markerClusterer.addMarkers(markercc);
+				markerClusterer = new AMap.MarkerClusterer(map, markercc, {
+					gridSize: 110,
+                    maxZoom: 13,
+                    minClusterSize: 10
+				})
+				
+				
 			})
 		}
 
@@ -287,7 +276,6 @@ export default defineComponent({
 		 * @return
 		 */
 		const onMarkerClick = async (e: any) => {
-			console.log(e.target)
 			const { id, lng, lat } = e.target
 			let res: any = await request({
 				url: import.meta.env.VITE_NODE_URL + "/checkCode/getCheckCodeRecordInfo",
@@ -308,12 +296,10 @@ export default defineComponent({
 					notToken: true,
 					notCheck: true
 				}).then((result) => {
-					console.log(result)
 					address = result.regeocode.formattedAddress;
 					// $('#address').html("<font color='red' size='3'>&nbsp;&nbsp;&nbsp;当前位置：" + address + "</font>");
 					// 信息窗体的内容
 					var codeInfo = res.data;
-					console.log(codeInfo)
 					var content = ["<div style=\"width: 350px;height: 180px;background: white;"
 						+ "border: 1px solid #cdcdcd; font-size: 13px; box-shadow: 0 2px 2px rgba(0,0,0,.30); border-radius: 3px;\">"
 						+ "<div style=\"margin-left: 5px; margin-top:3px; color: #2c2c2c \">"
@@ -352,9 +338,8 @@ export default defineComponent({
 						content: createInfoWindow("gaga", content.join("<br>")), //传入 dom 对象，或者 html 字符串
 						offset: new AMap.Pixel(4, -15)
 					});
-					infoWindow.open(state.mapObj, position);
+					infoWindow.open(map, position);
 					setTimeout(() => {
-						console.log(document.getElementById('closeWwww'));
 						(document.getElementById('closeWwww') as any).onclick = () => {
 							infoWindow.close()
 						}

@@ -1,13 +1,29 @@
 <template>
-    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+    <div style="height: 100%;">
+        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
+
+            <template #headerBtnArea>
+                <a-button type="primary" @click="handleSearch">查询</a-button>
+            </template>
+
+            <template #categoryName="{ record }">
+                <div v-if="record.firstCategoryName">{{ record.firstCategoryName }} > </div>
+                <div>{{ record.categoryName }}</div>
+            </template>
+
+            <template #action="{ record }">
+                <a-space>
+                    <a-button type="link" size="small" @click="handleView(record)">查看</a-button>
+                </a-space>
+            </template>
+        </FcTable>
+    </div>
+    <!-- <div style="display: flex; flex-direction: row; justify-content: space-between;">
         <a-form layout="inline" :model="searchData">
             <a-form-item label="">
                 <a-input v-model:value="searchData.name" @pressEnter="handleSearch" placeholder="对象名称" />
             </a-form-item>
             <a-form-item label="">
-                <!-- <a-select style="width: 194px;" v-model:value="searchData.categoryId" placeholder="对象分类名称" allowClear>
-					<a-select-option v-for="(item, key) in objectClassOptions" :key="key" :value="item.value">{{ item.label }}</a-select-option>
-				</a-select> -->
                 <Cascader style="width: 194px;" :options="objectClassOptions" :load-data="loadData" v-model:value="searchData.categoryId" placeholder="对象分类名称" change-on-select allowClear></Cascader>
             </a-form-item>
             <a-form-item>
@@ -44,14 +60,13 @@
                 <div>{{ record.categoryName }}</div>
             </template>
         </template>
-    </config-table>
+    </config-table> -->
 
     <a-modal width="640px" v-model:visible="visible" :title="`${objectInfo.name}的对象详情`">
         <Descriptions :column="2">
             <a-descriptions-item :label="item.attrNameCn" v-for="(item, key) in objectInfo.businessObjectAttrBOList" :key="key">
                 {{ item.attrValue }}
             </a-descriptions-item>
-            <!-- <Descriptions-item ></Descriptions-item> -->
         </Descriptions>
         <template #footer>
             <a-button type="primary" @click="visible = false">确定</a-button>

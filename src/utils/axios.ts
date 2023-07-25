@@ -37,7 +37,7 @@ instance.interceptors.request.use(
         removePending(config);
         const notToken = (config as any).notToken
         const headers = config.headers as AxiosRequestHeaders;
-        headers.app_id = 1;
+        
         config.cancelToken = new CancelToken((c: Function) => {
             let { url, method, params, data } = config;
             pending.push({ url, method, params, data, cancel: c });
@@ -45,6 +45,9 @@ instance.interceptors.request.use(
         const token: string | null = localStorage.getItem('token');
         if(!notToken && token) {
             headers.Authorization = `${token}`;
+        }
+        if (!notToken) {
+            headers.app_id = `${import.meta.env.VITE_APP_ID}`
         }
         return config;
     },

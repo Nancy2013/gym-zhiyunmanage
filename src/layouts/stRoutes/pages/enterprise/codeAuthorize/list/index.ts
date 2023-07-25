@@ -127,7 +127,7 @@ export default defineComponent({
     const {
       loading,
       pagination,
-      status,
+      codeStatus,
       statusOptions,
       search,
       dataSource,
@@ -245,7 +245,7 @@ export default defineComponent({
       ...toRefs(state),
       formRef,
       rules,
-      status,
+      codeStatus,
       statusOptions,
       title,
       showModal,

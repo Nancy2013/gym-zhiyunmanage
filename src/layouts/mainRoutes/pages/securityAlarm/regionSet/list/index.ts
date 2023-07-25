@@ -2,18 +2,40 @@ import { defineComponent, reactive, toRef,toRefs,onMounted } from "vue";
 import { usePage } from './../../composables/usePage';
 import moment from 'moment';
 import service from '@/service/mainRoutes'
+import { RenderFormItem } from '@/components/form/form'
+
+export const searchRenderList: RenderFormItem[] = [
+	{
+		label: '区域名称',
+		key: 'name',
+		type: 'input',
+		placeholder: '区域名称'
+  },
+  {
+		label: '省份',
+		key: 'province',
+		type: 'select',
+    placeholder: '请选择省份',
+    options: []
+	},
+	{
+		label: '创建人',
+		key: 'creatorName',
+		type: 'input',
+		placeholder: '创建人'
+  },
+]
+
 const columns = [
   {
-    dataIndex: "index",
-    key: "index",
-    align: "center",
+    dataIndex: "tableIndex",
+    key: "tableIndex",
     title: "序号",
     width: 70,
   },
   {
     dataIndex: "name",
     key: "name",
-    align: "center",
     title: "区域名称",
   },
   {
@@ -37,18 +59,21 @@ const columns = [
     key: "tenantName",
     align: "center",
     title: "所属企业",
+    width: 140
   },
   {
     dataIndex: "createUserName",
     key: "createUserName",
     align: "center",
     title: "创建人",
+    width: 140
   },
   {
     dataIndex: "createdTime",
     key: "createdTime",
     align: "center",
     title: "创建时间",
+    width: 140
   },
   {
     dataIndex: "action",
@@ -75,6 +100,7 @@ export default defineComponent({
         province:null,
       },
       columns,
+      searchRenderList,
       moment,
       options:[]as any,
       fieldNames,
@@ -87,7 +113,7 @@ export default defineComponent({
       addPath:'/securityAlarm/regionSet/add',
       search,
     };
-    const {dataSource,loading,pagination, handleSearch,edit,add,handleDel,paginationChange,handleFresh,}=usePage(opts);
+    const {dataSource,loading,pagination, handleSearch,jump,handleDel,paginationChange,handleFresh,}=usePage(opts);
 
     onMounted(() => {
       getAddressTree();
@@ -102,7 +128,7 @@ export default defineComponent({
         .then((res: any) => {
           const { code, data } = res;
           if (code === 200) {
-            state.options = data.map((item: any) =>({id:item.id,name:item.name}));
+            state.searchRenderList[1].options = data.map((item: any) =>({value:item.name,label:item.name}));
           }
         })
         .catch((e: any) => {
@@ -126,8 +152,7 @@ export default defineComponent({
       dataSource,
       loading,
       handleSearch,
-      edit,
-      add,
+      jump,
       handleDel,
       pagination,
       paginationChange,

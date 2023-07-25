@@ -44,7 +44,7 @@
                     <template v-if="column.key == 'status'">
                         <div :class="`shzt shzt-${record.status}`">
                             <span></span>
-                            <span>{{ status[record.status] }}</span>
+                            <span>{{ codeStatus[record.status] }}</span>
                         </div>
                     </template>
                     <template v-if="column.key == 'grantTime'">
@@ -87,7 +87,7 @@
                         </a-form-item>
                         <template v-if="formData.status !== 0">
                             <a-form-item label="审核状态" name="status">
-                                {{ status[formData.status] }}
+                                {{ codeStatus[formData.status] }}
                             </a-form-item>
                         </template>
                         <a-form-item label="发放码量" name="grantCodeNum" v-if="formData.status === 0">

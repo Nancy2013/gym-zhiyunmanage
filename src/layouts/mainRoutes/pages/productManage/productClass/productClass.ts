@@ -1,6 +1,6 @@
 import { defineComponent, reactive, toRefs, ref, onMounted, nextTick } from "vue";
 import request from "@/utils/axios";
-import { tableColumns, formRules, renderFormList } from './config'
+import { tableColumns, formRules, renderFormList, searchRenderList } from './config'
 import { Modal, message } from "ant-design-vue";
 import { objectAndProductDataTypeDict } from '@/utils/dict'
 import filterInputHook from '@/hooks/useFilterInput'
@@ -20,11 +20,13 @@ export default function () {
 		rules: formRules,
 		ruleOptions: [] as any,
 		renderFormList: renderFormList,
-		pageSize: 10,
-		pageNum: 1,
-		total: 0,
-		labelCol: { span: 6 },
-		wrapperCol: { span: 14 },
+		searchRenderList,
+		pagination: {
+			pageSize: 10,
+			pageNum: 1,
+			total: 0,
+		},
+		loading: true,
 		dataSource: [],
 		tableKey: Math.random(),
 		expandedRowKeys: [] as any[],
@@ -64,18 +66,20 @@ export default function () {
 
 
 	/**
-	 * 获取对象分类列表
+	 * 获取产品分类列表
 	 * @param
 	 * @return
 	 */
 	const getTableList = () => {
-		const { searchData, pageNum, pageSize } = state
+		state.loading = true
+		const { searchData, pagination: { pageNum, pageSize } } = state
 		request({
 			url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/pageQueryProduct",
 			type: "json",
 			method: "post",
 			data: { ...searchData, pageNum, pageSize, dataType }
 		}).then(async (res) => {
+			state.loading = false
 			state.dataSource = res.rows.map((item: any, key: number) => {
 				item.tableIndex = (pageNum - 1) * pageSize + key + 1
 				item.pageIndex = key
@@ -83,8 +87,9 @@ export default function () {
 				return item
 			}) as any
 			state.expandedRowKeys = []
-			state.total = res.total
+			state.pagination.total = res.total
 		}).catch(() => {
+			state.loading = false
 			state.dataSource = []
 		})
 	}
@@ -95,7 +100,7 @@ export default function () {
 	 * @return
 	 */
 	const handleSearch = () => {
-		state.pageNum = 1
+		state.pagination.pageNum = 1
 		getTableList()
 	}
 
@@ -105,7 +110,6 @@ export default function () {
 	 * @return
 	 */
 	const handleAddFirst = () => {
-		//state.parentName = ""
 		state.renderFormList[0].isHide = true
 		state.formData = {
 			treeLevel: 1
@@ -225,7 +229,7 @@ export default function () {
 	 * @param
 	 * @return
 	 */
-	const handleDelete = (column: any) => { 
+	const handleDelete = (column: any) => {
 		Modal.confirm({
 			title: '提示',
 			content: '确认要删除该条数据',
@@ -268,9 +272,9 @@ export default function () {
 	 * @param
 	 * @return
 	 */
-	const handlePageChange = (pagination: any) => {
-		state.pageNum = pagination.current
-		state.pageSize = pagination.pageSize
+	const paginationChange = (pagination: any) => {
+		state.pagination.pageNum = pagination.current
+		state.pagination.pageSize = pagination.pageSize
 		getTableList()
 	}
 
@@ -295,10 +299,9 @@ export default function () {
 	 * @return
 	 */
 	const getChildList = (record: any) => {
-		console.log('record: ', record)
 		return new Promise((resolve, reject) => {
 			request({
-				url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/getByParentId",
+				url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/getProductCategoryByPid",
 				params: { parentId: record.id, dataType }
 			}).then((res) => {
 				if (Array.isArray(res.data) && res.data.length) {
@@ -336,7 +339,7 @@ export default function () {
 		handleEdit,
 		handleSearch,
 		handleDelete,
-		handlePageChange,
+		paginationChange,
 		handleExpand,
 		handleExpandedRowsChange,
 		filterInputCategoryName

@@ -1,12 +1,12 @@
 <template>
-    <a-layout-sider class="manage-silder" theme="light" v-model:collapsed="collapsed" :trigger="null" collapsible>
-        <a-menu mode="inline" v-model:openKeys="openKeys" v-model:selectedKeys="selectedKeys" @select="selectKeysHandle">
-            <template v-for="(item, index) in routes" :key="index">
+    <a-layout-sider class="manage-silder" theme="light" :trigger="null" collapsible>
+        <a-menu mode="inline" v-model:openKeys="openKeys" v-model:selectedKeys="selectedKeys">
+            <template v-for="(item, index) in routeList" :key="index">
                 <template v-if="item.children">
                     <a-sub-menu :index="item.path" :key="item.path">
                         <template #icon>
                             <div class="manage-silder-icon" :style="`background-color: ${colorList[index % 5]}`">
-                                <config-icon color="#fff" width="16px" height="16px" :name="item.icon" class="svgClass" />
+                                <config-icon v-if="item.icon" color="#fff" width="16px" height="16px" :name="item.icon" class="svgClass" />
                             </div>
                         </template>
                         <template #title>
@@ -25,7 +25,7 @@
                 <template v-else>
                     <a-menu-item :key="item.path">
                         <template #icon>
-                            <config-icon :name="item.icon" class="svgClass" />
+                            <config-icon v-if="item.icon" :name="item.icon" class="svgClass" />
                         </template>
                         <span>{{ item.title }}</span>
                         <router-link :to="item.path" />
@@ -41,81 +41,70 @@ import { useAction, useState } from "@/hooks";
 import { RouteRecordRaw, useRoute, useRouter } from "vue-router";
 import request from "@/utils/axios";
 
-import { defineComponent, toRefs, reactive, onMounted, watch, PropType } from "vue";
+import { defineComponent, toRefs, reactive, ref, watch, PropType } from "vue";
+import { isEmpty } from "@/utils/common";
 
 export default defineComponent({
     props: {
-        routes: {
+        routeList: {
             type: Array as PropType<any[]>,
-            require: true
-        }
+            require: true,
+        },
     },
 
     setup(props) {
-        let state = reactive({});
-        const colorList = ["#368EC4", "#2BA471", "#E37318", "#D54941", "#50AFA9"];
-        const route = useRoute(); 
-        const router = useRouter();
-        const storeState = useState("mainModule", [
-            "collapsed",
-            "isLogo",
-            "openKeys",
-            "selectedKeys",
-        ]);
-        const storeAction = useAction("mainModule", [
-            "asyncUpdateSelectedKeys",
-            "asyncUpdateOpenKeys",
-        ]);
-        const { asyncUpdateSelectedKeys, asyncUpdateOpenKeys } = storeAction;   
+        let state = reactive({
+            openKeys: [] as any[],
+            selectedKeys: [] as any[],
+        });
+        const colorList = [
+            "#368EC4",
+            "#2BA471",
+            "#E37318",
+            "#D54941",
+            "#50AFA9",
+        ];
+        const route = useRoute();
+
+        const setOpenKeys = (openKeys: any) => {
+            state.openKeys = openKeys;
+        };
 
         /**
          * 路由跳转
          * @param
          * @return
          */
-        const redirectRouter = (routes: any) => {
-            if (route.path == "/") {
-                let url: string = routes[0].children
-                    ? routes[0].children[0].url
-                    : routes[0].url;
-                router.push(url);
-                selectKeysClick([url]);
-                openKeysClick([routes[0].url]);
-            } else {
-                route.matched.forEach((item, index) => {
-                    let getOpenkeys: string =
-                        item.path && index != 0
-                            ? route.matched[index - 1].path
-                            : "";
-                    openKeysClick([getOpenkeys]);
-                });
-                selectKeysClick([route.path]);
+        const redirectRouter = (routeList: any, openKeys = []) => {
+            for (let i = 0; i < routeList.length; i++) {
+                const routeItem: any = routeList[i];
+                if (routeItem.path === route.path) {
+                    state.selectedKeys = [routeItem.path];
+                    state.openKeys = openKeys
+                }
+                if (Array.isArray(routeItem.children) && routeItem.children.length) {
+                    redirectRouter(routeItem.children, [...openKeys, routeItem.path] as any);
+                }
             }
         };
 
-        const selectKeysClick = (keys: string[]) => {
-            asyncUpdateSelectedKeys({ selectedKeys: keys });
-        };
+        watch(() => props.routeList, (newValue, oldValue) => {
+                if (isEmpty(oldValue)) {
+                    redirectRouter(newValue);
+                } 
+            }
+        );
 
-        const openKeysClick = (keys: string[]) => {
-            asyncUpdateOpenKeys({ openKeys: keys });
-        };
-
-        const selectKeysHandle = (e: any) => {
-            selectKeysClick(e.selectedKeys);
-        }
-
-        watch(() => props.routes as any, (newValue) => {
-            redirectRouter(newValue)
-        })
+        watch(route, (route) => {
+            state.selectedKeys = [route.path];
+        });
 
         return {
             ...toRefs(state),
-            ...storeState,
+            redirectRouter,
+            setOpenKeys,
             colorList,
-            selectKeysHandle,
         };
-
     },
 });
 </script>
@@ -130,7 +119,7 @@ export default defineComponent({
         .ant-menu-submenu {
             color: @text-color-secondary;
             .ant-menu-submenu-arrow {
-                color: @text-color-secondary;
+                color: @text-color-tertiary;
             }
         }
         .ant-menu-submenu-selected {
@@ -182,6 +171,7 @@ export default defineComponent({
 }
 
 .manage-silder::-webkit-scrollbar {
+    display: none;
     width: 5px;
     height: 5px;
 }

@@ -10,8 +10,9 @@ import { setBreamubTitle } from '@/utils/setBreamubTitle'
 export default defineComponent({
     setup() {
         const route = useRoute()
-        const id = route.query.id || ""
-        const copy = route.query.copy || ""
+        const { type } = route.params || ""
+        const { id = "" } = route.query
+        const copy = type === 'copy' ? "1" : ""
         if (id) {
             if (copy) {
                 setBreamubTitle("复制对象模板") 

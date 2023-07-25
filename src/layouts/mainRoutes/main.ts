@@ -10,7 +10,9 @@ import configIcon from '@/components/configIcon';
 import configTable from '@/components/configTable';
 import configUpload from '@/components/configUpload';
 import configPage from '@/components/configPage';
+import configForm from '@/components/configForm';
 import FcForm from '@/components/form/form'
+import FcTable from "@/components/table/table.vue";
 
 const app: App<Element> = createApp(Main);
 
@@ -54,8 +56,14 @@ app.component("config-upload", configUpload);
 // 注入config-page组件
 app.component("config-page", configPage);
 
+// 注入config-form组件
+app.component("config-form", configForm);
+
 //注入表单组件
 app.component("FcForm", FcForm);
+
+// 注入table组件
+app.component("FcTable", FcTable);
 
 app.use(VideoPlayer)
 

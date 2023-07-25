@@ -1,68 +1,67 @@
+
 export const tableColumns = [
 	{
 		dataIndex: "tableIndex",
 		key: "tableIndex",
-		align: "left",
 		title: "序号",
+		width: 80
 	},
 	{
 		dataIndex: "name",
 		key: "name",
-		align: "left",
 		title: "产品名称",
 	},
 	{
 		dataIndex: "categoryName",
 		key: "categoryName",
-		align: "left",
 		title: "产品分类",
+		width: 180
 	},
 	{
 		dataIndex: "productNo",
 		key: "productNo",
-		align: "left",
 		title: "产品编号",
 	},
 	{
 		dataIndex: "barCode",
 		key: "barCode",
-		align: "left",
 		title: "产品条码",
 	},
 	{
 		dataIndex: "unit",
 		key: "unit",
-		align: "left",
 		title: "产品单位",
+		width: 90
 	},
 	{
 		dataIndex: "price",
 		key: "price",
-		align: "left",
 		title: "产品单价(元)",
+		width: 100,
+		align: 'right'
 	},
 	{
 		key: "syncStatus",
 		title: "同步状态",
-		align: "left",
 		dataIndex: "syncStatus",
 	},
 	{
 		key: "creator",
 		title: "创建人",
-		align: "left",
 		dataIndex: "creator",
+		width: 90
 	},
 	{
 		key: "createdTime",
 		title: "创建时间",
-		align: "left",
 		dataIndex: "createdTime",
+		width: 140
 	},
 	{
 		key: "action",
 		title: "操作",
 		align: "left",
 		dataIndex: "action",
+		width: 120
 	},
 ]

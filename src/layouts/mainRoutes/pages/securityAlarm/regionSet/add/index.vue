@@ -1,9 +1,9 @@
 <template>
   <a-spin :spinning="loading">
     <div class="add">
-      <div class="header">
+      <!-- <div class="header">
         <a-page-header title="返回" sub-title="" @back="back" />
-      </div>
+      </div> -->
       <div class="content">
         <div class="sider">
           <div class="sider-title">区域分配</div>

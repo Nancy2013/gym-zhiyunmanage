@@ -96,11 +96,11 @@ export const antiFakeTemplateAuditStatusOptions: Option[] = [
 export const antiFakeTemplateTypeOptions: Option[] = [
 	{
 		label: '系统',
-		value: 'submitted'
+		value: 'system'
 	},
 	{
 		label: '自定义',
-		value: 'pass'
+		value: 'custom'
 	},
 ]
 
@@ -114,3 +114,47 @@ export const antiFakeTemplateScenarioOptions: Option[] = [
 		value: '2'
 	}
 ]
+
+/**
+ * 标识码状态
+ */
+export const identityCodeStatusOptions: Option[] = [
+	{
+	  value: 1,
+	  label: "生码中",
+	},
+	{
+	  value: 2,
+	  label: "已生码",
+	},
+	{
+	  value: 3,
+	  label: "同步中",
+	},
+	{
+	  value: 4,
+	  label: "已同步",
+	},
+	{
+	  value: 5,
+	  label: "同步失败",
+	},
+	{
+	  value: 6,
+	  label: "生码失败",
+	},
+]
+  
+/**
+ * 升码类型选项
+ */
+export const ruleTypeoptions = [
+	{
+	  value: 1,
+	  label: "手动生码",
+	},
+	{
+	  value: 2,
+	  label: "自动生码",
+	},
+  ];

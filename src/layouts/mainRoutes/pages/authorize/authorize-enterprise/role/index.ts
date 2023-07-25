@@ -8,29 +8,63 @@ import {
   sassTerminalTypeOptions,
   xcTerminalTypeOptions,
 } from "@/utils/config";
+import { RenderFormItem } from '@/components/form/form'
+
+
+const searchRenderList: RenderFormItem[] = [
+  {
+    label: '角色名称',
+    key: 'name',
+    type: 'input',
+    placeholder: '角色名称'
+  }
+]
+
+const renderFormList: RenderFormItem[] = [
+  {
+    label: '上级名称',
+    type: 'treeSelect',
+    key: 'pid',
+    width: '100%',
+    fieldNames: { label: 'name', value: 'id' },
+    placeholder: '请选择上级名称'
+  },
+  {
+    label: '角色名称',
+    type: 'input',
+    key: 'name',
+    width: '100%',
+    placeholder: '请输入角色名称'
+  },
+  {
+    label: '别名',
+    type: 'input',
+    width: '100%',
+    key: 'anotherName',
+    placeholder: '请输入别名'
+  }
+]
+
 const columns = [
   {
     dataIndex: "name",
     key: "name",
-    align: "center",
     title: "角色名称",
   },
   {
     key: "pname",
     title: "上级角色",
-    align: "center",
     dataIndex: "pname",
   },
   {
     key: "anotherName",
     title: "别名",
-    align: "center",
     dataIndex: "anotherName",
   },
   {
     key: "action",
     title: "操作",
-    align: "center",
+    width: 200,
     dataIndex: "action",
   },
 ];
@@ -72,13 +106,19 @@ export default defineComponent({
       ruleOptions: [] as any,
       platformOptions: platforms,
       terminalOptions: [] as any,
-      pageSize: 20,
-      pageNum: 1,
+      searchRenderList,
+      pagination: {
+        total: 0,
+        current: 1,
+        pageSize: 10,
+      },
+      loading: true,
+      renderFormList,
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
-      roleTreeList: [] as any[],
       terminalTypeOptions: [] as Option[],
       allAuthorityList: [] as any[],
+      authorityMenus: [] as any[],
       authTreeData: [] as any[],
       dataSource: [],
       roleId: "",
@@ -102,7 +142,7 @@ export default defineComponent({
         method: "get",
         data: {},
       }).then((res) => {
-        state.roleTreeList = res.data as any;
+        state.renderFormList[0].treeData =  res.data as any;
       });
     };
 
@@ -112,14 +152,23 @@ export default defineComponent({
      * @return
      */
     const getTableList = () => {
+      state.loading = true
+      const {
+        pagination: { current, pageSize },
+        searchData,
+      } = state;
       request({
         url: import.meta.env.VITE_BASE_URL + "/enterprise/role/list",
         type: "json",
         method: "post",
-        data: { ...state.searchData },
+        data: { current, pageSize, ...searchData },
       }).then((res) => {
+        state.loading = false
         state.dataSource = res.rows as any;
-      });
+        state.pagination.total = res.total
+      }).catch(() => {
+        state.loading = false
+      })
     };
 
     /**
@@ -128,7 +177,7 @@ export default defineComponent({
      * @return
      */
     const handleSearch = () => {
-      state.pageNum = 1;
+      state.pagination.current = 1;
       getTableList();
     };
 
@@ -266,7 +315,8 @@ export default defineComponent({
           params: { roleId: roleId },
         }).then((res) => {
           if (Array.isArray(res.data) && res.data.length) {
-            state.authTreeData = convertTree(res.data[0].treeNodes, {
+            // state.authorityMenus = res.data[0].treeNodes;
+            state.authorityMenus = convertTree(res.data[0].treeNodes, {
               id: "id",
               pid: "pid",
             });
@@ -281,9 +331,11 @@ export default defineComponent({
             });
             state.terminalOptions =
               terminals[state.allAuthorityList[0].platformType];
+              terminalSelect(state.allAuthorityList[0].terminalType);
             resolve(true);
           } else {
-            state.authTreeData = [];
+            // state.authTreeData = [];
+            state.authorityMenus = [];
             message.error("菜单数据为空");
             reject();
           }
@@ -356,6 +408,7 @@ export default defineComponent({
             state.allAuthorityList.map((item: any, index: number) => {
               if (index == state.selectedMenuKeys[0] && item.platformType)
                 reactSelect(item.platformType);
+                terminalSelect(item.terminalType);
             });
           }
         },
@@ -366,6 +419,7 @@ export default defineComponent({
      * 多级联动数据
      */
     const reactSelect = (key: number, option?: any) => {
+      state.authTreeData = [];
       state.terminalOptions = [];
       let obj = { [key]: terminals[key] },
         getTargetIndexArr: any = [];
@@ -405,10 +459,32 @@ export default defineComponent({
             item.platformType
               ? reactSelect(item.platformType)
               : (state.terminalOptions = []);
+              terminalSelect(item.terminalType);
           }
         });
       }
     );
+
+    /**
+     * 选择终端类型
+     * @param
+     * @return
+     */
+    const terminalSelect = (value: any) => {
+      let getIdAuthorityMenu = state.authorityMenus.filter((item: any) => item.terminalType == value);
+      state.authTreeData = getIdAuthorityMenu;
+    }
+
+    /**
+     *分页
+     *
+     * @param {*} pagination
+     */
+     const paginationChange = (pagination: any) => {
+      let { current, pageSize, total } = pagination;
+      state.pagination = { current, pageSize, total };
+      getTableList();
+    };
 
     /**
      *表格刷新
@@ -416,7 +492,7 @@ export default defineComponent({
      */
     const handleFresh = () => {
       state.searchData = {} as any;
-      state.pageNum = 1;
+      state.pagination.current = 1;
       getTableList();
     };
 
@@ -429,6 +505,7 @@ export default defineComponent({
       platformTypeOptions,
       sassTerminalTypeOptions,
       xcTerminalTypeOptions,
+      paginationChange,
       handleSetAuthority,
       handleAuthSubmit,
       handleAuthCancel,
@@ -442,6 +519,7 @@ export default defineComponent({
       addAuthorityList,
       deleteAuthorityList,
       reactSelect,
+      terminalSelect
     };
   },
 });

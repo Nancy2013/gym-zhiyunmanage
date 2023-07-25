@@ -1,6 +1,22 @@
 import { defineComponent, reactive, toRef, toRefs } from "vue";
 import { usePage } from "./../../composables/usePage";
 import moment from "moment";
+import { RenderFormItem } from '@/components/form/form'
+
+export const searchRenderList: RenderFormItem[] = [
+	{
+		label: '区域名称',
+		key: 'regionName',
+		type: 'input',
+		placeholder: '区域名称'
+  },
+	{
+		label: '调配单号',
+		key: 'deployNo',
+		type: 'input',
+		placeholder: '调配单号'
+  },
+]
 
 const columns = [
   {
@@ -15,30 +31,35 @@ const columns = [
     key: "regionName",
     align: "center",
     title: "区域名称",
+    width:200,
   },
   {
     dataIndex: "deployNo",
     key: "deployNo",
     align: "center",
     title: "调配单号",
+    width:200,
   },
   {
     dataIndex: "deployTime",
     key: "deployTime",
     align: "center",
     title: "调配时间",
+    width:200,
   },
   {
     dataIndex: "createUserName",
     key: "createUserName",
     align: "center",
     title: "创建人",
+    width:200,
   },
   {
     dataIndex: "createdTime",
     key: "createdTime",
     align: "center",
     title: "创建时间",
+    width:200,
   },
   {
     dataIndex: "action",
@@ -53,6 +74,7 @@ export default defineComponent({
   setup() {
     const state = reactive({
       data: [] as any,
+      searchRenderList,
       search: {
         regionName: "",
         deployNo: "",
@@ -76,6 +98,7 @@ export default defineComponent({
       handleSearch,
       edit,
       add,
+      jump,
       handleDel,
       paginationChange,
       handleFresh,
@@ -98,6 +121,7 @@ export default defineComponent({
       handleSearch,
       edit,
       add,
+      jump,
       handleDel,
       pagination,
       paginationChange,

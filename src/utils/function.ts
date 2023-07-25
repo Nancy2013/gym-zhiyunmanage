@@ -37,6 +37,29 @@ export const convertTree = (arr: any, { id , pid }: any) => {
     return newArr;
 }
 
+// 平级结构
+export const convertLevel = (arr: any) => {
+    let newArr: any = [], copyArr = JSON.parse(JSON.stringify(arr)); // 数组深拷贝
+    copyArr.forEach((item: any, index: number) => {
+        if(item.children) {
+            newArr.push(...convertLevel(item.children));
+            delete item.children
+        } 
+        newArr.push({ ...item })
+    })
+    return newArr;
+}
+
+// 判定是否有重复值
+export const isRepeat = (arr: any) => {
+    let hash = {};
+    for (let i in arr) {
+      if (hash[arr[i]]) return true;
+      hash[arr[i]] = true;
+    }
+    return false;
+  };
+
 /**
  *格式化时间显示
  *
@@ -65,3 +88,43 @@ export const sendTime=(time:any,flag:string,format:string="YYYY-MM-DD HH:mm:ss")
     }
     return '';
 };
+
+/**
+ * 获得日期
+ * @param unit 颗粒度单位 'month' | 'year'
+ * @param scope 范围 默认最近6个时间单位
+ * @param format 日期格式
+ * @param sort 排序 'descend' | 'ascend' 默认倒序
+ */
+export const getDate=({unit='year' as any,scope=10,format='YYYY',sort='descend'})=>{
+    const date=[];
+    for(let i=0;i<scope;i++){
+        const next=dayjs().subtract(i, unit);        
+        const formatDate=next.format(format);
+        date.push(formatDate);
+    }
+    if(sort==='ascend'){
+        // 正序
+        date.sort((a:any,b:any)=>{
+            if(a>b) return 1;
+
+            if(a<b) return -1;
+
+            return 0;
+        });
+    }
+    return date;
+}
+
+/**
+ * 生成数组
+ * @param min 最小值
+ * @param len 长度
+ * @returns 
+ */
+export const getArray=(min=1,len=12)=>{
+    let arr=Array(len).fill(0);
+    arr=arr.map((item:any,$index)=>$index+min);
+    
+    return arr;
+}

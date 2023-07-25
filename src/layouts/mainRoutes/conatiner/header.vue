@@ -10,7 +10,9 @@
         </div>
 
         <div class="manage-header-content">
-
+            <Tabs v-model:activeKey="innerActiveKey" @change="handleTabChange">
+                <TabPane v-for="(tabItem) in routes" :key="tabItem.id" :tab="tabItem.name">{{ tabItem.name }}</TabPane>
+            </Tabs>
         </div>
         <!-- <div class="action">
             <div class="action-collapsed">
@@ -57,8 +59,9 @@ import {
     MenuFoldOutlined,
     RedoOutlined,
 } from "@ant-design/icons-vue";
-import { defineComponent, ref } from "vue";
-import { message, Badge } from "ant-design-vue";
+import { defineComponent, ref, PropType, watch } from "vue";
+import { message, Badge, Tabs } from "ant-design-vue";
+import { TabPane } from 'ant-design-vue/es/tabs'
 import { Image } from "ant-design-vue";
 import defaultLogo from "@/assets/image/main/layout/logo.png";
 import mailImg from "@/assets/image/main/layout/mail.png";
@@ -71,9 +74,22 @@ export default defineComponent({
         RedoOutlined,
         Badge,
         Image,
+        Tabs,
+        TabPane
     },
-    setup() {
+    props: {
+        routes: {
+            type: Array as PropType<any[]>,
+            require: true,
+        },
+        activeKey: {
+            type:  Number,
+        }
+    },
+    emits: ["update:activeKey", "change"],
+    setup(props, {emit}) {
         const visible = ref<boolean>(false);
+        const innerActiveKey = ref<string | number>("")
         const router = useRouter();
         const storeState = useState("mainModule", [
             "collapsed",
@@ -113,12 +129,30 @@ export default defineComponent({
             visible.value = true;
         };
 
+        /**
+         * 处理切换tab事件
+         * @param { String | Number } activeKey 当前选中的tab的id
+         * @return
+         */
+        const handleTabChange = (activeKey: string | number) => {
+            innerActiveKey.value = activeKey
+            emit("change", activeKey)
+            emit("update:activeKey", activeKey)
+        }
+
+        watch(() => props.activeKey as any, (newValue) => {
+            innerActiveKey.value = newValue || ""
+        }, { immediate: true })
+
+        
+
         return {
             visible,
+            innerActiveKey,
             showDrawer,
+            handleTabChange,
             clickTrigger,
             logout,
-
             defaultLogo,
             mailImg,
             userImg,
@@ -168,6 +202,24 @@ export default defineComponent({
 
 .manage-header-content {
     flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    :deep(.ant-tabs) {
+        .ant-tabs-nav {
+            margin-bottom: 0;
+        }
+        .ant-tabs-nav::before {
+            display: none;
+        }
+        .ant-tabs-content-holder {
+            display: none;
+        }
+        .ant-tabs-tab {
+            padding: 21px 0;
+        }
+    }
 }
 
 .manage-header-right {
@@ -191,7 +243,8 @@ export default defineComponent({
     margin-right: @space-sm;
 }
 
-.manage-heade-logout, .manage-heade-username {
+.manage-heade-logout,
+.manage-heade-username {
     display: inline-block;
     vertical-align: middle;
     div {

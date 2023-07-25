@@ -1,39 +1,60 @@
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import { convertTree } from "@/utils/function";
 import request from "@/utils/axios";
+import dayjs from "dayjs";
 import { Modal, message } from "ant-design-vue";
-import { Moment } from "moment";
+import { RenderFormItem } from '@/components/form/form'
+
+const searchRenderList: RenderFormItem[] = [
+  {
+    label: '类型',
+    key: 'name',
+    type: 'select',
+    options: [],
+    placeholder: '选择类型名称'
+  },
+  {
+    label: '创建人',
+    key: 'creatorName',
+    type: 'input',
+    placeholder: '创建人'
+  },
+  {
+    label: '创建人',
+    key: 'rangeTime',
+    type: 'datePicker',
+    datePickerType: 'rangePicker',
+    placeholder: '创建人'
+  }
+]
 
 const columns = [
   {
     key: "index",
     dataIndex: "index",
-    align: "center",
     title: "序号",
   },
   {
     key: "name",
     dataIndex: "name",
-    align: "center",
     title: "类型名称",
   },
   {
     key: "creatorName",
     dataIndex: "creatorName",
-    align: "center",
     title: "创建人",
   },
   {
     key: "createdTime",
     dataIndex: "createdTime",
-    align: "center",
     title: "创建时间",
   },
   {
     key: "tenantCount",
     dataIndex: "tenantCount",
-    align: "center",
     title: "使用租户数量",
+    align: "right",
+    width: 120
   },
   {
     key: "action",
@@ -50,10 +71,10 @@ export default defineComponent({
       title: "",
       columns,
       dataSource: [],
-      options: [],
       loading: true,
       isSubmit: true,
       visible: false,
+      searchRenderList,
       pagination: {
         total: 0,
         current: 1,
@@ -62,9 +83,7 @@ export default defineComponent({
       query: {
         name: undefined, // 类型名称
         creatorName: "", // 创建人
-        rangeTime: ref<Moment[]>([]),
-        beginTime: ref<Moment>(), // 开始时间
-        endTime: ref<Moment>() // 结束时间
+        rangeTime: ref<any[]>([]),
       },
       menuTree: [], // 菜单权限
       formState: {
@@ -95,20 +114,23 @@ export default defineComponent({
       state.loading = true;
       let {
         pagination: { current, pageSize },
-        query: { name, creatorName, beginTime, endTime },
+        query: { name, creatorName, rangeTime },
       } = state;
+      const params: any = {
+        pageNum: current,
+        pageSize,
+        name,
+        creatorName,
+      }
+      if (Array.isArray(rangeTime) && rangeTime.length) {
+        params.beginTime = `${dayjs(rangeTime[0]).format('YYYY-MM-DD')} 00:00:00`
+        params.endTime = `${dayjs(rangeTime[1]).format('YYYY-MM-DD')} 23:59:59`
+      }
       let res = await request({
         url: import.meta.env.VITE_BASE_URL + "/tenant/meal/list",
         type: "json",
         method: "post",
-        data: {
-          pageNum: current,
-          pageSize,
-          name,
-          creatorName,
-          beginTime, 
-          endTime
-        },
+        data: params,
       });
       if (res.code == 200) {
         state.loading = false;
@@ -116,7 +138,7 @@ export default defineComponent({
           total: res.total,
           current,
           pageSize
-      }
+        }
         state.dataSource = res.rows.map((item: any, index: number) =>
           Object.assign({}, item, { index: index + 1 })
         );
@@ -230,21 +252,21 @@ export default defineComponent({
      * @return
      */
     const listTenantMealChoose = async () => {
-       let res = await request({
-         url: import.meta.env.VITE_BASE_URL + "/tenant/meal/choose/list",
-         type: "json",
-         method: "get",
-         params: {}
-       })
-       if(res.code == 200) {
-          let result = res.data as any;
-          state.options = result.map((item: any) => {
-             return {
-                label: item.name,
-                value: item.name
-             }
-          });
-       }
+      let res = await request({
+        url: import.meta.env.VITE_BASE_URL + "/tenant/meal/choose/list",
+        type: "json",
+        method: "get",
+        params: {}
+      })
+      if (res.code == 200) {
+        let result = res.data as any;
+        state.searchRenderList[0].options = result.map((item: any) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        });
+      }
     }
 
     /**
@@ -252,9 +274,7 @@ export default defineComponent({
      * @param
      */
     const selectTimeChange = (value: any, dateString: any[]) => {
-       state.query.rangeTime = value;
-       state.query.beginTime = dateString[0];
-       state.query.endTime = dateString[1];
+      state.query.rangeTime = value;
     }
 
     /**
@@ -273,17 +293,17 @@ export default defineComponent({
             type: 'json',
             method: 'post',
             params: {
-              id, 
+              id,
               status
             }
           })
-          if(res.code == 200) {
-             message.success(`租户类型${text}成功!`);
-             getTenantMealList();
+          if (res.code == 200) {
+            message.success(`租户类型${text}成功!`);
+            getTenantMealList();
           }
         },
       });
-       
+
     }
 
     /**
@@ -328,8 +348,6 @@ export default defineComponent({
       state.query = {
         name: undefined,
         creatorName: "",
-        beginTime: undefined,
-        endTime: undefined,
         rangeTime: []
       };
       getTenantMealList();

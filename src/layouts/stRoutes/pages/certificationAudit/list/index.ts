@@ -3,7 +3,7 @@ import { Modal, message } from "ant-design-vue";
 import request from "@/utils/axios";
 import { useRoute, useRouter } from "vue-router";
 import { useAction } from "@/hooks";
-import {approvalStatusOptions} from "./config";
+import {certificationStatus} from "@/utils/dict";
 import audit from '@/assets/image/audit.png'
 import {showTime} from '@/utils/function'
 // 表格数据
@@ -114,9 +114,9 @@ const getStatusOptions=()=>{
     },
   ];
 
-  Object.keys(approvalStatusOptions).forEach(status=>{
+  Object.keys(certificationStatus).forEach(status=>{
     options.push({
-      label:approvalStatusOptions[status]||status,
+      label:certificationStatus[status]||status,
       value:status
     });
   })
@@ -127,7 +127,7 @@ const getStatusOptions=()=>{
 export default defineComponent({
   setup() {
     const router = useRouter()
-    const storeAction = useAction('stModule',['asyncUpdateIsStBreamub','asyncUpdateApprovalStatus'])
+    const storeAction = useAction('stModule',['asyncUpdateIsStBreamub',])
     const state = reactive({
       columns,
       dataSource: [],
@@ -307,7 +307,7 @@ export default defineComponent({
     
     return {
       ...toRefs(state),
-      approvalStatusOptions,
+      certificationStatus,
       handleSearch,
       showModal,
       cancel,

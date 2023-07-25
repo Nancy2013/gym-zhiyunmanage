@@ -2,43 +2,49 @@ import { reactive, toRefs, ref } from "vue";
 import { useRouter } from "vue-router";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
+import { RenderFormItem } from '@/components/form/form'
+
+export const searchRenderList: RenderFormItem[] = [
+	{
+		label: '模板名称/关联对象',
+		key: 'name',
+		type: 'input',
+		placeholder: '模板名称/关联对象'
+  }
+]
+
 
 const columns = [
 	{
 		dataIndex: "name",
-		key: "name",
-		align: "center",
+		key: "name",		
 		title: "模板名称",
 	},
 	{
 		dataIndex: "boName",
-		key: "boName",
-		align: "center",
+		key: "boName",		
 		title: "关联对象",
 	},
 	{
 		key: "categoryName",
-		title: "对象分类名称",
-		align: "center",
+		title: "对象分类名称",		
 		dataIndex: "categoryName",
 	},
 	{
 		key: "createUserName",
 		title: "创建人",
-		align: "center",
 		dataIndex: "createUserName",
 	},
 	{
 		key: "createdTime",
 		title: "创建时间",
-		align: "center",
 		dataIndex: "createdTime",
 	},
 	{
 		key: "action",
-		title: "操作",
-		align: "center",
+		title: "操作",		
 		dataIndex: "action",
+		width: 180
 	},
 ];
 
@@ -48,9 +54,10 @@ export default function () {
 	const router = useRouter();
 	const state = reactive({
 		searchData: { name: "" },
-		formData: { fieldA: "", fieldB: null },
 		columns,
+		loading: true,
 		dataSource: [],
+		searchRenderList,
 		pagination: {
 			total: 0,
 			current: 1,
@@ -64,6 +71,7 @@ export default function () {
 	 * @return
 	 */
 	const getTableList = () => {
+		state.loading = true
 		const { pagination: { current, pageSize } } = state;
 		request({
 			url: import.meta.env.VITE_NODE_URL + "/businessObjectTemplate/list",
@@ -71,13 +79,16 @@ export default function () {
 			method: "post",
 			data: { ...state.searchData, pageNum: current, pageSize },
 		}).then((res) => {
+			state.loading = false
 			state.dataSource = res.rows as any;
 			state.pagination = {
 				total: res.total,
 				current,
 				pageSize
 			}
-		});
+		}).catch(() => {
+			state.loading = false
+		})
 	};
 
 	getTableList();
@@ -88,10 +99,7 @@ export default function () {
 	 * @return
 	 */
 	const handleEdit = (record: any) => {
-		router.push({
-			path: "/productManage/addTemplate",
-			query: { id: record.id },
-		});
+		router.push({ name: 'addProductTemplate', params: { type: 'edit' }, query: { id: record.id } })
 	};
 
 	/**
@@ -100,10 +108,7 @@ export default function () {
 	 * @return
 	 */
 	const handleCopy = (record: any) => {
-		router.push({
-			path: "/productManage/addTemplate",
-			query: { id: record.id, copy: 1, title: '复制对象模板' },
-		});
+		router.push({ name: 'addProductTemplate', params: { type: 'copy' }, query: { id: record.id } });
 	};
 
 	/**
@@ -112,7 +117,7 @@ export default function () {
 	 * @return
 	 */
 	const handleAdd = () => {
-		router.push({ path: "/productManage/addTemplate" });
+		router.push({ name: 'addProductTemplate', params: { type: 'add' } });
 	};
 
 	/**

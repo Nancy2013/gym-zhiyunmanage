@@ -7,6 +7,8 @@ import { setBreamubTitle } from "@/utils/setBreamubTitle";
 import service from "@/service/mainRoutes";
 import { objectAndProductDataTypeDict } from "@/utils/dict";
 import {getPopupContainer} from '@/hooks'
+import type { Rule } from "ant-design-vue/es/form";
+import {validSpecialKey} from '@/utils/reg'
 interface DataItem {
   sort: number;
   itemType: string | undefined;
@@ -163,6 +165,24 @@ const fieldModuleNames = {
   label: "name",
   value: "code",
 };
+/**
+ *校验策略名称
+ *
+ * @param {Rule} _rule
+ * @param {string} value
+ * @return {*}
+ */
+ const validateName = async (_rule: Rule, value: string) => {
+  if (value === "") {
+    return Promise.reject("必填项不能为空");
+  }
+
+  if (validSpecialKey(value)) {
+    return Promise.reject("请输入正确格式标识策略名称");
+  }
+
+  return Promise.resolve();
+};
 export default defineComponent({
   setup() {
     const router = useRouter();
@@ -185,7 +205,7 @@ export default defineComponent({
       },
       rules: {
         ruleName: [
-          { required: true, message: "必填项不能为空", trigger: "blur" },
+          { required: true,  trigger: "blur",validator:validateName, },
         ],
         ruleType: [
           { required: true, message: "必填项不能为空", trigger: "change" },
@@ -208,21 +228,8 @@ export default defineComponent({
       loading:false,
     });
 
-    // 标题设置
-    switch (route.query.type) {
-      case "add":
-        setBreamubTitle("添加标识策略");
-        break;
-      case "edit":
-        setBreamubTitle("编辑标识策略");
-        break;
-      case "copy":
-        setBreamubTitle("复制标识策略");
-        break;
-    }
-
     onMounted(() => {
-      state.titleType = route.query.type as unknown as string;
+      state.titleType = route.params.type as unknown as string;
       init();
     });
 
@@ -543,7 +550,7 @@ export default defineComponent({
     };
 
     /**
-     * 初始化对象分类选择 TODO优化分类查询
+     * 初始化对象分类选择
      */
     const initCategory = async (ids?:any) => {
       const {code,data}=await queryCategory();

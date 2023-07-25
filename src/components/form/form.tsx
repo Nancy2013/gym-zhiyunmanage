@@ -8,6 +8,7 @@ import { CascaderOptionType } from 'ant-design-vue/lib/cascader/index'
 import { UploadListType } from 'ant-design-vue/lib/upload/interface'
 import { FormLabelAlign, } from 'ant-design-vue/lib/form/interface'
 import { ColProps } from 'ant-design-vue/lib/col/index'
+import { TreeSelectProps } from 'ant-design-vue/lib/tree-select/index'
 
 /**
  * 输入框类型 int float word
@@ -16,7 +17,7 @@ export type InputType = 'int' | 'float' | 'word'
 /**
  * 表单项类型
  */
-export type FormItemType = 'input' | 'select' | 'radio' | 'textarea' | 'datePicker' | 'checkbox' | 'cascader' | 'upload' | 'switch'
+export type FormItemType = 'input' | 'select' | 'radio' | 'textarea' | 'datePicker' | 'checkbox' | 'cascader' | 'upload' | 'switch' | 'treeSelect'
 
 /**
  * form的布局方式 
@@ -32,7 +33,10 @@ export type datePickerType = 'datePicker' | 'rangePicker'
  */
 export type UploadType = 'button' | 'card'
 
-export type BoxType = 'modal' | 'page'
+/**
+ * 
+ */
+export type BoxType = 'modal' | 'page' | 'search'
 
 /**
  * 渲染的表单项
@@ -164,6 +168,39 @@ export interface RenderFormItem {
 	 * 未选中的值
 	 */
 	unCheckedValue?: boolean | string | number
+	/**
+	 * 自定义label和value值
+	 */
+	fieldNames?: any
+	/**
+	 * 输入框过滤方法
+	 * @returns 
+	 */
+	filterOption?: (input: string, option: any) => boolean
+	/**
+	 * 是否可以搜索
+	 */
+	showSearch?: boolean
+	/**
+	 * 输入框是否是密码类型
+	 */
+	password?: boolean
+	/**
+	 * treeSelect treeNodes 数
+	 */
+	treeData?: TreeSelectProps[]
+	/**
+	 * 使用简单格式的 treeData
+	 */
+	treeDataSimpleMode?: boolean
+	/**
+	 * 默认展开所有树节点
+	 */
+	treeDefaultExpandAll?: boolean
+	/**
+	 * 表单布局方式
+	 */
+	layout?: Layout
 }
 
 export default defineComponent({
@@ -198,18 +235,18 @@ export default defineComponent({
 			default: 'modal'
 		}
 	},
-	emits: ["change"],
+	emits: ["change", "unifyEvent"],
 	setup(props, { slots, emit }) {
 		const fcFormRef = ref()
 
 		/**
-         * 执行校验
-         * @param
-         * @return
-         */
-		const validate = () => {
+		 * 执行校验
+		 * @param { Array } nameList name数组
+		 * @return
+		 */
+		const validate = (nameList: string[]) => {
 			return new Promise((resolve, reject) => {
-				fcFormRef.value.validate().then((formData: any) => {
+				fcFormRef.value.validate(nameList).then((formData: any) => {
 					resolve(formData)
 				}).catch(() => {
 					reject()
@@ -218,47 +255,59 @@ export default defineComponent({
 		}
 
 		/**
-         * 移除表单项的校验结果
-         * @param
-         * @return
-         */
+		 * 移除表单项的校验结果
+		 * @param
+		 * @return
+		 */
 		const clearValidate = () => {
 			fcFormRef.value.clearValidate()
 		}
 
 		/**
-         * 对整个表单进行重置
-         * @param
-         * @return
-         */
+		 * 对整个表单进行重置
+		 * @param
+		 * @return
+		 */
 		const resetFields = () => {
 			fcFormRef.value.resetFields()
 		}
 
 		/**
-         * 处理表单数据改变事件
-         * @param { Object } value 表单绑定的值
+		 * 处理表单数据改变事件
+		 * @param { Object } value 表单绑定的值
 		 * @param { RenderFormItem } renderItem 表单项渲染数据
-         * @return
-         */
+		 * @return
+		 */
 		const handleChange = (value: any, renderItem: RenderFormItem) => {
 			emit("change", value, renderItem)
+		}
+
+		/**
+		 * 统一处理表单事件
+		 * @param { Object } event 事件数据
+		 * @param { RenderFormItem } renderItem 表单项渲染数据
+		 * @return
+		 */
+		const handleUnifyEvent = (event: any, renderItem: RenderFormItem) => {
+			emit("unifyEvent", event, renderItem)
 		}
 		return {
 			fcFormRef,
 			handleChange,
 			validate,
 			clearValidate,
-			resetFields
+			resetFields,
+			handleUnifyEvent
 		}
 	},
 	render() {
 		return <Form ref="fcFormRef" class={[styles['fcForm'], styles[`fcForm-${this.boxType}`]]} layout={this.layout} model={this.formData} labelAlign={this.labelAlign} rules={this.rules} labelCol={this.labelCol} wrapperCol={{ style: Object.assign({ marginLeft: '8px' }, { flex: 1, overflow: 'hidden' }) }}>
-		{
-			this.renderList.map((renderItem) => {
-				return renderItem.isHide ? '' : <FcFormItem key={renderItem.key} renderItem={renderItem} v-model:value={this.formData[renderItem.key]} onChange={(value: any) => { this.handleChange(value, renderItem) }}></FcFormItem>
-			})
-		}
-	</Form>
+			{
+				this.renderList.map((renderItem) => {
+					return renderItem.isHide ? '' : <FcFormItem key={renderItem.key} renderItem={renderItem} v-model:value={this.formData[renderItem.key]} onChange={(value: any) => { this.handleChange(value, renderItem) }} onUnifyEvent={(event) => { this.handleUnifyEvent(event, renderItem) }}></FcFormItem>
+				})
+			}
+			{ this.$slots.default && this.$slots.default() }
+		</Form>
 	}
 })

@@ -244,7 +244,7 @@ export const mainAuthority = [
           },
           {
             level: 2,
-            path: "/productManage/addProduct",
+            path: "/productManage/addProduct/:type",
             name: "addProduct",
             title: "添加产品",
             meta: { title: "添加产品" },
@@ -280,7 +280,7 @@ export const mainAuthority = [
           },
           {
             level: 2,
-            path: "/productManage/addTemplate",
+            path: "/productManage/addTemplate/:type",
             name: "addProductTemplate",
             title: "添加产品模板",
             meta: { title: "添加产品模板" },
@@ -316,8 +316,8 @@ export const mainAuthority = [
           },
           {
             level: 2,
-            path: "/identity/identityStrategyAction",
-            name: "/identity/identityStrategyAction",
+            path: "/identity/identityStrategyAction/:type",
+            name: "identityStrategyAction",
             title: "标识策略",
             meta: { title: "标识策略" },
             ismenu: "N",
@@ -353,7 +353,7 @@ export const mainAuthority = [
           {
             level: 2,
             path: "/identity/identityDetailInfo",
-            name: "/identityDetailInfo",
+            name: "identityDetailInfo",
             title: "标识详情",
             meta: { title: "标识详情" },
             ismenu: "N",
@@ -399,14 +399,14 @@ export const mainAuthority = [
           },
           {
             level: 2,
-            path: "/trace/traceDataEdit",
-            name: "/traceDataEdit",
-            title: "编辑数据",
-            meta: { title: "编辑数据" },
+            path: "/trace/traceDataAction",
+            name: "/traceDataAction",
+            title: "操作数据",
+            meta: { title: "操作数据" },
             ismenu: "N",
             component: () =>
               import(
-                "@/layouts/mainRoutes/pages/trace/trace-data/edit/index.vue"
+                "@/layouts/mainRoutes/pages/trace/trace-data/action/index.vue"
               ),
           },
         ],
@@ -477,7 +477,7 @@ export const mainAuthority = [
           },
           {
             level: 2,
-            path: "/securityAlarm/regionSet/add",
+            path: "/securityAlarm/regionSet/add/:type",
             name: "regionSetAdd",
             title: "区域配置列表",
             meta: { title: "添加区域配置" },
@@ -501,7 +501,7 @@ export const mainAuthority = [
           },
           {
             level: 2,
-            path: "/securityAlarm/deployBatch/add",
+            path: "/securityAlarm/deployBatch/add/:type",
             name: "deployBatchAdd",
             title: "产品地区分配列表",
             meta: { title: "添加地区分配" },

@@ -1,0 +1,189 @@
+.trace-data-action {
+  .trace-data-steps {
+    margin: 30px 50px;
+  }
+  :deep(.ant-row) {
+    justify-content: center;
+  }
+  // 标题
+  .trace-data-title {
+    padding: 10px 20px;
+    background: #f5f5f5;
+    margin: 0 0 10px;
+  }
+  // 表单
+  .trace-data-form {
+    width: 100%;
+    margin: 20px 0;
+    p {
+      margin: 0 0 10px;
+      color: #00000080;
+      font-weight: 600;
+    }
+    .form-item-margin {
+      display: inline-block;
+      margin: 0 10px 10px 0;
+    }
+    .form-rules-ref {
+      padding: 0 0 0 30px;
+      border-left: 1px solid #d8d8d8;
+    }
+    // 选择模板
+    .trace-data-templates {
+      display: flex;
+      > .templates-item {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #176b91;
+        border-radius: 5px;
+        margin: 0 20px 0 0;
+      }
+    }
+    // 数据规则
+    .data-rules-title {
+      margin: 0 10px 10px;
+      font-size: 18px;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+    // 数据选择
+    .data-rules-select {
+      > p {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 30px;
+      }
+      span {
+        margin: 0px 0px 0px 10px;
+        color: #00000080;
+        font-weight: 600;
+      }
+      margin: 0 0 10px;
+      border-bottom: 1px dashed #d8d8d8;
+      .rules-select-tables {
+        position: relative;
+        .rules-select-btns {
+          text-align: right;
+          margin: 0 0 10px;
+        }
+      }
+    }
+    // 权限配置
+    .data-rules-authority {
+      position: relative;
+      > p {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 20px 0 30px 0;
+      }
+      span {
+        margin: 0px 0px 0px 10px;
+        color: #00000080;
+        font-weight: 600;
+      }
+      .rules-authority-btns {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+    }
+    // 配置数据类型
+    .data-rules-type {
+      position: relative;
+      > p {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 20px 0 30px 0;
+      }
+      .rules-type-selects {
+        padding: 10px 20px;
+        background: #f8f8f8;
+        height: 400px;
+        overflow: auto;
+        > .type-selects-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 0;
+          .selects-item-border {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #d8d8d8;
+            width: 200px;
+          }
+        }
+      }
+      .rules-type-action {
+        padding: 10px;
+        background: #f8f8f8;
+        height: 400px;
+        overflow: auto;
+        > .type-action-item {
+          padding: 10px 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          > .action-item-title {
+            display: inline-block;
+            width: 60px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+      .rules-type-btns {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+    }
+    // 配置数据
+    .data-rules-config {
+      > p {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 20px 0 30px 0;
+      }
+      .rules-config-data {
+        padding: 10px 20px;
+        position: relative;
+        border-radius: 4px;
+        border: 1px solid #d8d8d8;
+        height: 300px;
+      }
+      .rules-config-authority {
+        padding: 10px 20px;
+        position: relative;
+        border-radius: 4px;
+        border: 1px solid #d8d8d8;
+        height: 300px;
+        > p {
+          font-size: 16px;
+          font-weight: 600;
+          margin: 0 0 30px;
+        }
+        span {
+          margin: 0px 0px 0px 10px;
+          color: #00000080;
+          font-weight: 600;
+        }
+        .config-authority-btns {
+          position: absolute;
+          top: 10px;
+          right: 20px;
+        }
+      }
+    }
+  }
+  // 按钮操作
+  .action-content-btns {
+    .content-btns {
+      margin: 20px;
+      text-align: center;
+      > button {
+        margin: 5px 10px;
+      }
+    }
+  }
+}

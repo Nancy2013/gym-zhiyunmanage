@@ -5,6 +5,7 @@ import { Modal, message } from "ant-design-vue";
 import { sourceFlagDict, syncStatusDict } from "@/utils/dict"
 import { tableColumns } from './config'
 import { objectAndProductDataTypeDict } from '@/utils/dict'
+import { RenderFormItem } from '@/components/form/form'
 
 
 
@@ -14,28 +15,25 @@ export default function () {
 	const router = useRouter();
 	const state = reactive({
 		searchData: {} as any,
-		formData: { fieldA: "", fieldB: null },
-		objectClassOptions: [] as any,
 		visible: false,
 		columns: tableColumns,
-		labelCol: { span: 6 },
-		wrapperCol: { span: 14 },
 		dataSource: [],
+		loading: true,
 		pagination: {
 			total: 0,
 			current: 1,
 			pageSize: 10,
 		},
 		syncStatusColor: {
-			[syncStatusDict.notSync]: 'processing',
+			[syncStatusDict.notSync]: 'default',
 			[syncStatusDict.synchronized]: "success",
 			[syncStatusDict.syncError]: "error"
 		}
 	});
 
 	onMounted(() => {
-		getObjectClassList().then((options) => {
-			state.objectClassOptions = options
+		getObjectClassList().then((options: any) => {
+			searchRenderList.value[1].options = options
 		});
 		getTableList();
 	});
@@ -87,6 +85,7 @@ export default function () {
 	 * @return
 	 */
 	const getTableList = () => {
+		state.loading = true
 		const { pagination: { current, pageSize } } = state;
 		const paramsData = { ...state.searchData }
 		if (Array.isArray(paramsData.categoryId) && paramsData.categoryId.length) {
@@ -99,13 +98,19 @@ export default function () {
 			method: "post",
 			data: { ...paramsData, pageNum: current, pageSize, dataType },
 		}).then((res) => {
-			state.dataSource = res.rows as any;
+			state.loading = false
+			state.dataSource = res.rows.map((item: any, key: number) => {
+				item.tableIndex = (current - 1) * pageSize + key + 1
+				return item
+			}) as any;
 			state.pagination = {
 				total: res.total,
 				current,
 				pageSize,
 			};
-		});
+		}).catch(() => {
+			state.loading = false
+		})
 	};
 
 	/**
@@ -153,13 +158,7 @@ export default function () {
 	 * @return
 	 */
 	const handleEdit = (column: any) => {
-		router.push({
-			path: "/productManage/addProduct",
-			query: {
-				id: column.id
-			},
-			title: '编辑对象'
-		} as any);
+		router.push({ name: 'addProduct', params: { type: 'edit' }, query: { id: column.id }, });
 	};
 
 	/**
@@ -168,7 +167,7 @@ export default function () {
 	 * @return
 	 */
 	const handleAdd = () => {
-		router.push({ path: "/productManage/addProduct" });
+		router.push({ name: 'addProduct', params: { type: 'add' } });
 	};
 
 	/**
@@ -200,7 +199,7 @@ export default function () {
 				'Content-Type': 'multipart/form-data'
 			},
 		}).then((res) => {
-			console.log(res)
+			getTableList()
 		})
 	}
 
@@ -265,11 +264,29 @@ export default function () {
 		getTableList();
 	};
 
+	const searchRenderList = ref<RenderFormItem[]>([
+		{
+			label: '产品编号/名称',
+			key: 'name',
+			type: 'input',
+			placeholder: '产品编号/名称'
+		},
+		{
+			label: '产品分类',
+			key: 'categoryId',
+			type: 'cascader',
+			options: [],
+			placeholder: '选择产品分类',
+			loadData: loadData
+		}
+	])
+
 	return {
 		...toRefs(state),
 		sourceFlagDict,
 		syncStatusDict,
 		handleDelete,
+		searchRenderList,
 		formRef,
 		loadData,
 		handleSubmit,

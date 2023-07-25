@@ -2,7 +2,7 @@
  * 石台硒茶分支
  */
 import { RouteRecordRaw, _RouteRecordBase } from "vue-router";
-
+import report from './report'; // 报表总览模块
 export const stAuthority = [
 	{
 		level: 0,
@@ -160,6 +160,7 @@ export const stAuthority = [
 				component: () =>
 					import("@/layouts/stRoutes/pages/enterprise/codeAuthorize/list/index.vue"),
 			},
+			...report,
 		],
 	},
 ];

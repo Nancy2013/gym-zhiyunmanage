@@ -103,7 +103,7 @@ export default defineComponent({
      *删除点标记
      *
      */
-     const removeMarkers = () => {
+    const removeMarkers = () => {
       markers = []; // 删除点标记
       cluster && cluster.clearMarkers(); // 取消点聚合
     };
@@ -114,20 +114,45 @@ export default defineComponent({
      */
     const convertFrom = () => {
       createAMap().then((AMap) => {
-        let lnglats:any=[];
-        props.data.forEach((item:any)=>{
-          const {lng,lat}=item;
-          if(lng&&lat){
-            lnglats.push([lng,lat]);
-          }
-        });        
-        AMap.convertFrom(lnglats, "gps", function (status: any, result: any) {
-          // GPS转高德坐标
-          if (result.info === "ok") {
-            console.log('----convertFrom------',result.locations);
-            createMarker(result.locations);
+        let lnglats: any = [];
+        let convertedArr: any = [];
+        props.data.forEach((item: any) => {
+          const { lng, lat } = item;
+          if (lng && lat) {
+            lnglats.push([lng, lat]);
           }
         });
+        const maxSize = 40; // GPS转高德坐标,每次最多支持40对坐标
+        const page =Math.ceil(lnglats.length/maxSize);
+        let count = 0;  // 转换次数
+
+
+        /**
+         *批量转换坐标
+         *
+         * @param {*} LngLat 坐标切片
+         */
+        const batchConvert = (LngLat: any) => {
+          AMap.convertFrom(
+            LngLat,
+            "gps",
+            function (status: any, result: any) {
+              if (result.info === "ok") {
+                count++;
+                console.log("----convertFrom------", result.locations);
+                convertedArr=convertedArr.concat(result.locations);
+                if (count >= page) {
+                  createMarker(convertedArr);
+                }
+              }
+            }
+          );
+        };
+
+        for (let i = 0; i < page; i++) {
+          const lnglatsSlice = lnglats.slice(i * maxSize, (i + 1) * maxSize);
+          batchConvert(lnglatsSlice);
+        }
       });
     };
 
@@ -136,9 +161,10 @@ export default defineComponent({
      *
      * @param {*} position
      */
-    const createMarker=(positions:any)=>{
-      createAMap().then((AMap)=>{
-        positions.forEach((position:any)=>{
+    const createMarker = (positions: any) => {
+      console.log('-----createMarker-------',positions);
+      createAMap().then((AMap) => {
+        positions.forEach((position: any) => {
           const size = 50;
           const icon = new AMap.Icon({
             image: mapIcon,
@@ -154,8 +180,7 @@ export default defineComponent({
         });
         cluster.addMarkers(markers);
       });
-    }
-
+    };
 
     watch(
       () => [...props.data],

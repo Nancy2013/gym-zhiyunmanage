@@ -1,56 +1,29 @@
 <template>
-    <div>
-        <a-form layout="inline" :model="query">
-            <a-form-item label="">
-                <a-input v-model:value="query.name" placeholder="模板名称/企业名称" @pressEnter="handleSearch" />
-            </a-form-item>
-            <a-form-item label="">
-                <a-select allowClear style="width: 194px;" placeholder="审核状态" :options="antiFakeTemplateAuditStatusOptions" v-model:value="query.reviewStatus"></a-select>
-            </a-form-item>
-            <a-form-item>
-                <a-button type="primary" @click="handleSearch">查询</a-button>
-            </a-form-item> 
-        </a-form>
-    </div>
+    <div style="height: 100%;">
+        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="handleSearch">
 
-    <div>
-        <config-table :configColumns="{
-                    tableModules: {
-                        columns,
-                        dataSource,
-                        rowKey: 'id',
-                        bordered: true,
-                        loading,
-                        pagination,
-                        onChange: paginationChange
-                    },
-                    actionModules: {
-                        isAdd: false,
-                        isSearch: false,
-                        isAction: true,
-                        receive: reset
-                    },
-                    paginationModules: {
-                       
-                    }
-                }">
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.key == 'type'">
-                    <span :style="`color: ${record.type == 'system' ? '#1890ff' : ''}`">{{ antiFakeTypeDict[record.type] }}</span>
-                </template>
-                <template v-if="column.key == 'scenario'">
-                    <span :style="`color: ${record.scenario == antiFakeScenarioDict.first ? '#1890ff' : ''}`">{{ antiFakeScenarioDict[record.scenario] }}</span>
-                </template>
-                <template v-if="column.key == 'reviewStatus'">
-                    <span :style="`color: ${record.reviewStatus == 'submitted' ? '#faad14' : record.reviewStatus == 'pass' ? '#52c41a' : record.reviewStatus == 'reject' ? '#f5222d' : ''}`">{{ antiFakeAuditStatusDict[record.reviewStatus] }}</span>
-                </template>
-                <template v-if="column.key === 'action'">
-                    <div class="action" v-if="record.reviewStatus == 'submitted'">
-                        <a-button type="link" size="small" @click="showExamineModal(record)">审核</a-button>
-                    </div>
-                </template>
+            <template #headerBtnArea>
+                <a-button type="primary" @click="handleSearch"> 查询 </a-button>
             </template>
-        </config-table>
+
+            <template #type="{ record }">
+                <span :style="`color: ${record.type == 'system' ? '#1890ff' : ''}`">{{ antiFakeTypeDict[record.type] }}</span>
+            </template>
+
+            <template #scenario="{ record }">
+                <span :style="`color: ${record.scenario == antiFakeScenarioDict.first ? '#1890ff' : ''}`">{{ antiFakeScenarioDict[record.scenario] }}</span>
+            </template>
+
+            <template #reviewStatus="{ record }">
+                <span :style="`color: ${record.reviewStatus == 'submitted' ? '#faad14' : record.reviewStatus == 'pass' ? '#52c41a' : record.reviewStatus == 'reject' ? '#f5222d' : ''}`">{{ antiFakeAuditStatusDict[record.reviewStatus] }}</span>
+            </template>
+
+            <template #action="{ record }">
+                <div class="action" v-if="record.reviewStatus == 'submitted'">
+                    <a-button type="link" size="small" @click="showExamineModal(record)">审核</a-button>
+                </div>
+            </template>
+        </FcTable>
     </div>
 
     <a-modal width="640px" v-model:visible="visible" title="审核扫码验证文字模板" okText="通过" cancelText="不通过" @cancel="handleCancel">

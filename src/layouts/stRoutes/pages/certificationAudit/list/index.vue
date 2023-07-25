@@ -44,7 +44,7 @@
                     <template v-if="column.key == 'approvalStatus'">
                         <div :class="`shzt shzt-${record.approvalStatus}`">
                             <span></span>
-                            <span>{{ approvalStatusOptions[record.approvalStatus] || record.approvalStatus }}</span>
+                            <span>{{ certificationStatus[record.approvalStatus] || record.approvalStatus }}</span>
                         </div>
                     </template>
                     <template v-if="column.key == 'createdTime'">

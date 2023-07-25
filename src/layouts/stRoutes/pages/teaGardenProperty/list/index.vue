@@ -15,8 +15,8 @@
                     </div>
                 </div>
             </div>
-            <div class="teaGardenProperty-table">
-                <a-table :columns="columns" :dataSource="dataSource" :pagination="pagination" :loading="loading">
+            <div class="teaGardenProperty-table" id="teaGardenProperty-table">
+                <a-table :scroll="{ y: tHeight }" :columns="columns" :dataSource="dataSource" :pagination="pagination" :loading="loading" @change="paginationChange">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.key === 'authorizedStatus'">
                             <div :class="`teaConfirmStatus teaConfirmStatus-${record.authorizedStatus}`">

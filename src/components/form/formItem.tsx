@@ -1,5 +1,5 @@
 import { defineComponent, PropType, toRefs, ref, watch } from "vue";
-import { Select, Radio, DatePicker, Checkbox, Cascader, Switch } from 'ant-design-vue'
+import { Select, Radio, DatePicker, Checkbox, Cascader, Switch, TreeSelect } from 'ant-design-vue'
 import { RangePicker } from 'ant-design-vue/es/date-picker'
 import { FormItem } from "ant-design-vue/es/form";
 import { RadioGroup } from 'ant-design-vue/es/radio'
@@ -29,28 +29,36 @@ export default defineComponent({
 			type: [String, Number, Object, Boolean, Symbol, Array] as PropType<any>,
 		}
 	},
-	emits: ["update:value", "change"], 
+	emits: ["update:value", "change", "unifyEvent"],
 	setup(props, { slots, emit }) {
 		const innerRenderItem = ref(props.renderItem)
-		const { rules, label, required, width, type, key, options, placeholder, decimalLen, disabled, allowClear = ref(true), inputType, filterFnc, maxlength, datePickerType, labelAlign, labelCol } = { ...toRefs(innerRenderItem.value) }
+		const { rules, label, required, width, type, key, options, placeholder, decimalLen, disabled, allowClear = ref(true), inputType, filterFnc, maxlength, datePickerType, labelAlign, labelCol, fieldNames, showSearch, password, layout } = { ...toRefs(innerRenderItem.value) }
 		const innerValue = ref(props.value)
 
 		/**
-         * 处理表单数据改变事件
-         * @param { Object } value 表单绑定的值
-         * @return
-         */
+		 * 处理表单数据改变事件
+		 * @param { Object } value 表单绑定的值
+		 * @return
+		 */
 		const handleChange = (value: any) => {
-			console.log(value)
 			emit("change", value)
 			emit('update:value', value)
 		}
 
 		/**
-         * 处理级联选择器加载数据
-         * @param { Array } selectedOptions 级联选择器当前选中的值
-         * @return
-         */
+		 * 处理自定义事件(回车 失焦等其他时间)
+		 * @param { Object } event 表单绑定的值
+		 * @return
+		 */
+		const handleUnifyEvent = (event: any) => {
+			emit('unifyEvent', event)
+		}
+
+		/**
+		 * 处理级联选择器加载数据
+		 * @param { Array } selectedOptions 级联选择器当前选中的值
+		 * @return
+		 */
 		const handleLoadDate = (selectedOptions: CascaderOptionType[]) => {
 			emit('update:value', selectedOptions.map((option) => {
 				return option.value
@@ -71,28 +79,30 @@ export default defineComponent({
 		return () => (
 			<div class={`${styles['fcFormItem-wrapper']} ${styles[`fcFormItem-wrapper-${type.value}`]}`} style={{ width: width?.value }}>
 				<FormItem class={`${styles['fcFormItem']} fcFormItem-${key.value}`} name={key.value} rules={rules?.value} label={label?.value} required={required?.value} labelAlign={labelAlign?.value} labelCol={labelCol?.value}>
-					{
+					{slots.default ? slots.default() :
 						(() => {
 							switch (type.value) {
 								case 'select':
-									return <Select disabled={disabled?.value} v-model:value={innerValue.value} options={options?.value} placeholder={placeholder?.value} allowClear={allowClear?.value} onChange={handleChange}></Select>
+									return <Select disabled={disabled?.value} v-model:value={innerValue.value} options={options?.value} placeholder={placeholder?.value} fieldNames={fieldNames?.value} filterOption={props.renderItem.filterOption} showSearch={showSearch?.value} allowClear={allowClear?.value} onChange={handleChange}></Select>
+								case 'treeSelect':
+									return <TreeSelect {...innerRenderItem.value} v-model:value={innerValue.value} onChange={handleChange} onSelect={ (value: any, node: any, extra: any)=> { handleUnifyEvent({ type: 'select', value: { value, node, extra } }) } }></TreeSelect>
 								case 'textarea':
-									return <FcInput type='textarea' disabled={disabled?.value} v-model:value={innerValue.value} placeholder={placeholder?.value} allowClear={allowClear?.value} decimalLen={decimalLen?.value} inputType={inputType?.value} filterFnc={filterFnc?.value} maxlength={maxlength?.value} onChange={handleChange}></FcInput>
+									return <FcInput type='textarea' disabled={disabled?.value} v-model:value={innerValue.value} placeholder={placeholder?.value} allowClear={allowClear?.value} decimalLen={decimalLen?.value} inputType={inputType?.value} filterFnc={filterFnc?.value} maxlength={maxlength?.value} onChange={handleChange} onUnifyEvent={handleUnifyEvent}></FcInput>
 								case 'radio':
-									return <RadioGroup disabled={disabled?.value} v-model:value={innerValue.value} onChange={(event)=> { handleChange(event.target.value) }}>
+									return <RadioGroup disabled={disabled?.value} v-model:value={innerValue.value} onChange={(event) => { handleChange(event.target.value) }}>
 										{
 											(Array.isArray(options?.value) && options?.value.length) ? options?.value.map((option) => {
-												return <Radio value={ option.value }>{option.label}</Radio>
+												return <Radio value={option.value}>{option.label}</Radio>
 											}) : ""
 										}
 									</RadioGroup>
 								case 'datePicker':
 									return datePickerType?.value === 'rangePicker' ? <RangePicker class={styles['fcDatePicker']} disabled={disabled?.value} v-model:value={innerValue.value} allowClear={allowClear?.value} onChange={handleChange}></RangePicker> : <DatePicker class={styles['fcDatePicker']} disabled={disabled?.value} v-model:value={innerValue.value} placeholder={placeholder?.value} allowClear={allowClear?.value} onChange={handleChange}></DatePicker>
 								case 'checkbox':
-									return <CheckboxGroup disabled={disabled?.value} v-model:value={innerValue.value} onChange={(event)=> { handleChange(event) }}>
+									return <CheckboxGroup disabled={disabled?.value} v-model:value={innerValue.value} onChange={(event) => { handleChange(event) }}>
 										{
 											(Array.isArray(options?.value) && options?.value.length) ? options?.value.map((option) => {
-												return <Checkbox value={ option.value }>{option.label}</Checkbox>
+												return <Checkbox value={option.value}>{option.label}</Checkbox>
 											}) : ""
 										}
 									</CheckboxGroup>
@@ -103,14 +113,15 @@ export default defineComponent({
 								case 'switch':
 									return <Switch {...innerRenderItem.value} v-model:checked={innerValue.value} onChange={handleChange}></Switch>
 								default:
-									return <FcInput disabled={disabled?.value} v-model:value={innerValue.value} placeholder={placeholder?.value} allowClear={allowClear?.value} decimalLen={decimalLen?.value} inputType={inputType?.value} filterFnc={filterFnc?.value} maxlength={maxlength?.value} onChange={handleChange}></FcInput>
-								
+									return <FcInput disabled={disabled?.value} v-model:value={innerValue.value} placeholder={placeholder?.value} allowClear={allowClear?.value} decimalLen={decimalLen?.value} inputType={inputType?.value} filterFnc={filterFnc?.value} password={password?.value} maxlength={maxlength?.value} onChange={handleChange} onUnifyEvent={handleUnifyEvent}></FcInput>
+
 							}
 						})()
 					}
+
 				</FormItem>
 			</div>
-			
+
 		)
 	}
 })

@@ -3,54 +3,88 @@ import { convertTree } from "@/utils/function";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
 
+import { RenderFormItem } from '@/components/form/form'
+
+const searchRenderList: RenderFormItem[] = [
+  {
+    label: '角色名称',
+    key: 'enterpriseType',
+    type: 'select',
+    placeholder: '选择角色名称',
+    options: []
+  },
+  {
+    label: '企业名称',
+    key: 'tenantName',
+    type: 'input',
+    placeholder: '企业名称'
+  },
+  {
+    label: '状态',
+    key: 'status',
+    type: 'select',
+    placeholder: '请选择状态',
+    options: [
+      {
+        label: "启用",
+        value: "ENABLE",
+      },
+      {
+        label: "停用",
+        value: "DISABLE",
+      },
+    ]
+  },
+]
+
 const columns = [
   {
     key: "index",
     dataIndex: "index",
-    align: "center",
     title: "序号",
+    width: 80
   },
   {
     key: "enterpriseTypeName",
     dataIndex: "enterpriseTypeName",
-    align: "center",
     title: "企业类型",
+    width: 120
   },
   {
     key: "account",
     dataIndex: "account",
-    align: "center",
     title: "账号",
+    width: 160,
   },
   {
     key: "tenantName",
     dataIndex: "tenantName",
-    align: "center",
     title: "企业名称",
+    width: 120
   },
   {
     key: "contact",
     dataIndex: "contact",
-    align: "center",
     title: "联系人",
+    width: 110
   },
   {
     key: "contactPhone",
     dataIndex: "contactPhone",
-    align: "center",
     title: "联系电话",
+    width: 140
   },
   {
     key: "status",
     dataIndex: "status",
-    align: "center",
     title: "状态",
+    width: 100
   },
   {
     key: "createdTime",
     dataIndex: "createdTime",
-    align: "center",
     title: "创建时间",
+    width: 140
   },
   {
     key: "action",
@@ -70,16 +104,7 @@ export default defineComponent({
       columns,
       dataSource: [],
       options: [],
-      statusOptions: [
-        {
-          label: "启用",
-          value: "ENABLE",
-        },
-        {
-          label: "停用",
-          value: "DISABLE",
-        },
-      ],
+      searchRenderList,
       isSubmit: true,
       pagination: {
         total: 0,
@@ -241,7 +266,7 @@ export default defineComponent({
      * @return
      */
     const listDictsByCode = async() => {
-      let res = await request({
+      let res: any = await request({
         url: import.meta.env.VITE_BASE_URL + "/dict/listDictsByCode",
         type: "json",
         method: "get",
@@ -250,13 +275,15 @@ export default defineComponent({
         }
       })
       if(res.code == 200) {
-         let result = res.data as any;
-         state.options = result.map((item: any) => {
-           return {
-             label: item.name,
-             value: item.code
-           }
-         })
+        let result = res.data as any;
+        const options = res.data.map((item: any) => {
+          return {
+            label: item.name,
+            value: item.code
+          }
+        })
+        state.options = options
+        state.searchRenderList[0].options = options
       }
     }
 

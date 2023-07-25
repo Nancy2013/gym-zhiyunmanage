@@ -1,42 +1,42 @@
 import { RenderFormItem } from '@/components/form/form'
 import { Rules } from '@/shims'
 
+export const searchRenderList: RenderFormItem[] = [
+	{
+		label: '对象分类名称',
+		key: 'firstCategoryName',
+		type: 'input',
+		placeholder: '对象分类名称'
+  }
+]
+
 export const tableColumns = [
-	// {
-	// 	dataIndex: "tableIndex",
-	// 	key: "tableIndex",
-	// 	align: "left",
-	// 	title: "序号",
-	// },
 	{
 		dataIndex: "categoryName",
 		key: "categoryName",
-		align: "left",
 		title: "产品分类",
 	},
 	{
-		key: "boCount",
+		key: "productCount",
 		title: "产品数",
-		align: "left",
-		dataIndex: "boCount",
+		dataIndex: "productCount",
 	},
 	{
 		key: "creator",
 		title: "创建人",
-		align: "left",
 		dataIndex: "creator",
 	},
 	{
 		key: "createdTime",
 		title: "创建时间",
-		align: "left",
-		dataIndex: "createdTime",
+		dataIndex: "createdTime"
 	},
 	{
 		key: "action",
 		title: "操作",
-		align: "left",
 		dataIndex: "action",
+		width: 180
+
 	},
 ]
 

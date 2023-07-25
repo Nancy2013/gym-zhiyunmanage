@@ -4,6 +4,9 @@ import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
 import { sourceFlagDict, syncStatusDict, objectAndProductDataTypeDict } from "@/utils/dict"
 import { tableColumns } from './config'
+import { RenderFormItem } from '@/components/form/form'
+
+
 
 
 
@@ -20,10 +23,10 @@ export default function () {
 	const state = reactive({
 		searchData: {  } as any,
 		formData: { fieldA: "", fieldB: null },
-		objectClassOptions: [] as any,
 		visible: false,
 		columns: tableColumns,
 		rules,
+		loading: true,
 		labelCol: { span: 6 },
 		wrapperCol: { span: 14 },
 		dataSource: [],
@@ -41,10 +44,10 @@ export default function () {
 	});
 
 	onMounted(() => {
-		getObjectClassList().then((options) => {
-			state.objectClassOptions = options
+		getObjectClassList().then((options: any) => {
+			searchRenderList.value[1].options = options
 		}).catch(() => {
-			state.objectClassOptions = []
+			searchRenderList.value[1].options = []
 		})
 		getTableList();
 	});
@@ -83,7 +86,6 @@ export default function () {
 	 * @return
 	 */
 	const loadData = (selectedOptions: any) => {
-		console.log(selectedOptions)
 		const targetOption = selectedOptions[selectedOptions.length - 1];
 		targetOption.loading = true;
 		getObjectClassList(targetOption.value).then((options) => {
@@ -100,6 +102,7 @@ export default function () {
 	 * @return
 	 */
 	const getTableList = () => {
+		state.loading = true
 		const { pagination: { current, pageSize } } = state;
 		const paramsData = { ...state.searchData }
 		if (Array.isArray(paramsData.categoryId) && paramsData.categoryId.length) {
@@ -112,13 +115,16 @@ export default function () {
 			method: "post",
 			data: { ...paramsData, pageNum: current, pageSize },
 		}).then((res) => {
+			state.loading = false
 			state.dataSource = res.rows as any;
 			state.pagination = {
 				total: res.total,
 				current,
 				pageSize,
 			};
-		});
+		}).catch(() => {
+			state.loading = false
+		})
 	};
 
 	/**
@@ -209,6 +215,23 @@ export default function () {
 		getTableList();
 	};
 
+	const searchRenderList = ref<RenderFormItem[]>([
+		{
+			label: '对象名称',
+			key: 'name',
+			type: 'input',
+			placeholder: '对象名称'
+		},
+		{
+			label: '对象分类名称',
+			key: 'categoryId',
+			type: 'cascader',
+			loadData: loadData,
+			placeholder: '对象分类名称',
+			options: []
+		},
+	])
+
 	return {
 		...toRefs(state),
 		sourceFlagDict,
@@ -216,6 +239,7 @@ export default function () {
 		formRef,
 		handleSubmit,
 		handleCancel,
+		searchRenderList,
 		handleView,
 		loadData,
 		handleAdd,

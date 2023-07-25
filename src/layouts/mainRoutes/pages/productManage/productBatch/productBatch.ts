@@ -2,12 +2,7 @@ import { defineComponent, reactive, toRefs, ref } from "vue";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
 import dayjs from 'dayjs'
-import { tableColumns, formRules, renderList } from './config'
-
-
-
-
-
+import { tableColumns, formRules, renderList, searchRenderList } from './config'
 
 
 export default function () {
@@ -19,9 +14,9 @@ export default function () {
 		visible: false,
 		columns: tableColumns,
 		formRules,
+		searchRenderList,
+		loading: true,
 		renderList: renderList,
-		labelCol: { span: 6 },
-		wrapperCol: { span: 14 },
 		dataSource: [],
 		pagination: {
 			total: 0,
@@ -36,6 +31,7 @@ export default function () {
 	 * @return
 	 */
 	const getTableList = () => {
+		state.loading = true
 		const {
 			pagination: { current, pageSize },
 		} = state;
@@ -44,21 +40,21 @@ export default function () {
 			type: "json",
 			method: "post",
 			data: { ...state.searchData, pageNum: current, pageSize },
-		})
-			.then((res) => {
-				state.dataSource = res.rows.map((item: any, key: number) => {
-					item.tableIndex = (current - 1) * pageSize + key + 1
-					return item
-				}) as any;
-				state.pagination = {
-					total: res.total,
-					current,
-					pageSize,
-				};
-			})
-			.catch(() => {
-				state.dataSource = [];
-			});
+		}).then((res) => {
+			state.loading = false
+			state.dataSource = res.rows.map((item: any, key: number) => {
+				item.tableIndex = (current - 1) * pageSize + key + 1
+				return item
+			}) as any;
+			state.pagination = {
+				total: res.total,
+				current,
+				pageSize,
+			};
+		}).catch(() => {
+			state.loading = false
+			state.dataSource = [];
+		});
 	};
 
 
@@ -92,7 +88,6 @@ export default function () {
 	 * @return
 	 */
 	const handleSubmit = () => {
-
 		formRef.value.validate().then((formData: any) => {
 			const paramsData = { ...formData };
 			if (paramsData.batchDate) {
@@ -139,7 +134,7 @@ export default function () {
 	 * @return
 	 */
 	const handleCancel = () => {
-		formRef.value.resetFields();
+		state.formData = {}
 		state.visible = false;
 	};
 

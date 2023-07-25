@@ -1,6 +1,40 @@
 import { defineComponent, reactive, toRefs, onMounted } from "vue";
 import service from "@/service/mainRoutes";
 import { message } from "ant-design-vue";
+import { RenderFormItem } from '@/components/form/form'
+
+export const searchRenderList: RenderFormItem[] = [
+	{
+		label: '区域地址',
+		key: 'regionName',
+		type: 'input',
+		placeholder: '区域地址'
+  },
+  {
+		label: '产品名称',
+		key: 'productName',
+		type: 'input',
+		placeholder: '产品名称'
+  },
+  {
+		label: '处理状态',
+		key: 'handleStatus',
+		type: 'select',
+    placeholder: '请选择处理状态',
+    options: [
+      {
+        value: 0,
+        label: "未处理",
+      },
+      {
+        value: 1,
+        label: "已处理",
+      },
+    ]
+	},	
+]
+
+
 const columns = [
   {
     dataIndex: "index",
@@ -14,36 +48,42 @@ const columns = [
     key: "regionNameregionName",
     align: "center",
     title: "区域地址",
+    width:140,
   },
   {
     dataIndex: "productName",
     key: "productName",
     align: "center",
     title: "产品名称",
+    width:140,
   },
   {
     dataIndex: "batchNo",
     key: "batchNo",
     align: "center",
     title: "产品批次",
+    width:140,
   },
   {
     dataIndex: "createdTime",
     key: "createdTime",
     align: "center",
     title: "窜货时间",
+    width:140,
   },
   {
     dataIndex: "handleStatus",
     key: "handleStatus",
     align: "center",
     title: "处理状态",
+    width:140,
   },
   {
     dataIndex: "handlePerson",
     key: "handlePerson",
     align: "center",
     title: "处理人",
+    width:140,
   },
   {
     dataIndex: "action",
@@ -62,16 +102,7 @@ export default defineComponent({
         productName: "",
         handleStatus: null,
       },
-      options: [
-        {
-          value: 0,
-          label: "未处理",
-        },
-        {
-          value: 1,
-          label: "已处理",
-        },
-      ],
+      searchRenderList,
       columns,
       dataSource: [] as any,
       pagination: {

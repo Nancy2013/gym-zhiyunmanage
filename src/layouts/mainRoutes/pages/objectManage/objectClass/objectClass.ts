@@ -1,12 +1,11 @@
 import { defineComponent, reactive, toRefs, ref, onMounted } from "vue";
+import { useState } from "@/hooks";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
 import filterInputHook from '@/hooks/useFilterInput'
 import { tableColumns, formRules } from './config'
 import { objectAndProductDataTypeDict } from '@/utils/dict'
-
-
-
+import { RenderFormItem } from '@/components/form/form'
 
 export default function () {
 	const dataType = objectAndProductDataTypeDict.object
@@ -17,13 +16,38 @@ export default function () {
 		visible: false,
 		columns: tableColumns,
 		formRules,
+		loading: true,
 		ruleOptions: [] as any,
-		pageSize: 10,
-		pageNum: 1,
-		total: 0,
+		pagination: {
+			pageSize: 10,
+			current: 1,
+			total: 0,
+		},
 		dataSource: [],
 		IdNameOptions: [] as any
 	});
+
+	const storeState = useState("mainModule", [
+		"userInfo",
+	]);
+
+	const searchRenderList = ref<RenderFormItem[]>([
+		{
+			label: '对象分类名称',
+			key: 'name',
+			type: 'input',
+			placeholder: '对象分类名称'
+		},
+		{
+			label: '所属机构',
+			key: 'enterpriseId',
+			type: 'select',
+			placeholder: '所属机构',
+			isHide: !storeState.userInfo.value.enterpriseName,
+			options: []
+		},
+	])
+
 
 	const filterInputCategoryName = filterInputHook(state.formData, 'categoryName', { type: 'notSymbol' })
 
@@ -40,9 +64,9 @@ export default function () {
 	const getIdNameMap = () => {
 		request({
 			url: import.meta.env.VITE_BASE_URL + "/enterprise/getIdNameMap",
-			
+
 		}).then((res: any) => {
-			state.IdNameOptions = Object.keys(res.data).map((item) => {
+			searchRenderList.value[1].options = Object.keys(res.data).map((item) => {
 				return {
 					label: res.data[item],
 					value: item
@@ -81,19 +105,22 @@ export default function () {
 	 * @return
 	 */
 	const getTableList = () => {
-		const { searchData, pageNum, pageSize } = state
+		state.loading = true
+		const { searchData, pagination: { current, pageSize }  } = state
 		request({
 			url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/pageQuery",
 			type: "json",
 			method: "post",
-			data: { ...searchData, pageNum, pageSize, dataType }
+			data: { ...searchData, current, pageSize, dataType }
 		}).then((res) => {
+			state.loading = false
 			state.dataSource = res.rows.map((item: any, key: number) => {
-				item.tableIndex = (pageNum - 1) * pageSize + key + 1
+				item.tableIndex = (current - 1) * pageSize + key + 1
 				return item
 			}) as any
-			state.total = res.total
+			state.pagination.total = res.total
 		}).catch(() => {
+			state.loading = false
 			state.dataSource = []
 		})
 	}
@@ -104,7 +131,7 @@ export default function () {
 	 * @return
 	 */
 	const handleSearch = () => {
-		state.pageNum = 1
+		state.pagination.current = 1
 		getTableList()
 	}
 
@@ -224,21 +251,23 @@ export default function () {
 		})
 	}
 
-	const handlePageChange = (pagination: any) => {
-		state.pageNum = pagination.current
-		state.pageSize = pagination.pageSize
+	const paginationChange = (pagination: any) => {
+		state.pagination.current = pagination.current
+		state.pagination.pageSize = pagination.pageSize
 		getTableList()
 	}
 
 	return {
 		...toRefs(state),
+		...storeState,
+		searchRenderList,
 		formRef,
 		handleSubmit,
 		handleCancel,
 		handleEdit,
 		handleSearch,
 		handleDelete,
-		handlePageChange,
+		paginationChange,
 		filterInputCategoryName
 	};
 }

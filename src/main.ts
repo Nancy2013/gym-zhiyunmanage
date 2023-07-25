@@ -4,12 +4,14 @@ import router from "@/router";
 import store from "@/store";
 import VideoPlayer from 'vue-video-player'
 import 'video.js/dist/video-js.css'
-import { Tooltip, Tag, Button, Table, Divider, Input, Popover, Radio, Checkbox, Row, Col, Select, Modal, Spin } from 'ant-design-vue'
+import { Tooltip, Tag, Button, Table, Divider, Input, Popover, Radio, Checkbox, Row, Col, Select, Modal, Spin, Steps } from 'ant-design-vue'
 import configIcon from '@/components/configIcon';
 import configTable from '@/components/configTable';
 import configUpload from '@/components/configUpload';
 import configPage from '@/components/configPage';
+import configForm from '@/components/configForm';
 import FcForm from '@/components/form/form'
+import FcTable from "@/components/table/table.vue";
 
 const app: App<Element> = createApp(Main);
 
@@ -31,6 +33,7 @@ const components = [
     Select,
     Modal,
     Spin,
+    Steps
 ];
 
 components.forEach(component => {
@@ -49,7 +52,13 @@ app.component("config-upload", configUpload);
 // 注入config-page组件
 app.component("config-page", configPage);
 
+// 注入config-form组件
+app.component("config-form", configForm);
+
 app.component("FcForm", FcForm);
+
+// 注入table组件
+app.component("FcTable", FcTable);
 
 app.use(VideoPlayer)
 

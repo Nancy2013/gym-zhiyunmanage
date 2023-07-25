@@ -1,85 +1,94 @@
 import { RenderFormItem } from '@/components/form/form'
 import { Rules } from '@/shims'
 
+export const searchRenderList: RenderFormItem[] = [
+	{
+		label: '批次标题/产品名称',
+		key: 'name',
+		type: 'input',
+		placeholder: '批次标题/产品名称'
+  }
+]
+
 
 export const tableColumns = [
 	{
 		dataIndex: "tableIndex",
 		key: "tableIndex",
-		align: "center",
 		title: "序号",
+		width: 80
 	},
 	{
 		dataIndex: "batchNo",
 		key: "batchNo",
-		align: "center",
 		title: "批次编号",
 	},
 	{
 		key: "batchTitle",
 		title: "批次标题",
-		align: "center",
+		
 		dataIndex: "batchTitle",
 	},
 	{
 		key: "categoryName",
 		title: "产品分类",
-		align: "center",
+		width: 160,
 		dataIndex: "categoryName",
 	},
 	{
 		key: "boName",
 		title: "产品名称",
-		align: "center",
+		
 		dataIndex: "boName",
 	},
 	{
 		key: "boName",
 		title: "产品编号",
-		align: "center",
+		
 		dataIndex: "boName",
 	},
 	{
 		key: "batchDate",
 		title: "批次日期",
-		align: "center",
+		
 		dataIndex: "batchDate",
 	},
 	{
 		key: "warrantyPeriod",
 		title: "质保期",
-		align: "center",
+		width: 160,
 		dataIndex: "warrantyPeriod",
 	},
 	{
 		key: "batchResponorUser",
 		title: "负责人",
-		align: "center",
+		width: 90,
 		dataIndex: "batchResponorUser",
 	},
 	{
 		key: "remark",
 		title: "说明",
-		align: "center",
+		
 		dataIndex: "remark",
 	},
 	{
 		key: "creator",
 		title: "创建人",
-		align: "center",
+		width: 90,
 		dataIndex: "creator",
 	},
 	{
 		key: "createdTime",
 		title: "创建时间",
-		align: "center",
+		width: 140,
 		dataIndex: "createdTime",
 	},
 	{
 		key: "action",
 		title: "操作",
-		align: "center",
+		width: 120,
 		dataIndex: "action",
+		fixed: 'right'
 	},
 ]
 
@@ -95,18 +104,23 @@ export const renderList: RenderFormItem[] = [
 		label: '批次编号',
 		type: 'input',
 		key: 'batchNo',
+		maxlength: 30,
+		inputType: 'word',
 		placeholder: '请输入批次编号'
 	},
 	{
 		label: '批次标题',
 		type: 'input',
 		key: 'batchTitle',
+		maxlength: 30,
+		inputType: 'word',
 		placeholder: '请输入批次标题'
 	},
 	{
 		label: '负责人',
 		type: 'input',
 		key: 'batchResponorUser',
+		maxlength: 30,
 		placeholder: '请输入负责人'
 	},
 	{
@@ -129,6 +143,7 @@ export const renderList: RenderFormItem[] = [
 		type: 'textarea',
 		key: 'remark',
 		placeholder: '请输入说明',
+		maxlength: 1000,
 		width: '100%'
 	},
 ]

@@ -1,61 +1,28 @@
 <template>
-  <div class="list">
-      <div class="operate">
-        <a-form layout="inline">
-            <a-form-item label="">
-                    <a-input v-model:value="search.regionName" placeholder="区域名称" />
-                </a-form-item>
-                <a-form-item label="">
-                    <a-input v-model:value="search.deployNo" placeholder="调配单号" @pressEnter="handleSearch"/>
-                </a-form-item>
-                <a-form-item>
-                    <a-button class='left'  type="primary" @click="handleSearch">搜索</a-button>
-                    <a-button type="primary" @click="reset">重置</a-button>
-                </a-form-item>
-            </a-form>
-            <div>
-                <a-button type="primary" @click="add">添加</a-button>
-            </div>
-      </div>
-      <div class="content">
-        <config-table :configColumns="{
-            tableModules: {
-                columns,
-                dataSource,
-                rowKey: 'id',
-                bordered: true,
-                loading,
-                pagination,
-                onChange: paginationChange
-            },
-            actionModules: {
-                isAdd: false,
-                isSearch: false,
-                isAction: true,
-                receive:handleFresh
-            },
-        }">
-            <template #bodyCell="{ column, record,index }">
-                <template v-if="column.key === 'index'">
-                    {{ index+1 }}
-                </template>
-                <template v-if="column.key === 'deployTime'">
-                    {{ record.deployTime?moment(record.deployTime).format('YYYY-MM-DD hh:mm:ss'):'' }}
-                </template>
-                <template v-if="column.key === 'action'">
-                    <a-space>
-                        <a-button type="link" size="small" @click="edit(record)"> 配置批次 </a-button>
-                        <a-divider type="vertical" />
-                        <a-button type="link" class='error' size="small" @click="handleDel(record)"> 删除 </a-button>
-                    </a-space>
-                </template>
+    <div class="list" style="height: 100%;">
+        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="search" @search="handleSearch">
+
+            <template #headerBtnArea>
+                <a-button class='left' type="primary" @click="handleSearch">搜索</a-button>
+                <a-button @click="reset">重置</a-button>
+                <a-button type="primary" @click="jump({ name: 'deployBatchAdd', params: { type: 'add' } })">添加</a-button>
             </template>
-        </config-table>
-      </div>
-  </div>
+
+            <template #deployTime="{ record }">
+                {{ record.deployTime?moment(record.deployTime).format('YYYY-MM-DD hh:mm:ss'):'' }}
+            </template>
+
+            <template #action="{ record }">
+                <a-space>
+                    <a-button type="link" size="small" @click="jump({ name: 'deployBatchAdd', params: { type: 'edit' }, query: { id: record.id } })">配置批次</a-button>
+                    <a-button type="link" class='error' size="small" @click="handleDel(record)">删除</a-button>
+                </a-space>
+            </template>
+        </FcTable>
+    </div>
 </template>
 <script lang="ts">
-import Index from './index'
+import Index from "./index";
 
 export default Index;
 </script>

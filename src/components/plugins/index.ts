@@ -1,0 +1,6 @@
+export { default as PDictSelect } from './PDictSelect.vue'
+export { default as PModal } from './PModal.vue'
+export { default as BrandSelect } from './brandSelect.vue'
+export { default as TableView } from './tableView.vue'
+export { default as PCard } from './PCard.vue'
+export { default as IngredientSelection } from './ingredientSelection.vue'

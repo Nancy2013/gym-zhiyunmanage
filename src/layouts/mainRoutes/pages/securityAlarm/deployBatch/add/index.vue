@@ -1,8 +1,8 @@
 <template>
   <div class="add">
-    <div class="header">
+    <!-- <div class="header">
       <a-page-header title="返回" sub-title="" @back="back" />
-    </div>
+    </div> -->
     <div class="content">
       <div class="left-table">
         <div class="operate">

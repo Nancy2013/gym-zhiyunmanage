@@ -2,7 +2,7 @@ import { ref, reactive, toRef, onMounted, toRefs } from "vue";
 import service from '@/service/stRoutes'
 import { Modal, message } from "ant-design-vue";
 import { useAction } from "@/hooks";
-import {status} from "./../list/config";
+import {codeStatus} from "@/utils/dict";
 import {sendTime} from '@/utils/function'
 
 /**
@@ -18,9 +18,9 @@ const getStatusOptions=()=>{
     },
   ];
 
-  Object.keys(status).forEach(value=>{
+  Object.keys(codeStatus).forEach(value=>{
     options.push({
-      label:status[value]||value,
+      label:codeStatus[value]||value,
       value:parseInt(value),
     });
   })
@@ -28,7 +28,7 @@ const getStatusOptions=()=>{
   return options;
 }
 export const usePage = (opts: any) => {
-  const storeAction = useAction('stModule',['asyncUpdateIsStBreamub','asyncUpdateApprovalStatus'])
+  const storeAction = useAction('stModule',['asyncUpdateIsStBreamub',])
   const state = reactive({
     loading: true,
     dataSource: [],
@@ -132,7 +132,7 @@ export const usePage = (opts: any) => {
 
   return {
     ...toRefs(state),
-    status,
+    codeStatus,
     query,
     handleSearch,
     paginationChange,

@@ -1,8 +1,46 @@
-import { Moment } from "moment";
+import dayjs from "dayjs";
 import request from "@/utils/axios";
 import { useRouter } from "vue-router";
 import { defineComponent, toRefs, reactive, onMounted, ref } from "vue";
-import {getPopupContainer} from '@/hooks'
+import { getPopupContainer } from '@/hooks'
+import { RenderFormItem } from '@/components/form/form'
+
+const statusOptions = [
+  {
+    value: 1,
+    label: "已创建",
+  },
+  {
+    value: 2,
+    label: "已同步",
+  },
+  {
+    value: 3,
+    label: "同步失败",
+  },
+]; // 状态数据
+
+const searchRenderList: RenderFormItem[] = [
+	{
+		label: '工业标识/对象名称',
+		key: 'idisCodeOrBoName',
+		type: 'input',
+		placeholder: '工业标识/对象名称'
+  },
+  {
+		label: '状态',
+		key: 'syncStatus',
+		type: 'select',
+    placeholder: '请选择状态',
+    options: statusOptions
+  },
+  {
+    label: '时间区间',
+    key: 'rangeTime',
+    type: 'datePicker',
+    datePickerType: 'rangePicker'
+  }
+]
 const columns = [
   {
     key: "idisCode",
@@ -50,21 +88,6 @@ const columns = [
   },
 ]; // 表格数据
 
-const statusOptions = [
-  {
-    value: 1,
-    label: "已创建",
-  },
-  {
-    value: 2,
-    label: "已同步",
-  },
-  {
-    value: 3,
-    label: "同步失败",
-  },
-]; // 状态数据
-
 export default defineComponent({
   setup() {
     const router = useRouter();
@@ -77,12 +100,11 @@ export default defineComponent({
         current: 1,
         pageSize: 10,
       },
+      searchRenderList,
       query: {
         idisCodeOrBoName: "",
         syncStatus: undefined,
-        startTime: ref<Moment>(),
-        endTime: ref<Moment>(),
-        rangeTime: ref<Moment[]>([]),
+        rangeTime: ref<any[]>([]),
       },
       statusOptions,
     });
@@ -107,20 +129,23 @@ export default defineComponent({
       state.loading = true;
       let {
         pagination: { current, pageSize },
-        query: { idisCodeOrBoName, syncStatus, startTime, endTime },
+        query: { idisCodeOrBoName, syncStatus, rangeTime },
       } = state;
+      const params: any = {
+        pageNum: current,
+        pageSize,
+        idisCodeOrBoName,
+        syncStatus,
+      }
+      if (Array.isArray(rangeTime) && rangeTime.length) {
+        params.startTime = `${dayjs(rangeTime[0]).format("YYYY-MM-DD")} 00:00:00`
+        params.endTime = `${dayjs(rangeTime[1]).format("YYYY-MM-DD")} 23:59:59`
+      }
       let res: any = await request({
         url: import.meta.env.VITE_NODE_URL + "/code/page",
         type: "json",
         method: "post",
-        data: {
-          pageNum: current,
-          pageSize,
-          idisCodeOrBoName,
-          syncStatus,
-          startTime,
-          endTime,
-        },
+        data: params,
       });
       if (res.code == 200) {
         state.loading = false;
@@ -142,8 +167,6 @@ export default defineComponent({
      * @return
      */
     const rangeDateChange = (value: any, dateString: any) => {
-      state.query.startTime = dateString[0];
-      state.query.endTime = dateString[1];
       state.query.rangeTime = value;
     };
 
@@ -187,8 +210,6 @@ export default defineComponent({
       state.query = {
         idisCodeOrBoName: "",
         syncStatus: undefined,
-        startTime: undefined,
-        endTime: undefined,
         rangeTime: [],
       };
       queryList();

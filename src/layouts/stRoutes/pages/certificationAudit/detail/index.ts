@@ -10,7 +10,6 @@ import Panel from "./../components/panel/index.vue";
 import baseIcon from "@/assets/image/baseIcon.png";
 import coreIcon from "@/assets/image/coreIcon.png";
 import contactIcon from "@/assets/image/contactIcon.png";
-import { approvalStatusOptions } from "../list/config";
 
 export default defineComponent({
   components: {
@@ -24,7 +23,6 @@ export default defineComponent({
       id: "" as any,
       loading: true,
       dataSource: {} as any,
-      approvalStatusOptions,
       dicts: {} as any,
     });
 

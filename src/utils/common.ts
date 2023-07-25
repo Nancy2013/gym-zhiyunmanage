@@ -19,3 +19,13 @@
 export const getSuffixName = (name: string) => {
 	return name.substring(name.lastIndexOf(".") + 1)
 }
+
+/**
+ * 时间显示格式
+ */
+export const pickerFormat={
+    yearFormat:'YYYY',
+    monthFormat:'YYYY-MM',
+    dateFormat:'YYYY-MM-DD',
+    timeFormat:'YYYY-MM-DD HH:mm:ss',
+}

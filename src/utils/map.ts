@@ -11,8 +11,9 @@ export const createAMap = (): Promise<any> => {
 		if ((window as any).AMap) {
 			resolve((window as any).AMap)
 		} else {
+			(window as any)._AMapSecurityConfig = { securityJsCode: '9d74a7886434306686865687065c2437' }
 			AMapLoader.load({
-				"key": "04cb551edd372f8177a9ecfaf27a71fa",              // 申请好的Web端开发者Key，首次调用 load 时必填
+				"key": "05274b363af7cb9cbeb61009e0cf6c7a",              // 申请好的Web端开发者Key，首次调用 load 时必填
 				"version": "1.4.15",   // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
 				"plugins": ["AMap.DistrictSearch", "AMap.Geolocation", "AMap.MarkerClusterer", "AMap.Geocoder"],           // 需要使用的的插件列表，如比例尺'AMap.Scale'等
 			}).then((AMap) => {

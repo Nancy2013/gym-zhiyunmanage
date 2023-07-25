@@ -100,7 +100,7 @@ export default defineComponent({
             pagination: {
                 total: 0,
                 current: 1,
-                limit: 10
+                pageSize: 10
             },
             formData: {} as any,
             validateStatus: "",
@@ -115,9 +115,17 @@ export default defineComponent({
             id: '',
             reason: '',
             type: '',
+            tHeight: '' as string | number ,
             teaCodeKey: Math.random(),
             teaGardenData: {} as any,
             selectedRowKeys: []
+        })
+
+        onMounted(() => {
+            const tableHeight = document.getElementById('teaGardenProperty-table')?.clientHeight
+            if (tableHeight) {
+                state.tHeight = tableHeight - 120 
+            }
         })
         const convertStatus = (state: number) => {
             let value: string = ''
@@ -133,11 +141,11 @@ export default defineComponent({
         // 茶企确权查询
         const queryTea = async () => {
             state.loading = true
-            let { pagination: { limit, current }, query: { condition, status } } = state
+            let { pagination: { pageSize, current }, query: { condition, status } } = state
             let res: any = await request({
                 url: `${import.meta.env.VITE_XICHA_URL}/authorized/page-query`, method: 'POST', data: {
-                    pageSize: 15,
-                    pageNum: 1,
+                    pageSize: pageSize,
+                    pageNum: current,
                     keyWords: condition,
                     authorizedStatus: status
                 }
@@ -146,7 +154,7 @@ export default defineComponent({
             
             if (Array.isArray(rows) && rows.length) {
                 state.dataSource = rows.map((row, index) => {
-                    row.tableIndex = limit * (current - 1) + index + 1
+                    row.tableIndex = pageSize * (current - 1) + index + 1
                     return row as never
                 });
             } else {
@@ -157,7 +165,7 @@ export default defineComponent({
             state.pagination = {
                 total: total,
                 current,
-                limit
+                pageSize
             };
         }
 
@@ -250,8 +258,8 @@ export default defineComponent({
 
         // 分页查询
         const paginationChange = (pagination: any) => {
-            let { total, current, limit } = pagination
-            state.pagination = { total, current, limit };
+            let { total, current, pageSize } = pagination
+            state.pagination = { total, current, pageSize };
             queryTea();
         }
 

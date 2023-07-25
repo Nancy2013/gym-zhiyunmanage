@@ -1,7 +1,10 @@
-import { defineComponent, reactive, toRefs, onMounted } from "vue";
+import { defineComponent, reactive, toRefs, onMounted, ref } from "vue";
 import service from "@/service/mainRoutes";
 import Mapview from "@/layouts/mainRoutes/pages/securityAlarm/components/map/index.vue";
-import {sendTime} from '@/utils/function'
+import { sendTime } from '@/utils/function'
+import { RenderFormItem } from '@/components/form/form'
+
+
 const productFieldNames = {
   value: "id",
   label: "productName",
@@ -86,7 +89,7 @@ export default defineComponent({
         .then((res: any) => {
           const { code, data } = res;
           if (code === 200) {
-            state.productOptions = data;
+            searchRenderList.value[0].options = data
           }
         })
         .catch((e: any) => {
@@ -109,7 +112,8 @@ export default defineComponent({
         .then((res: any) => {
           const { code, data } = res;
           if (code === 200) {
-            state.batchOptions = data;
+            searchRenderList.value[1].options = data
+            //state.batchOptions = data;
           }
         })
         .catch((e: any) => {
@@ -141,12 +145,34 @@ export default defineComponent({
         time: [],
       };
     };
+
+    const searchRenderList = ref<RenderFormItem[]>([
+      {
+        label: '产品',
+        key: 'productId',
+        type: 'select',
+        placeholder: '请选择产品',
+        options: [],
+        fieldNames: productFieldNames,
+        filterOption: productFilterOption,
+        showSearch: true
+      },
+      {
+        label: '批次',
+        key: 'batchId',
+        type: 'select',
+        placeholder: '请选择批次',
+        options: [],
+        fieldNames: batchFieldNames,
+        filterOption: batchFilterOption,
+        showSearch: true
+      },
+    ])
     return {
       ...toRefs(state),
+      searchRenderList,
       handleSearch,
       reset,
-      productFilterOption,
-      batchFilterOption,
     };
   },
 });

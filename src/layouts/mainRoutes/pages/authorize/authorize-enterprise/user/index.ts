@@ -4,54 +4,99 @@ import dayjs from "dayjs";
 import { Modal, message, TreeProps } from "ant-design-vue";
 import type { Rule } from "ant-design-vue/es/form";
 const DEFAULT_PASS = "111111"; // 默认用户密码
+import { RenderFormItem } from '@/components/form/form'
+
+const searchRenderList: RenderFormItem[] = [
+  {
+    label: '账号/姓名/手机',
+    key: 'name',
+    type: 'input',
+    placeholder: '账号/姓名/手机'
+  },
+  {
+    label: '时间区间',
+    key: 'time',
+    type: 'datePicker',
+    datePickerType: 'rangePicker'
+  },
+  // {
+  //   label: '状态',
+  //   key: 'status',
+  //   type: 'select',
+  //   placeholder: '请选择状态',
+  //   options: [{ label: '启用', value: 'ENABLE' }, { label: '停用', value: 'DISABLE' }]
+  // }
+]
+
+const renderFormList: RenderFormItem[] = [
+  {
+    label: '账号',
+    type: 'input',
+    key: 'account',
+    width: "100%",
+    placeholder: '请输入账号'
+  },
+  {
+    label: '联系人',
+    type: 'input',
+    key: 'name',
+    width: "100%",
+    placeholder: '请输入联系人'
+  },
+
+  {
+    label: '电话',
+    type: 'input',
+    key: 'phone',
+    inputType: 'int',
+    width: "100%",
+    maxlength: 11,
+    placeholder: '请输入电话'
+  },
+]
+
+
 const columns = [
   {
     dataIndex: "index",
     key: "index",
-    align: "center",
     title: "序号",
+    width: 80
   },
   {
     dataIndex: "account",
     key: "account",
-    align: "center",
     title: "账号",
+
   },
   {
     dataIndex: "name",
     key: "name",
-    align: "center",
     title: "员工名称",
   },
   {
     dataIndex: "phone",
     key: "phone",
-    align: "center",
     title: "联系电话",
+    width: 160
   },
-  // {
-  //   dataIndex: "roleName",
-  //   key: "roleName",
-  //   align: "center",
-  //   title: "角色名称",
-  // },
   {
     dataIndex: "status",
     key: "status",
-    align: "center",
     title: "状态",
+    width: 120
   },
   {
     dataIndex: "createdTime",
     key: "createdTime",
-    align: "center",
     title: "创建时间",
+    width: 140
   },
   {
     dataIndex: "action",
     key: "action",
-    align: "center",
     title: "操作",
+    width: 280
   },
 ];
 
@@ -91,9 +136,11 @@ export default defineComponent({
         name: "",
         phone: "",
       },
+      searchRenderList,
       loading: false,
       visible: false,
       visibleRole: false,
+      renderFormList,
       columns,
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },

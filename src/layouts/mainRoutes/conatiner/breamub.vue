@@ -20,10 +20,14 @@ export default defineComponent({
         Breadcrumb,
     },
     props: {
-        routes: {
+        routeList: {
             type: Array as PropType<any[]>,
             require: true,
         },
+        activeKey: {
+            type: Number,
+            require: true,
+        }
     },
     setup(props) {
         const route: any = useRoute();
@@ -37,9 +41,9 @@ export default defineComponent({
             "isBreamub",
         ]);
 
-        watch([() => props.routes, route], (next, prev) => {
-            const routes = next[0], path = next[1].path
-            state.breamubList = getBreamubList(routes as any[], path, []);
+        watch([() => props.routeList, route], (next, prev) => {
+            const [routeList = [], route ] = next
+            state.breamubList = getBreamubList(routeList as any[], route.path, []);
         });
 
         /**
@@ -47,9 +51,9 @@ export default defineComponent({
          * @param
          * @return
          */
-        const getBreamubList = (routes: any[], path: any, breamubList: any[]): any => {
-            for (let i = 0; i < routes.length; i++) {
-                const routeItem = routes[i];
+        const getBreamubList = (routeList: any[], path: any, breamubList: any[]): any => {
+            for (let i = 0; i < routeList.length; i++) {
+                const routeItem = routeList[i];
                 if (routeItem.path === path) {
                     breamubList.push(routeItem);
                     return breamubList;

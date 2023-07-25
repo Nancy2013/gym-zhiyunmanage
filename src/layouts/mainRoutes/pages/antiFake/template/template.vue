@@ -1,69 +1,31 @@
 <template>
-    <div>
-        <!-- <FcForm v-model:formData="formData" :renderList="renderList" layout="inline" @loadData="handleCange"></FcForm> -->
+    <div class="aniFakeTemplate" style="height: 100%">
+        <FcTable  :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="handleSearch">
 
-        <a-form layout="inline" :model="query">
-            <a-form-item label="">
-                <a-input v-model:value="query.name" placeholder="模板名称" @pressEnter="handleSearch" />
-            </a-form-item>
-            <a-form-item label="">
-                <a-select style="width: 194px;" allowClear placeholder="类型" :options="antiFakeTemplateTypeOptions" v-model:value="query.type"></a-select>
-            </a-form-item>
-            <a-form-item label="">
-				<a-select style="width: 194px;" allowClear placeholder="显示场景" :options="antiFakeTemplateScenarioOptions" v-model:value="query.scenario"></a-select>
-            </a-form-item>
-            <a-form-item label="">
-                <a-select style="width: 194px;" allowClear placeholder="审核状态" :options="antiFakeTemplateAuditStatusOptions" v-model:value="query.reviewStatus"></a-select>
-            </a-form-item>
-            <a-form-item>
-                <a-button type="primary" @click="handleSearch">查询</a-button>
-            </a-form-item>
-            <a-form-item>
-                <a-button type="primary" @click="handleAdd">添加</a-button>
-            </a-form-item>
-        </a-form>
-    </div>
-
-    <div>
-        <config-table :configColumns="{
-                    tableModules: {
-                        columns,
-                        dataSource,
-                        rowKey: 'id',
-                        bordered: true,
-                        loading,
-                        pagination,
-                        rowSelection:{},
-                        onChange: paginationChange
-                    },
-                    actionModules: {
-                        isAdd: false,
-                        isSearch: false,
-                        isAction: true,
-                        receive: reset
-                    },
-                    paginationModules: {
-                       
-                    }
-                }">
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.key == 'type'">
-                    <span :style="`color: ${record.type == 'system' ? '#1890ff' : ''}`">{{ antiFakeTypeDict[record.type] }}</span>
-                </template>
-				<template v-if="column.key == 'scenario'">
-                    <span :style="`color: ${record.scenario == antiFakeScenarioDict.first ? '#1890ff' : ''}`">{{ antiFakeScenarioDict[record.scenario] }}</span>
-                </template>
-				<template v-if="column.key == 'reviewStatus'">
-                    <span :style="`color: ${record.reviewStatus == 'submitted' ? '#faad14' : record.reviewStatus == 'pass' ? '#52c41a' : record.reviewStatus == 'reject' ? '#f5222d' : ''}`">{{ antiFakeAuditStatusDict[record.reviewStatus] }}</span>
-                </template>
-                <template v-if="column.key === 'action'">
-                    <div class="action" v-if="record.reviewStatus == 'submitted' || record.reviewStatus == 'reject'">
-                        <a-button type="link" size="small" @click="handleEdit(record)">修改</a-button>
-						<a-button type="link" size="small" @click="handleDelete(record)">删除</a-button>
-                    </div>
-                </template>
+            <template #headerBtnArea>
+                <a-button type="primary" @click="handleSearch"> 查询 </a-button>
+                <a-button type="primary"  @click="handleAdd"> 添加 </a-button>
             </template>
-        </config-table>
+
+            <template #type="{ record }">
+                <span :style="`color: ${record.type == 'system' ? '#1890ff' : ''}`">{{ antiFakeTypeDict[record.type] }}</span>
+            </template>
+
+            <template #scenario="{ record }">
+                <span :style="`color: ${record.scenario == antiFakeScenarioDict.first ? '#1890ff' : ''}`">{{ antiFakeScenarioDict[record.scenario] }}</span>
+            </template>
+
+            <template #reviewStatus="{ record }">
+                <span :style="`color: ${record.reviewStatus == 'submitted' ? '#faad14' : record.reviewStatus == 'pass' ? '#52c41a' : record.reviewStatus == 'reject' ? '#f5222d' : ''}`">{{ antiFakeAuditStatusDict[record.reviewStatus] }}</span>
+            </template>
+
+            <template #action="{ record }">
+                <div class="action" v-if="record.reviewStatus == 'submitted' || record.reviewStatus == 'reject'">
+                    <a-button type="link" size="small" @click="handleEdit(record)">修改</a-button>
+                    <a-button type="link" size="small" @click="handleDelete(record)">删除</a-button>
+                </div>
+            </template>
+        </FcTable>
     </div>
 
     <a-modal width="640px" v-model:visible="visible" :title="`${formData.id ? '编辑扫码验证文字模板' : '添加扫码验证文字模板'}`" @ok="handleSubmit()" @cancel="handleCancel">
@@ -76,7 +38,7 @@
             </a-form-item>
 
             <a-form-item label="模板名称" name="name">
-                <a-input v-model:value="formData.name" placeholder="请输入模板名称" />
+                <a-input v-model:value="formData.name" placeholder="请输入模板名称" maxlength="30" />
             </a-form-item>
 
             <a-form-item label="防伪内容" name="text">
@@ -101,8 +63,6 @@
         </a-form>
     </a-modal>
 
-
-   
 </template>
 
 <script lang="ts">

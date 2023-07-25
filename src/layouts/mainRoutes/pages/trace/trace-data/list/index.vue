@@ -5,7 +5,7 @@
             <div class="data-tables-search">
                 <div class="search-left">
                     <div class="search-left-inline">
-                        <a-input style="width: 200px;" placeholder="流程名称" />
+                        <a-input style="width: 300px;" placeholder="产品名称/流程名称/流程说明" v-model:value="query.condition" />
                     </div>
                     <div class="search-left-inline">
                         <a-button type="primary">搜索</a-button>

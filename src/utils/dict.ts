@@ -110,3 +110,113 @@ export const objectAndProductDataTypeDict = {
 	product: 1
 }
 
+/**
+ * 企业认证状态
+ */
+export const certificationStatus={
+	1:'待审核',
+    2:'已认证',
+    3:'已驳回',
+	'wait':1,
+	'complate':2,
+	'reject':3,
+};
+
+/**
+ * 码量授权状态
+ */
+export const codeStatus={
+	0:'待审核',
+	1:'已审核',
+	2:'已驳回',
+};
+
+/**
+ * 工单类型的说明
+ */
+export const workTypeDict = {
+	/**
+	 * 农事工单
+	 */
+	farming: 1,
+	/**
+	 * 采摘工单
+	 */
+	pick: 2,
+	/**
+	 * 生产工单
+	 */
+	production: 3,
+	/**
+	 * 质量检验
+	 */
+	qualityTesting: 4,
+	/**
+	 * 产品包装
+	 */
+	productPackaging: 5,
+	/**
+	 * 二次包装
+	 */
+	secondaryPackaging: 6,
+	/**
+	 * 入库
+	 */
+	warehousing: 7,
+	/**
+	 * 出库
+	 */
+	outbound: 8,
+	/**
+	 * 农事工单
+	 */
+	'1': '农事工单',
+	/**
+	 * 采摘工单
+	 */
+	'2': '采摘工单',
+	/**
+	 * 生产工单
+	 */
+	'3': '生产工单',
+	/**
+	 * 质量检验
+	 */
+	'4': '质量检验',
+	/**
+	 * 产品包装
+	 */
+	'5': '产品包装',
+	/**
+	 * 二次包装
+	 */
+	'6': '二次包装',
+	/**
+	 * 入库
+	 */
+	'7': '入库',
+	/**
+	 * 出库
+	 */
+	'8': '出库'
+}
+
+/**
+ *品牌活动方式
+ */
+export const activityMode={
+	1:'线上',
+	2:'线下',
+};
+
+/**
+ *品牌活动状态
+ */
+export const activityStatus={
+	'0':'未下发',
+	'1':'已下发',
+	'2':'报名中',
+	'3':'进行中',
+	'4':'已终止',
+};
+
