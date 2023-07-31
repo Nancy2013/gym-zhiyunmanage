@@ -1,6 +1,6 @@
 <template>
     <div class="tenant">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="queryList">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="queryList">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="queryList">查询</a-button>
@@ -21,7 +21,7 @@
                     <a-button type="link" size="small" @click="see(record)">查看</a-button>
                 </a-space>
             </template>
-        </FcTable>
+        </vue-table>
         
         <!-- 弹框 -->
         <a-modal v-model:visible="visible" :title="title" :afterClose="destroyInfo">

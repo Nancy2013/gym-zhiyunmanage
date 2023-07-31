@@ -21,7 +21,7 @@
       <div class="table-header-tools">
         <a-tooltip>
           <template #title>{{ fullScreen ? "退出全屏" : "全屏显示" }}</template>
-          <config-icon
+          <tsx-icon
             :name="fullScreen ? 'outScreen' : 'screen'"
             @click="switchScreenDisplay"
           />
@@ -39,11 +39,11 @@
               </p>
             </a-checkbox-group>
           </template>
-          <config-icon name="filter" />
+          <tsx-icon name="filter" />
         </a-popover>
         <a-tooltip>
           <template #title>刷新</template>
-          <config-icon name="reset" style="margin-right: 0" @click="handleRoad" />
+          <tsx-icon name="reset" style="margin-right: 0" @click="handleRoad" />
         </a-tooltip>
       </div>
     </div>

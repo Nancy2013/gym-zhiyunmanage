@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import PModal from './PModal.vue';
+import PModal from './pmodal.vue';
 import { ref, reactive } from 'vue'
 import request from '@/utils/axios';
 import { Response, ColumnItem } from '@/types/mainInterface'

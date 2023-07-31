@@ -1,61 +1,24 @@
 <template>
     <div class="trace-data-list">
-        <!-- 表格 -->
-        <div class="trace-data-tables">
-            <div class="data-tables-search">
-                <div class="search-left">
-                    <div class="search-left-inline">
-                        <a-input style="width: 300px;" placeholder="产品名称/流程名称/流程说明" v-model:value="query.condition" />
-                    </div>
-                    <div class="search-left-inline">
-                        <a-button type="primary">搜索</a-button>
-                    </div>
-                </div>
-                <div class="search-right">
-                    <div class="seach-right-inline">
-                        <a-button type="primary" @click="showAction">添加</a-button>
-                    </div>
-                </div>
-            </div>
-            <config-table 
-              :configColumns="{
-                 tableModules: {
-                    columns,
-                    dataSource,
-                    rowKey: 'id',
-                    loading: false,
-                    bordered: true,
-                    rowSelection: {}
-                 },
-                 actionModules: {
-                    isAdd: false,
-                    isSearch: false,
-                    isAction: true
-                 },
-                 paginationModules: {
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange"
+            :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="queryList">
 
-                 }
-              }"
-            >
-            <template #bodyCell="{ column }">
-                    <template v-if="column.key === 'action'">
-                        <div class="action">
-                            <a-button type="link" size="small" @click="showAction"> 修改 </a-button>
-                            <a-divider type="vertical" />
-                            <a-button type="link" size="small"> 复制 </a-button>
-                            <a-divider type="vertical" />
-                            <a-button type="link" danger size="small"> 删除 </a-button>
-                        </div>
-                    </template>
-                </template>
-            </config-table>
-        </div>
+            <template #headerBtnArea>
+                <a-button type="primary" @click="queryList">搜索</a-button>
+                <a-button type="primary" @click="showAction()">添加</a-button>
+            </template>
+
+            <template #action="{ record }">
+                <a-space>
+                    <a-button type="link" size="small" @click="showAction(record.id)"> 编辑 </a-button>
+                    <a-button type="link" danger size="small" @click="deleteConfirm(record.id)"> 删除 </a-button>
+                </a-space>
+            </template>
+
+        </vue-table>
     </div>
 </template>
 <script lang="ts">
 import Index from './index'
 export default Index
 </script>
-<style lang="less" scoped>
-@import url('./index.less');
-</style>

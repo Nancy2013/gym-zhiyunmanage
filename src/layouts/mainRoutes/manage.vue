@@ -56,6 +56,7 @@ export default defineComponent({
          * @return
          */
         const getActiveKey = (routes: any[], firstKey?: number) => {
+            
             for (let i = 0; i < routes.length; i++) {
                 const routeItem = routes[i];
                 if (routeItem.path === route.path) {
@@ -85,8 +86,15 @@ export default defineComponent({
                                 });
                             }),{ id: "id", pid: "parentId" }
                     );
-                    getActiveKey(routes);
                     state.routes = routes
+                    if (route.path === '/') {
+                        const activeKey = routes[0].id
+                        state.activeKey = activeKey
+                        handleTabChange(activeKey)
+                    } else {
+                        getActiveKey(routes);
+                    }
+                    
                 } else {
                     router.push("/error");
                 }
@@ -103,10 +111,10 @@ export default defineComponent({
             const { routes } = state
             for (let i = 0; i < routes.length; i++) {
                 if (routes[i].id === activeKey) {
-                    const routeList = routes[i].children
+                    const routeList = routes[i].children || []
                     for (let i = 0; i < routeList.length; i++) {
                         const routes = routeList[i]
-                        if ( Array.isArray(routes.children) && routes.children.length ) {
+                        if (routes && Array.isArray(routes.children) && routes.children.length ) {
                             for (let j = 0; j < routes.children.length; j++) {
                                 const routeItem = routes.children[j];
                                 if (routeItem.ismenu === "Y" && routeItem.path) {
@@ -127,8 +135,7 @@ export default defineComponent({
             const [routes, activeKey] = newValue
             for (let i = 0; i < routes.length; i++) {
                 if (routes[i].id === activeKey) {
-                    state.routeList = routes[i].children
-                    console.log(state.routeList)
+                    state.routeList = routes[i].children || []
                 }
             }
         }, { immediate: true })

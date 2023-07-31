@@ -8,7 +8,8 @@ import {
   sassTerminalTypeOptions,
   xcTerminalTypeOptions,
 } from "@/utils/config";
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
+import { getMenuIdList, filterParentNodeChecked } from '../../authorize-tenant/role/index'
 
 
 const searchRenderList: RenderFormItem[] = [
@@ -303,9 +304,9 @@ export default defineComponent({
         }).then((res) => {
           if (Array.isArray(res.data) && res.data.length) {
             state.authTreeData = convertTree(res.data, { id: 'id', pid: 'pid' });
-            state.selectAuthList = res.data.filter((element: any) => element.checked).map((item) => {
+            state.selectAuthList = filterParentNodeChecked(state.authTreeData, res.data.filter((element: any) => element.checked).map((item) => {
               return item.id;
-            });
+            }))
             resolve(true);
           } else {
             state.authTreeData = [];
@@ -322,12 +323,13 @@ export default defineComponent({
      * @return
      */
     const handleAuthSubmit = () => {
-      if (state.selectAuthList.length) {
+      const { selectAuthList, authTreeData } = state
+      if (selectAuthList.length) {
         request({
           url: import.meta.env.VITE_BASE_URL + "/role/setAuthority",
           type: "json",
           method: "post",
-          data: { menuPlatformReqList: [{ menuIds: state.selectAuthList }], roleId: state.roleId },
+          data: { menuPlatformReqList: [{ menuIds: getMenuIdList(authTreeData, [...selectAuthList], []) }], roleId: state.roleId },
         }).then((res) => {
           message.success("菜单配置成功");
           state.visibleAuth = false;

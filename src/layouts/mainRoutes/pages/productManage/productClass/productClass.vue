@@ -1,6 +1,6 @@
 <template>
     <div style="height: 100%;">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :expandedRowKeys="expandedRowKeys" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch" @expand="handleExpand" @expandedRowsChange="handleExpandedRowsChange">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :expandedRowKeys="expandedRowKeys" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch" @expand="handleExpand" @expandedRowsChange="handleExpandedRowsChange">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -14,11 +14,11 @@
                     <a-button type="link" danger size="small" @click="handleDelete(record)">删除</a-button>
                 </a-space>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
 
     <a-modal  v-model:visible="visible" :title="formData.id ? '编辑子类' : '添加子类' " @ok="handleSubmit()" @cancel="handleCancel">
-        <FcForm ref="formRef" :rules="rules" :renderList="renderFormList" :formData="formData" labelAlign="right" :labelCol="{ style: {width: '112px'} }"></FcForm>
+        <tsx-form ref="formRef" :rules="rules" :renderList="renderFormList" :formData="formData" labelAlign="right" :labelCol="{ style: {width: '112px'} }"></tsx-form>
     </a-modal>
 
 </template>
@@ -26,12 +26,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import Main from "./productClass";
-import FcForm from '@/components/form/form'
+// import { FcJsxForm } from '@/components/jsx'
 import { renderFormList } from "./config";
 export default defineComponent({
-    components: {
-        FcForm
-    },
+    // components: {
+    //     FcJsxForm
+    // },
     setup() {
         return {
             ...Main(),

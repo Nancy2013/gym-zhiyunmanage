@@ -32,11 +32,24 @@
     .trace-data-templates {
       display: flex;
       > .templates-item {
-        width: 100px;
-        height: 100px;
-        border: 1px solid #176b91;
-        border-radius: 5px;
+        text-align: center;
         margin: 0 20px 0 0;
+        .templates-item-img {
+          width: 130px;
+          height: auto;
+          border-radius: 5px;
+          background: #d8d8d854;
+          border: 3px solid #b1c1c4;
+          > img {
+             width: 100%;
+          }
+        }
+        .template-active {
+          border: 3px solid #176b91;
+        }
+        .templates-item-text {
+           padding: 10px 0 0;
+        }
       }
     }
     // 数据规则
@@ -62,10 +75,6 @@
       border-bottom: 1px dashed #d8d8d8;
       .rules-select-tables {
         position: relative;
-        .rules-select-btns {
-          text-align: right;
-          margin: 0 0 10px;
-        }
       }
     }
     // 权限配置
@@ -130,6 +139,15 @@
             overflow: hidden;
             text-overflow: ellipsis;
           }
+          .action-item-border {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #d8d8d8;
+            width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
         }
       }
       .rules-type-btns {
@@ -151,6 +169,7 @@
         border-radius: 4px;
         border: 1px solid #d8d8d8;
         height: 300px;
+        overflow: auto;
       }
       .rules-config-authority {
         padding: 10px 20px;
@@ -186,4 +205,9 @@
       }
     }
   }
+}
+.default-template-tip {
+  margin-bottom: 20px;
+  font-size: 17px;
+  color: #e3403e;
 }

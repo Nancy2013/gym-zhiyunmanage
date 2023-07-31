@@ -228,7 +228,6 @@ export default function () {
 	};
 
 	if (route.query.id) {
-		setBreamubTitle("编辑产品")
 		getObjectDetail()
 	} else {
 		getObjectClassList().then((options: any) => {
@@ -236,7 +235,21 @@ export default function () {
 		});
 	}
 
+	/**
+	 * 获取品牌列表
+	 * @param
+	 * @return
+	 */
+	const getBrandList = () => {
+		request({
+			url: import.meta.env.VITE_NODE_URL + "/brand/list",
+			method: "post",
+		}).then((res) => {
+			console.log(res)
+		})
+	}
 
+	//getBrandList()
 
 
 	/**

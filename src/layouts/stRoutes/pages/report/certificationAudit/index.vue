@@ -12,6 +12,14 @@
             <a-form-item label="">
               <a-button type="primary" @click="handleSearch">查询</a-button>
             </a-form-item>
+            <a-form-item label="">
+              <a-upload :file-list="fileList" :before-upload="beforeUpload">
+                <a-button>
+                  <upload-outlined></upload-outlined>
+                  导入
+                </a-button>
+              </a-upload>
+            </a-form-item>
           </a-form>
         </div>
       </template>
@@ -23,9 +31,8 @@
 import { defineComponent, reactive, toRefs, toRef, onMounted } from "vue";
 import Page from './../components/page/index.vue';
 import { usePage } from './../composables/usePage';
-import { certificationStatus } from '@/utils/dict';
-import { showTime } from '@/utils/function';
 import { pickerFormat } from '@/utils/common';
+import importToJson from '@/utils/importToJson'
 const columns = [
   {
     key: "index",
@@ -63,22 +70,22 @@ const columns = [
     width: 200,
   },
   {
-    key: "@index",
-    dataIndex: "@index",
+    key: "totalAmount",
+    dataIndex: "totalAmount",
     align: "center",
     title: "总金额（万元）",
     width: 200,
   },
   {
-    key: "@index",
-    dataIndex: "@index",
+    key: "salesVolume",
+    dataIndex: "salesVolume",
     align: "center",
     title: "销售额（万元）",
     width: 200,
   },
   {
-    key: "@index",
-    dataIndex: "@index",
+    key: "distributionAmount",
+    dataIndex: "distributionAmount",
     align: "center",
     title: "分销额（万元）",
     width: 200,
@@ -93,38 +100,30 @@ export default defineComponent({
     const state = reactive({
       columns,
       search: {
-        timePicker: '',
-        approveStatus:certificationStatus.complate, // 已认证
+        timePicker: null,
+        // approveStatus:certificationStatus.complate, // 已认证
       },
+      fileList: [] as any,
     });
 
     const search = toRef(state, 'search');
-    /**
-     * 格式化数据显示
-     * @param data 查询数据
-     */
-    const formatData = (data: any) => {
-      if (Array.isArray(data)) {
-        data.forEach((item) => {
-          const { approvalStatus, teaGardenSelf, createdTime,updatedTime } = item;
-          item.approvalStatus = certificationStatus[approvalStatus] || approvalStatus;
-          item.teaGardenSelf = teaGardenSelf ? '是' : '否';
-          item.createdTime = createdTime ? showTime(createdTime) : '';
-          item.updatedTime = updatedTime ? showTime(updatedTime) : '';
-        });
-        return data;
-      }
-    };
     const opts = {
       queryApi: 'queryCertification',
       search,
       exportApi: '',
-      formatData,
     };
-    const { dataSource, loading, pagination,count, handleSearch, paginationChange, exportData } = usePage(opts);
+    const { dataSource, loading, pagination, count, handleSearch, paginationChange, exportData } = usePage(opts);
     onMounted(() => { });
 
-    
+    const beforeUpload= (file:any) => {
+      console.log('------beforeUpload-----',file);
+      state.fileList = [...(state.fileList||[]),file];
+      importToJson(file).then((res:any)=>{
+        console.log('------importToJson-----',res);
+        
+      });
+      return false;
+    };
     return {
       ...toRefs(state),
       dataSource,
@@ -135,6 +134,7 @@ export default defineComponent({
       paginationChange,
       exportData,
       pickerFormat,
+      beforeUpload,
     };
   },
 });

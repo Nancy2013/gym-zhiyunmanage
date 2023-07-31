@@ -3,6 +3,16 @@
     <Page :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination"
       :paginationChange="paginationChange" @exportData="exportData">
       <template #header>
+        <div class="operate">
+          <a-form layout="inline" :model="search">
+            <a-form-item label="">
+              <a-range-picker v-model:value="search.timePicker" picker="month" :valueFormat="pickerFormat.monthFormat"/>
+            </a-form-item>
+            <a-form-item label="">
+              <a-button type="primary" @click="handleSearch">查询</a-button>
+            </a-form-item>
+          </a-form>
+        </div>
       </template>
     </Page>
   </div>
@@ -12,7 +22,7 @@
 import { defineComponent, reactive, toRefs, toRef, onMounted } from "vue";
 import Page from './../components/page/index.vue';
 import { usePage } from './../composables/usePage';
-import { getDate } from '@/utils/function';
+import { pickerFormat } from '@/utils/common';
 const columns = [
   {
     key: "idisCode",
@@ -53,7 +63,9 @@ export default defineComponent({
   setup() {
     const state = reactive({
       columns,
-      search: {},
+      search: {
+        timePicker: [],
+      },
     });
     const search = toRef(state, 'search');
     const opts = {
@@ -72,6 +84,7 @@ export default defineComponent({
       handleSearch,
       paginationChange,
       exportData,
+      pickerFormat,
     };
   },
 });

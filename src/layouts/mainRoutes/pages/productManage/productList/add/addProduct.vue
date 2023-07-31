@@ -90,7 +90,7 @@
         <a-form ref="addFormRef" layout="horizontal" :model="imageFormData" :rules="imageFormRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 14 }">
             <a-form-item label="对象分类图片" name="imgPath">
                 <!-- <a-input v-model:value="formData.fieldA" placeholder="请输入对象分类名称" /> -->
-                <config-upload :uploadConfigs="{
+                <tsx-upload-img :uploadConfigs="{
                     maxCount: 1,
                     accept: 'image/*',
                     listType: 'picture'

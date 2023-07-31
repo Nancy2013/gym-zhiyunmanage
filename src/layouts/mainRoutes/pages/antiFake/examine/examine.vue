@@ -1,6 +1,6 @@
 <template>
     <div style="height: 100%;">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="handleSearch">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="handleSearch">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="handleSearch"> 查询 </a-button>
@@ -23,7 +23,7 @@
                     <a-button type="link" size="small" @click="showExamineModal(record)">审核</a-button>
                 </div>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
 
     <a-modal width="640px" v-model:visible="visible" title="审核扫码验证文字模板" okText="通过" cancelText="不通过" @cancel="handleCancel">

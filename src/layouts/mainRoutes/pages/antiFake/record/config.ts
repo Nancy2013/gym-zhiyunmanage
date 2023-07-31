@@ -1,4 +1,4 @@
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 import { antiFakeTemplateAuditStatusOptions } from '@/utils/config'
 
 export const searchRenderList: RenderFormItem[] = [

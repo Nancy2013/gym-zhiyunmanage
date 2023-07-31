@@ -8,7 +8,7 @@ import {
   sassTerminalTypeOptions,
   xcTerminalTypeOptions,
 } from "@/utils/config";
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 
 const searchRenderList: RenderFormItem[] = [
@@ -85,6 +85,52 @@ const rules = {
   ],
   terminalType: [{ required: true, message: "请选择终端", trigger: "blur" }],
 };
+
+/**
+	 * 过滤父级节点(如果子节点没有全选 删除父节点)
+	 * @param
+	 * @return
+	 */
+export const filterParentNodeChecked = (treeData: any[], menuIdList: any[]) => {
+  for (let i = 0; i < treeData.length; i++) {
+    const treeItem = treeData[i], parentIndex = menuIdList.indexOf(treeItem.id)
+    if (parentIndex > -1) {
+      if (Array.isArray(treeItem.children) && treeItem.children.length) {
+        let includeIndex = 0
+        for (let j = 0; j < treeItem.children.length; j++) {
+          menuIdList.indexOf(treeItem.children[j].id) > -1  && includeIndex++
+        }
+        if (includeIndex !== treeItem.children.length) {
+          menuIdList.splice(parentIndex, 1)
+        }
+        filterParentNodeChecked(treeItem.children, menuIdList)
+      }
+    }
+  }
+  return menuIdList
+}
+
+/**
+	 * 获取选中的节点(如果子节点有选中 将父节点加入数组)
+	 * @param
+	 * @return
+	 */
+export const getMenuIdList = (treeList: any[], menuIdList: any[], parentList: any[]) => {
+  for (let i = 0; i < treeList.length; i++) {
+    const treeItem = treeList[i]
+    const menuIndex = menuIdList.indexOf(treeItem.id)
+    if (menuIndex > -1) {
+      menuIdList.splice(menuIndex, 0, ...parentList)
+      continue
+    }
+    if (treeItem && Array.isArray(treeItem.children) && treeItem.children.length) {
+      getMenuIdList(treeItem.children, menuIdList, [...parentList, treeItem.id])
+    }
+  }
+  return menuIdList.filter((item, index, array) => {
+    return array.indexOf(item) === index
+  })
+}
 
 export default defineComponent({
   setup() {
@@ -325,9 +371,9 @@ export default defineComponent({
         }).then((res) => {
           if (Array.isArray(res.data) && res.data.length) {
             state.authTreeData = convertTree(res.data, { id: 'id', pid: 'pid' });
-            state.selectAuthList = res.data.filter((element: any) => element.checked).map((item) => {
+            state.selectAuthList = filterParentNodeChecked(state.authTreeData, res.data.filter((element: any) => element.checked).map((item) => {
               return item.id;
-            });
+            }))
             resolve(true);
           } else {
             state.authTreeData = [];
@@ -344,12 +390,13 @@ export default defineComponent({
      * @return
      */
     const handleAuthSubmit = () => {
+      const { selectAuthList, authTreeData } = state
       if (state.selectAuthList.length) {
         request({
           url: import.meta.env.VITE_BASE_URL + "/role/setAuthority",
           type: "json",
           method: "post",
-          data: { menuPlatformReqList: [{ menuIds: state.selectAuthList }], roleId: state.roleId },
+          data: { menuPlatformReqList: [{ menuIds: getMenuIdList(authTreeData, [...selectAuthList], []) }], roleId: state.roleId },
         }).then((res) => {
           message.success("菜单配置成功");
           state.visibleAuth = false;

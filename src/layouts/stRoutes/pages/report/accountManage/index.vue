@@ -1,12 +1,13 @@
 <template>
   <div class="accountPage">
-    <Page :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination" :paginationChange="paginationChange" @exportData="exportData" >
+    <Page :columns="columns" :dataSource="formatData(dataSource)" :loading="loading" :pagination="pagination"
+      :paginationChange="paginationChange" @exportData="exportData" :scroll="1000">
       <template #header>
         <div class="operate">
           <a-form layout="inline" :model="search">
             <a-form-item label="">
-              <a-select style="width:200px" v-model:value="search.enterpriseId" placeholder="请选择企业"
-                :options="enterpriseOpts" :fieldNames="enterpriseFieldNames"></a-select>
+              <a-select style="width:200px" v-model:value="search.terminalType" placeholder="请选择端类型"
+                :options="typeOpts" allowClear></a-select>
             </a-form-item>
             <a-form-item label="">
               <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -22,63 +23,40 @@
 import { defineComponent, reactive, toRefs, toRef, onMounted } from "vue";
 import Page from '../components/page/index.vue';
 import { usePage } from '../composables/usePage';
-import service from '@/service/stRoutes';
-import {certificationStatus} from '@/utils/dict';
+import { terminalType } from '@/utils/dict';
 const columns = [
   {
-    key: "enterpriseName",
-    dataIndex: "enterpriseName",
+    key: "userId",
+    dataIndex: "userId",
     align: "center",
-    title: "企业名称",
+    title: "用户id",
   },
   {
-    key: "pcSuccessCount",
-    dataIndex: "pcSuccessCount",
+    key: "phoneNumber",
+    dataIndex: "phoneNumber",
     align: "center",
-    title: "PC端登录数",
-    colSpan: 2,
+    title: "用户手机号",
   },
   {
-    key: "pcFailedCount",
-    dataIndex: "pcFailedCount",
+    key: "loginTerminalType",
+    dataIndex: "loginTerminalType",
     align: "center",
-    title: "失败次数",
-    colSpan: 0,
+    title: "端类型",
   },
   {
-    key: "appSuccessCount",
-    dataIndex: "appSuccessCount",
+    key: "loginTime",
+    dataIndex: "loginTime",
     align: "center",
-    title: "小程序端登录数",
-    colSpan: 2,
+    title: "登录时间",
   },
   {
-    key: "appFailedCount",
-    dataIndex: "appFailedCount",
+    key: "successFail",
+    dataIndex: "successFail",
     align: "center",
-    title: "失败次数",
-    colSpan: 0,
-  },
-  {
-    key: "h5SuccessCount",
-    dataIndex: "h5SuccessCount",
-    align: "center",
-    title: "H5端登录数",
-    colSpan: 2,
-  },
-  {
-    key: "h5FailedCount",
-    dataIndex: "h5FailedCount",
-    align: "center",
-    title: "失败次数",
-    colSpan: 0,
+    title: "登录状态",
   },
 ];
 
-const enterpriseFieldNames = {
-  label: 'tenantName',
-  value: 'id',
-};
 export default defineComponent({
   props: {},
   components: {
@@ -88,66 +66,53 @@ export default defineComponent({
     const state = reactive({
       columns,
       search: {
-        enterpriseId: '',
-        timePicker: [],
+        terminalType: null,
       },
-      enterpriseOpts: [
-        {
-          tenantName: '全部',
-          id: ''
-        },
-      ],
-      enterpriseFieldNames,
+      typeOpts: [] as any,
+      statusMap:{
+        '1':'成功',
+        '2':'失败',
+      },
     });
-    const search = toRef(state, 'search');
 
-    /**
-     * 格式化数据显示
-     * @param data 查询数据
-     */
-    const formatData = (data: any) => {
-      const keys=[`pcSuccessCount`,`pcFailedCount`,`appSuccessCount`,`appFailedCount`,`h5SuccessCount`,`h5FailedCount`]; // 次数显示
-      if (Array.isArray(data)) {
-        data.forEach((item) => {
-           keys.forEach((key:string)=>{
-            const text=key.includes('Success')?'成功次数':'失败次数';
-            item[key]=`${text}${item[key]}`;
-           });
-         });
-        return data;
-      }
-    };
+    const search = toRef(state, 'search');
     const opts = {
       queryApi: 'queryAccount',
       search,
       exportApi: '',
-      formatData,
     };
     const { dataSource, loading, pagination, handleSearch, paginationChange, exportData } = usePage(opts);
-    onMounted(() => {
-      queryCertification();
+
+    onMounted(() => { 
+      setOptions();
     });
 
     /**
-     * 企业下拉框
+     * 终端类型
      */
-    const queryCertification = () => {
-      const params = {
-        pageNum: 1,
-        pageSize: 9999,
-        approveStatus: certificationStatus.complate, // 已认证
-      };
-      const { queryCertification } = service.report;
-      queryCertification(params).then((res: any) => {
-        const { code, data } = res;
-        if (code === 200) {
-          const { enterpriseOpts } = state;
-          state.enterpriseOpts = enterpriseOpts.concat(data.rows);
-        }
-      }).catch((e: any) => {
-        console.error(e);
-      });
+     const setOptions = () => {
+      const { typeOpts } = state;
+      Object.keys(terminalType).forEach((key: any) => {
+        typeOpts.push({
+          label: terminalType[key],
+          value: parseInt(key)
+        },);
+      })
     }
+
+    /**
+    * 格式化数据显示
+    * @param data 查询数据
+    */
+    const formatData = (data: any) => {
+      const {statusMap}=state
+      data.forEach((item: any) => {
+        const {successFail,loginTerminalType } = item;
+        item.loginTerminalType=terminalType[loginTerminalType]||loginTerminalType;
+        item.successFail=statusMap[successFail]||successFail;
+      });
+      return data;
+    };
 
     return {
       ...toRefs(state),
@@ -157,6 +122,7 @@ export default defineComponent({
       handleSearch,
       paginationChange,
       exportData,
+      formatData,
     };
   },
 });

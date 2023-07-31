@@ -28,7 +28,7 @@
                     </div>
                 </div>
             </div>
-            <config-table :configColumns="{
+            <tsx-table :configColumns="{
                 tableModules: {
                     loading,
                     columns,
@@ -68,7 +68,7 @@
                         </div>
                     </template>
                 </template>
-            </config-table>
+            </tsx-table>
         </div>
         <!-- 弹框 -->
         <a-modal v-model:visible="visible" title="审核确认" cancelText="驳回" okText="认证通过" :footer="null">

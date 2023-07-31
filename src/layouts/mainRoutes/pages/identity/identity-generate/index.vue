@@ -1,6 +1,6 @@
 <template>
     <div class="identity-generate" style="height: 100%">
-        <FcTable :columns="type ? segColumns : codeColumns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="type ? sectionSearchRenderList : batchSearchRenderList" :searchData="query" @search="queryList">
+        <vue-table :columns="type ? segColumns : codeColumns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="type ? sectionSearchRenderList : batchSearchRenderList" :searchData="query" @search="queryList">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="queryList">搜索</a-button>
@@ -49,7 +49,7 @@
                     </template>
                 </div>
             </template>
-        </FcTable>
+        </vue-table>
         <!-- 弹框 -->
         <a-modal v-model:visible="visible" :title="title" :afterClose="destroyInfo" :footer="Object.is(title, '下载') ? null : undefined" :width="title == '赋值' && type ? `1000px` : undefined" @ok="submit" :maskClosable="false">
             <div class="modal-content">

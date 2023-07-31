@@ -12,7 +12,7 @@ import {
 } from "vue";
 import service from "@/service/mainRoutes";
 import { getPopupContainer } from '@/hooks'
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 import { identityCodeStatusOptions } from '@/utils/config'
 
 

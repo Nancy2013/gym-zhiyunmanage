@@ -2,8 +2,8 @@ import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
 import { convertTree } from "@/utils/function";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
-
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
+import { getMenuIdList, filterParentNodeChecked } from '../../authorize-tenant/role/index'
 
 const searchRenderList: RenderFormItem[] = [
   {
@@ -301,8 +301,8 @@ export default defineComponent({
          params: { enterpriseId }
        });
        if(res.code == 200) {
-          let { menuList }: any = res.data;
-          state.formState.selectMenuList = menuList.filter((element: any) => element.checked).map((item: any) => item.id);
+         let { menuList }: any = res.data;
+          state.formState.selectMenuList = filterParentNodeChecked(state.menuTree, menuList.filter((element: any) => element.checked).map((item: any) => item.id)) as any ;
        }
     }
 
@@ -424,7 +424,7 @@ export default defineComponent({
               contact: params.contact,
               enterpriseType: params.enterpriseType,
               contactPhone: params.contactPhone,
-              menuIdList: params.selectMenuList
+              menuIdList: getMenuIdList(state.menuTree, [...params.selectMenuList], [])
             })
             break;
           case "编辑":
@@ -434,7 +434,7 @@ export default defineComponent({
                contact: params.contact,
                enterpriseType: params.enterpriseType,
                contactPhone: params.contactPhone,
-               menuIdList: params.selectMenuList
+               menuIdList: getMenuIdList(state.menuTree, [...params.selectMenuList], [])
             })
             break;
         }

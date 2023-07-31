@@ -46,7 +46,7 @@
                 <div class="detail-info-canvas">
                     <div class="info-canvas-card">
                         <canvas id="canvas" width="370" height="612" :key="qrcodeKey"></canvas>
-                        <div id="qrcode" class="canvas-card-qrcode" style="display: none;"></div>
+                        <div id="qrcode" class="canvas-card-qrcode" :key="1 + qrcodeKey" style="display: none;"></div>
                     </div>
                     <div class="info-canvs-btn">
                         <a-button type="primary" @click="downloadCode">下载</a-button>

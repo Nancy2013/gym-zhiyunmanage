@@ -5,7 +5,7 @@ import { Modal, message } from "ant-design-vue";
 import { sourceFlagDict, syncStatusDict } from "@/utils/dict"
 import { tableColumns } from './config'
 import { objectAndProductDataTypeDict } from '@/utils/dict'
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 
 

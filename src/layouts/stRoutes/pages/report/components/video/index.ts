@@ -58,7 +58,6 @@ export default defineComponent({
 
     return {
       ...toRefs(state),
-      ...toRefs(props),
       mountedVideo,
     };
   },

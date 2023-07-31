@@ -1,12 +1,12 @@
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 import { Rules } from '@/shims'
 
 export const searchRenderList: RenderFormItem[] = [
 	{
-		label: '对象分类名称',
+		label: '产品分类名称',
 		key: 'firstCategoryName',
 		type: 'input',
-		placeholder: '对象分类名称'
+		placeholder: '产品分类名称'
   }
 ]
 
@@ -19,7 +19,9 @@ export const tableColumns = [
 	{
 		key: "productCount",
 		title: "产品数",
+		//align: 'right',
 		dataIndex: "productCount",
+		width: 120
 	},
 	{
 		key: "creator",
@@ -29,7 +31,8 @@ export const tableColumns = [
 	{
 		key: "createdTime",
 		title: "创建时间",
-		dataIndex: "createdTime"
+		dataIndex: "createdTime",
+		width: 140
 	},
 	{
 		key: "action",

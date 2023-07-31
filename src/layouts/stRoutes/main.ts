@@ -6,8 +6,7 @@ import store from "@/store";
 import VideoPlayer from 'vue-video-player'
 import 'video.js/dist/video-js.css'
 import { Tooltip, Tag, Button, Table, Divider, Input, Popover, Radio, Checkbox, Row, Col, Select, Modal, Spin } from 'ant-design-vue'
-import configIcon from '@/components/configIcon';
-import configTable from '@/components/configTable';
+import {  TsxIcon, TsxTable } from "@/components/tsx"
 
 const app: App<Element> = createApp(Main);
 
@@ -30,17 +29,13 @@ const components = [
     Select,
     Modal,
     Spin,
+    TsxIcon,
+    TsxTable
 ];
 
 components.forEach(component => {
     app.component(component.name, component);
 })
-
-// 注入config-icon组件
-app.component("config-icon", configIcon);
-
-// 注入config-table组件
-app.component("config-table", configTable);
 
 app.use(VideoPlayer)
 

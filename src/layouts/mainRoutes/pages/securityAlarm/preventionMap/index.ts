@@ -2,7 +2,7 @@ import { defineComponent, reactive, toRefs, onMounted, ref } from "vue";
 import service from "@/service/mainRoutes";
 import Mapview from "@/layouts/mainRoutes/pages/securityAlarm/components/map/index.vue";
 import { sendTime } from '@/utils/function'
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 
 const productFieldNames = {

@@ -1,6 +1,6 @@
 <template>
     <div style="height: 100%;">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -13,7 +13,7 @@
                     <a-button type="link" danger size="small" @click="handleDelete(record)">删除</a-button>
                 </a-space>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
 
     <a-modal v-model:visible="visible" :title="formData.id ? '编辑对象分类' : '添加对象分类' " @ok="handleSubmit()" @cancel="handleCancel">

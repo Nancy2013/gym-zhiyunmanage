@@ -1,6 +1,6 @@
 <template>
   <div class="farmingPage">
-    <Page :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination" :paginationChange="paginationChange" @exportData="exportData" >
+    <Page :columns="columns" :dataSource="formatData(dataSource)" :loading="loading" :pagination="pagination" :paginationChange="paginationChange" @exportData="exportData" >
       <template #header>
         <div class="operate">
           <a-form layout="inline" :model="search">
@@ -37,20 +37,20 @@ const columns = [
     title: "工单数",
   },
   {
-    key: "@index",
-    dataIndex: "@index",
+    key: "startCount",
+    dataIndex: "startCount",
     align: "center",
     title: "未开始",
   },
   {
-    key: "@index",
-    dataIndex: "@index",
+    key: "actionCount",
+    dataIndex: "actionCount",
     align: "center",
     title: "进行中",
   },
   {
-    key: "@index",
-    dataIndex: "@index",
+    key: "completeCount",
+    dataIndex: "completeCount",
     align: "center",
     title: "已完成",
   },
@@ -87,7 +87,6 @@ export default defineComponent({
       queryApi: 'queryFarmingAnalysis',
       search,
       exportApi: '',
-      formatData,
     };
     const { dataSource, loading, pagination, handleSearch, paginationChange, exportData } = usePage(opts);
     onMounted(() => {});
@@ -101,6 +100,7 @@ export default defineComponent({
       paginationChange,
       exportData,
       pickerFormat,
+      formatData,
     };
   },
 });

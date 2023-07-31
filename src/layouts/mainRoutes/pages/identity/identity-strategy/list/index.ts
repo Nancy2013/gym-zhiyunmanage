@@ -4,7 +4,7 @@ import { Modal, message } from "ant-design-vue";
 import { defineComponent, toRefs, reactive, onMounted } from "vue";
 import { ruleTypeoptions } from '@/utils/config'
 import { getPopupContainer } from '@/hooks'
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 const searchRenderList: RenderFormItem[] = [
 	{
@@ -48,6 +48,7 @@ const columns = [
     key: "codePreview",
     dataIndex: "codePreview",
     title: "编码预览",
+    width: 100
   },
   {
     key: "creator",

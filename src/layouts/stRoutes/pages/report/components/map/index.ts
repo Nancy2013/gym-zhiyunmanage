@@ -212,7 +212,7 @@ export default defineComponent({
       return marker;
     };
 
-    watch(()=>[props.actived,markers],(newVal,oldVal)=>{
+    watch(()=>props.actived,(newVal,oldVal)=>{
       const activeMarker=markers.filter((item:any)=>item.id===newVal)[0];
       console.log('------activeMarker------',newVal,activeMarker);
       if(activeMarker){

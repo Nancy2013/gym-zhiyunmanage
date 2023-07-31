@@ -2,7 +2,7 @@ import { reactive, toRefs, ref } from "vue";
 import { useRouter } from "vue-router";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 export const searchRenderList: RenderFormItem[] = [
 	{
@@ -19,26 +19,31 @@ const columns = [
 		dataIndex: "name",
 		key: "name",		
 		title: "模板名称",
+		width: 140
 	},
 	{
 		dataIndex: "boName",
 		key: "boName",		
 		title: "关联对象",
+		width: 140
 	},
 	{
 		key: "categoryName",
 		title: "对象分类名称",		
 		dataIndex: "categoryName",
+		width: 140
 	},
 	{
 		key: "createUserName",
 		title: "创建人",
 		dataIndex: "createUserName",
+		width: 140
 	},
 	{
 		key: "createdTime",
 		title: "创建时间",
 		dataIndex: "createdTime",
+		width: 140
 	},
 	{
 		key: "action",

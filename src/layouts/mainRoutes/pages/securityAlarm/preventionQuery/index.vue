@@ -1,6 +1,6 @@
 <template>
     <div class="list" style="height: 100%">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="search" @search="handleSearch">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="search" @search="handleSearch">
 
             <template #headerBtnArea>
                 <a-button class='left' type="primary" @click="handleSearch">搜索</a-button>
@@ -22,7 +22,7 @@
                     <a-button v-else type="link" size="small" @click="handle(record)"> 处理 </a-button>
                 </a-space>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
     <a-modal v-model:visible="visible" title="处理结果" @ok="handleOk" :maskClosable="false">
         <div class="modal-content">

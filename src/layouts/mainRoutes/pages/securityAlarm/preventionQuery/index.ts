@@ -1,7 +1,7 @@
 import { defineComponent, reactive, toRefs, onMounted } from "vue";
 import service from "@/service/mainRoutes";
 import { message } from "ant-design-vue";
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 export const searchRenderList: RenderFormItem[] = [
 	{

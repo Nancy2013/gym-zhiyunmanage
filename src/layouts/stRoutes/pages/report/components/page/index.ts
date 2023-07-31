@@ -14,12 +14,16 @@ export default defineComponent({
       default:[],
     },
     pagination:{
-      type:Object,
+      type:[Object,Boolean],
       default:{},
     },
     paginationChange:{
       type:Function,
       default:()=>{},
+    },
+    scroll:{
+      type:Number,
+      default:1500,
     },
   },
   components: {},

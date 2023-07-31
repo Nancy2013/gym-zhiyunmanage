@@ -1,6 +1,6 @@
 <template>
     <div class="identity-strategy" style="height: 100%">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="queryList">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="queryList">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="queryList">搜索</a-button>
@@ -20,7 +20,7 @@
                     <a-button type="link" danger size="small" @click="deleteConfirm(record.id)"> 删除 </a-button>
                 </div>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
 </template>
 <script lang="ts">

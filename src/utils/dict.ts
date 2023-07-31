@@ -210,13 +210,22 @@ export const activityMode={
 };
 
 /**
- *品牌活动状态
+ * 终端类型
  */
-export const activityStatus={
-	'0':'未下发',
-	'1':'已下发',
-	'2':'报名中',
-	'3':'进行中',
-	'4':'已终止',
+export const terminalType={
+	1:'PC端',
+	2:'小程序端',
+	// 3:'H5端',
 };
+
+/**
+ * 字典查询参数
+ */
+export const dictTypeCode={
+	activityCategory:'activity_category', // 品牌活动，活动类型
+	contentCategory:'msg_category', // 内容管理，内容类型
+	activityWay:'activity_way', // 活动方式
+	codeActivityCategory:'promotionTempType', // 码上营销，活动类型
+	farmType:'farm_stock_type', // 农资管理，农资类型
+}
 

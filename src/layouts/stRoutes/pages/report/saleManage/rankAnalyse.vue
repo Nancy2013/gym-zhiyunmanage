@@ -1,7 +1,7 @@
 <template>
   <div class="salePage">
     <Page :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination"
-       :paginationChange="paginationChange" @exportData="exportData" >
+       :paginationChange="paginationChange" @exportData="exportData" :scroll="1000">
        <template #header>
         <div class="operate">
           <a-form layout="inline" :model="search">
@@ -26,34 +26,22 @@ import { usePage } from '../composables/usePage';
 import { pickerFormat } from '@/utils/common';
 const columns = [
   {
-    key: "@index",
-    dataIndex: "@index",
+    key: "name",
+    dataIndex: "name",
     align: "center",
     title: "分销商名称",
   },
   {
-    key: "@index",
-    dataIndex: "@index",
+    key: "purchaseAmount",
+    dataIndex: "purchaseAmount",
     align: "center",
     title: "采购金额(万元)",
   },
   {
-    key: "@index",
-    dataIndex: "@index",
-    align: "center",
-    title: "采购重量(kg)",
-  },
-  {
-    key: "@index",
-    dataIndex: "@index",
+    key: "distributionAmount",
+    dataIndex: "distributionAmount",
     align: "center",
     title: "分销金额(万元)",
-  },
-  {
-    key: "@index",
-    dataIndex: "@index",
-    align: "center",
-    title: "分销重量(kg)",
   },
 ];
 export default defineComponent({
@@ -65,7 +53,7 @@ export default defineComponent({
     const state = reactive({
       columns,
       search: {
-        timePicker: '',
+        timePicker: null,
       },
     });
     const search = toRef(state, 'search');

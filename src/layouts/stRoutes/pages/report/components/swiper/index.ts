@@ -35,35 +35,36 @@ export default defineComponent({
       mySwiper.value = swiper;
     };
 
-    const snapGridLengthChange = () => {
-      mySwiper.snapGrid = mySwiper.snapGrid.slice(0);
-    };
-
-    const clickSwiper = (swiper: any) => {
+    const onSwiperclick = (swiper: any) => {
       const { clickedIndex } = swiper;
-      console.log("-----clickSwiper--clickedIndex-", clickedIndex);
-      emit('clickSwiper',swiper);
+      console.log("-----onSwiperclick--clickedIndex-", clickedIndex);
+      emit('onSwiperclick',swiper);
+      
     };
-
-    const clickSlide = (item: any) => {
+    const onSlideClick = (item: any) => {
       console.log("---clickSlide---", item);
+      emit('onSlideClick',item);
     };
 
     const slideTo = () => {
       mySwiper.value.slideTo(2);
     };
 
-    watch(()=>props.actived,(newVal,oldVal)=>{
-      mySwiper.value.slideTo(newVal);
+    watch(()=>props.actived,(newVal:any,oldVal:any)=>{
+      const pos=props.data.findIndex((item:any)=>item.id===newVal);
+      console.log('----watch-----swiper-------',pos);
+      
+      if(pos>-1){
+        mySwiper.value.slideTo(pos);
+      }
     });
 
     return {
       ...toRefs(state),
       ...toRefs(props),
       onSwiper,
-      snapGridLengthChange,
-      clickSwiper,
-      clickSlide,
+      onSwiperclick,
+      onSlideClick,
     };
   },
 });

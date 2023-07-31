@@ -3,6 +3,7 @@ import { svgModule } from "./config/svgModule";
 import { subModule, getPublicDir } from "./config/subModule";
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
+import vuesetupextend from "vite-plugin-vue-setup-extend";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import { createStyleImportPlugin, VantResolve } from "vite-plugin-style-import";
 import Vitecomponents, { AntDesignVueResolver } from "vite-plugin-components";
@@ -12,6 +13,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       vue(),
+      vuesetupextend(),
       vueJsx(),
       Vitecomponents({
         customComponentResolvers: [

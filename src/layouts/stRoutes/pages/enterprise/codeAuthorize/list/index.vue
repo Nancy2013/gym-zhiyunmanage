@@ -23,7 +23,7 @@
                     <a-button type="primary" @click="showModal">新增</a-button>
                 </div>
             </div>
-            <config-table :configColumns="{
+            <tsx-table :configColumns="{
                 tableModules: {
                     loading,
                     columns,
@@ -59,7 +59,7 @@
                         </div>
                     </template>
                 </template>
-            </config-table>
+            </tsx-table>
         </div>
         <!-- 弹框 -->
         <a-modal v-model:visible="visible" :title="title" :footer="null" :maskClosable="false" class="audit-modal"

@@ -2,8 +2,7 @@ import { defineComponent, reactive, toRefs, onMounted, ref, watch } from "vue";
 import { convertTree } from "@/utils/function";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
-import { RenderFormItem } from '@/components/form/form'
-import FcFormItem from '@/components/form/formItem'
+import { RenderFormItem } from '@/components/tsx/form'
 
 
 const searchRenderList: RenderFormItem[] = [
@@ -144,9 +143,6 @@ const columns = [
   },
 ];
 export default defineComponent({
-  components: {
-    FcFormItem
-  },
   setup() {
     const formRef = ref();
     const state = reactive({

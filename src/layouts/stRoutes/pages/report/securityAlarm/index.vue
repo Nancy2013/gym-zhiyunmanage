@@ -1,12 +1,14 @@
 <template>
-  <div class="farmingPage">
-    <Page :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination" :paginationChange="paginationChange" @exportData="exportData" >
+  <div class="alarmPage">
+    <Page :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination" :paginationChange="paginationChange" @exportData="exportData" :scroll="1000">
       <template #header>
         <div class="operate">
           <a-form layout="inline" :model="search">
             <a-form-item label="">
-              <a-select style="width:200px" v-model:value="search.cityId" placeholder="请选择城市"
-                :options="cityOpts" :fieldNames="cityFieldNames"></a-select>
+              <a-range-picker v-model:value="search.timePicker" picker="month" :valueFormat="pickerFormat.monthFormat"/>
+            </a-form-item>
+            <a-form-item label="">
+              <a-cascader v-model:value="search.city" :options="cityOpts" :fieldNames="cityFieldNames" placeholder="请选择城市" style="width:200px"/>
             </a-form-item>
             <a-form-item label="">
               <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -19,10 +21,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, toRef, onMounted } from "vue";
+import { defineComponent, reactive, toRefs, toRef, onMounted,computed } from "vue";
 import Page from '../components/page/index.vue';
 import { usePage } from '../composables/usePage';
 import service from '@/service/stRoutes';
+import { pickerFormat } from '@/utils/common';
 const columns = [
   {
     key: "index",
@@ -48,7 +51,8 @@ const columns = [
 
 const cityFieldNames = {
   label: 'name',
-  value: 'id',
+  value: 'name',
+  children:'cities',
 };
 export default defineComponent({
   props: {},
@@ -59,16 +63,27 @@ export default defineComponent({
     const state = reactive({
       columns,
       search: {
-        cityId: '',
+        timePicker: [],
+        city: null,
       },
       cityOpts: [],
       cityFieldNames,
     });
-    const search = toRef(state, 'search');
-
+    // 搜索条件
+    const formatSearch=computed(()=>{
+      const {search}=state;
+      const {city}=search;
+      if(city){
+        return {
+          ...search,
+          city:[...city].pop(),
+        }
+      }
+      return {...search};
+    });
     const opts = {
       queryApi: 'queryAlarm',
-      search,
+      search:formatSearch,
       exportApi: '',
     };
     const { dataSource, loading, pagination, handleSearch, paginationChange, exportData } = usePage(opts);
@@ -77,7 +92,7 @@ export default defineComponent({
     });
 
     /**
-     * 企业下拉框
+     * 城市下拉框
      */
     const queryCity = () => {
       const params = {
@@ -89,7 +104,7 @@ export default defineComponent({
       queryCity(params).then((res: any) => {
         const { code, data } = res;
         if (code === 200) {
-          state.cityOpts = data.rows;
+          state.cityOpts = data;
         }
       }).catch((e: any) => {
         console.error(e);
@@ -104,11 +119,12 @@ export default defineComponent({
       handleSearch,
       paginationChange,
       exportData,
+      pickerFormat,
     };
   },
 });
 </script>
 
 <style lang="less" scoped>
-.farmingPage {}
+.alarmPage {}
 </style>

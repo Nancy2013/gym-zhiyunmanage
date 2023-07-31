@@ -1,6 +1,6 @@
 <template>
     <div style="height: 100%;">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -25,7 +25,7 @@
             <template #syncStatus="{record}">
                 <a-tag v-if="record.syncStatus" :color="syncStatusColor[record.syncStatus]">{{ syncStatusDict[record.syncStatus] }}</a-tag>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
     <!-- <div style="display: flex; flex-direction: row; justify-content: space-between;">
         <a-form layout="inline" :model="searchData">
@@ -45,7 +45,7 @@
             <a-button type="primary" @click="handleImport">批量导入</a-button>
         </div>
     </div>
-    <config-table :configColumns="{
+    <tsx-table :configColumns="{
       tableModules: {
         columns,
         dataSource,
@@ -81,7 +81,7 @@
                 <a-tag v-if="record.syncStatus" :color="syncStatusColor[record.syncStatus]">{{ syncStatusDict[record.syncStatus] }}</a-tag>
             </template>
         </template>
-    </config-table> -->
+    </tsx-table> -->
 
     <input id="download" type="file" class="file" @change="handleUpload" style="display: none" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
 </template>

@@ -8,7 +8,7 @@
       <VideoView v-else/>
     </div>
     <div class="swiper">
-      <SwiperView @clickSwiper="clickSwiper"/>
+      <SwiperView @onSlideClick="onSlideClick" :data="data" :actived="current.id"/>
     </div>
   </div>
 </template>
@@ -17,7 +17,7 @@
 import { defineComponent, reactive, toRefs, toRef,ref, onMounted } from "vue";
 import MapView from './../components/map/index.vue'
 import VideoView from './../components/video/index.vue'
-import SwiperView from './../components/video/index.vue'
+import SwiperView from './../components/swiper/index.vue'
 import service from '@/service/stRoutes';
 import { useAction } from "@/hooks";
 const tempData = [
@@ -127,6 +127,23 @@ export default defineComponent({
      */
     const onMarkerClick=(marker:any)=>{
       const {id}=marker.target;
+      setCurrent(id);
+    }
+
+    /**
+     * 点击swiper-slide
+     * @param swiper  当前swiper-slide
+     */
+    const onSlideClick=(slide:any)=>{
+      const {id}=slide;
+      setCurrent(id);
+    }
+
+    /**
+     * 设置当前茶园
+     * @param id 茶园id
+     */
+    const setCurrent=(id:any)=>{
       const {data}=state;
       const current=data.filter((item:any)=>item.id===id)[0];
       if(current){
@@ -134,17 +151,10 @@ export default defineComponent({
       }
     }
 
-    /**
-     * 点击swiper
-     * @param swiper  当前swiper
-     */
-    const clickSwiper=(swiper:any)=>{
-    
-    }
-
     return {
       ...toRefs(state),
       onMarkerClick,
+      onSlideClick,
     };
   },
 });
@@ -163,6 +173,8 @@ export default defineComponent({
   .video{
     flex: 2;
   }
-  
+  .swiper{
+    height: 800px;
+  }
 }
 </style>

@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { Modal, message, TreeProps } from "ant-design-vue";
 import type { Rule } from "ant-design-vue/es/form";
 const DEFAULT_PASS = "111111"; // 默认用户密码
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 const searchRenderList: RenderFormItem[] = [
   {
@@ -67,12 +67,14 @@ const columns = [
     dataIndex: "account",
     key: "account",
     title: "账号",
+    width: 140
 
   },
   {
     dataIndex: "name",
     key: "name",
     title: "员工名称",
+    width: 140
   },
   {
     dataIndex: "phone",

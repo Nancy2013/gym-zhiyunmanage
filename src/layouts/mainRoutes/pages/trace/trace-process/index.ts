@@ -1,8 +1,20 @@
 import { defineComponent, onMounted, reactive, ref, toRefs } from "vue";
-import configTree from "@/components/configTree";
+import TsxTree from "@/components/tsx/tree";
 import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
 import { convertLevel, convertTree, isRepeat } from "@/utils/function";
+import { RenderFormItem } from "@/components/tsx/form";
+import { get } from "jquery";
+
+const searchRenderList: RenderFormItem[] = [
+  {
+    label: "流程名称/流程说明",
+    key: "condition",
+    type: "input",
+    placeholder: "流程名称/流程说明",
+  },
+];
+
 // 表格数据
 const columns = [
   {
@@ -10,48 +22,56 @@ const columns = [
     dataIndex: "index",
     align: "center",
     title: "序号",
+    width: 150,
   },
   {
     key: "name",
     dataIndex: "name",
     align: "center",
     title: "流程名称",
+    width: 150,
   },
   {
     key: "treeLevel",
     dataIndex: "treeLevel",
     align: "center",
     title: "流程层级",
+    width: 150,
   },
   {
     key: "remark",
     dataIndex: "remark",
     align: "center",
     title: "流程说明",
+    width: 150,
   },
   {
     key: "updater",
     dataIndex: "updater",
     align: "center",
     title: "更新人",
+    width: 150,
   },
   {
     key: "updatedTime",
     dataIndex: "updatedTime",
     align: "center",
     title: "更新时间",
+    width: 150,
   },
   {
     key: "creator",
     dataIndex: "creator",
     align: "center",
     title: "创建人",
+    width: 150,
   },
   {
     key: "createdTime",
     dataIndex: "createdTime",
     align: "center",
     title: "创建时间",
+    width: 150,
   },
   {
     key: "action",
@@ -74,11 +94,12 @@ const topTree = [
 
 export default defineComponent({
   components: {
-    configTree,
+    TsxTree,
   },
   setup() {
     const formRef = ref();
     const state = reactive({
+      searchRenderList,
       title: "",
       columns,
       dataSource: [],
@@ -365,8 +386,18 @@ export default defineComponent({
       formRef.value.validate().then((params: any) => {
         let { name, remark, stepParams, treeLevel } = params;
         let getStepList = convertLevel(stepParams);
+        let getStepLeafList = convertLevel(stepParams, true);
+        if (
+          getStepLeafList.some(
+            (v: any) => v.stepLevel != state.formState.treeLevel
+          )
+        ) {
+          message.error("配置节点与层级不一致!");
+          return true;
+        }
         if (isRepeat(getStepList.map((v: any) => v.title))) {
           message.error("流程节点字段值不能重复!");
+          return true;
         } else {
           switch (state.title) {
             case "添加流程":

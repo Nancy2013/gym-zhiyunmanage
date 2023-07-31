@@ -6,7 +6,7 @@
                     <a-sub-menu :index="item.path" :key="item.path">
                         <template #icon>
                             <div class="manage-silder-icon" :style="`background-color: ${colorList[index % 5]}`">
-                                <config-icon v-if="item.icon" color="#fff" width="16px" height="16px" :name="item.icon" class="svgClass" />
+                                <tsx-icon v-if="item.icon" color="#fff" width="16px" height="16px" :name="item.icon" class="svgClass" />
                             </div>
                         </template>
                         <template #title>
@@ -25,7 +25,7 @@
                 <template v-else>
                     <a-menu-item :key="item.path">
                         <template #icon>
-                            <config-icon v-if="item.icon" :name="item.icon" class="svgClass" />
+                            <tsx-icon v-if="item.icon" :name="item.icon" class="svgClass" />
                         </template>
                         <span>{{ item.title }}</span>
                         <router-link :to="item.path" />
@@ -79,7 +79,11 @@ export default defineComponent({
             for (let i = 0; i < routeList.length; i++) {
                 const routeItem: any = routeList[i];
                 if (routeItem.path === route.path) {
-                    state.selectedKeys = [routeItem.path];
+                    if (routeItem.ismenu === 'Y') {
+                        state.selectedKeys = [routeItem.path];
+                    } else {
+                        state.selectedKeys = [openKeys[openKeys.length - 1]]
+                    }
                     state.openKeys = openKeys
                 }
                 if (Array.isArray(routeItem.children) && routeItem.children.length) {
@@ -87,6 +91,30 @@ export default defineComponent({
                 }
             }
         };
+
+        /**
+         * 获取当前选中的路由path
+         * @param
+         * @return
+         */
+        const getSelectedKeys = (routeList = props.routeList as any, parentPath: string = "") => {
+            for (let i = 0; i < routeList.length; i++) {
+                const routeItem = routeList[i]
+                if (routeItem.path === route.path) {
+                    if (routeItem.ismenu === 'Y') {
+                        return route.path
+                    } else {
+                        return parentPath
+                    }
+                }
+                if (Array.isArray(routeItem.children) && routeItem.children.length) {
+                    const path: any = getSelectedKeys(routeItem.children, routeItem.path)
+                    if (path) {
+                        return path
+                    }
+                }
+            }
+        }
 
         watch(() => props.routeList, (newValue, oldValue) => {
                 if (isEmpty(oldValue)) {
@@ -96,7 +124,7 @@ export default defineComponent({
         );
 
         watch(route, (route) => {
-            state.selectedKeys = [route.path];
+            state.selectedKeys = [getSelectedKeys()]
         });
 
         return {

@@ -8,13 +8,13 @@
     </div>
     <div class="content">
       <div class="table">
-        <config-table :key='columns' :configColumns="{
+        <tsx-table :key='columns' :configColumns="{
           tableModules: {
             loading,
             columns,
             dataSource,
             rowKey: 'id',
-            scroll: { x: 1500 },
+            scroll: { x: scroll },
             bordered: true,
             pagination,
             onChange: paginationChange
@@ -30,7 +30,7 @@
                         {{ index + 1 }}
            </template>
         </template>
-        </config-table>
+        </tsx-table>
       </div>
     </div>
   </div>

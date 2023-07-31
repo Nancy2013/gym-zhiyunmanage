@@ -1,6 +1,6 @@
 <template>
     <div style="height: 100%;">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -16,7 +16,7 @@
                     <a-button type="link" size="small" @click="handleView(record)">查看</a-button>
                 </a-space>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
     <!-- <div style="display: flex; flex-direction: row; justify-content: space-between;">
         <a-form layout="inline" :model="searchData">
@@ -31,7 +31,7 @@
             </a-form-item>
         </a-form>
     </div>
-    <config-table :configColumns="{
+    <tsx-table :configColumns="{
       tableModules: {
         columns,
         dataSource,
@@ -60,7 +60,7 @@
                 <div>{{ record.categoryName }}</div>
             </template>
         </template>
-    </config-table> -->
+    </tsx-table> -->
 
     <a-modal width="640px" v-model:visible="visible" :title="`${objectInfo.name}的对象详情`">
         <Descriptions :column="2">

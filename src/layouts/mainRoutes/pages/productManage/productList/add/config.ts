@@ -1,4 +1,4 @@
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 import { Rules } from '@/shims'
 
 export const formRules: Rules = {
@@ -19,7 +19,7 @@ export const renderFormList: RenderFormItem[] = [
 		type: 'input',
 		key: 'name',
 		placeholder: '请输入产品名称',
-		maxlength: 20,
+		maxlength: 30,
 		inputType: 'word'
 	},
 	{
@@ -27,7 +27,7 @@ export const renderFormList: RenderFormItem[] = [
 		type: 'input',
 		key: 'productNo',
 		placeholder: '请输入产品编号',
-		maxlength: 20,
+		maxlength: 30,
 		inputType: 'word'
 	},
 	{
@@ -49,7 +49,7 @@ export const renderFormList: RenderFormItem[] = [
 		type: 'input',
 		key: 'barCode',
 		placeholder: '请输入产品条码',
-		maxlength: 20
+		maxlength: 30
 	},
 	{
 		label: '产品单位',

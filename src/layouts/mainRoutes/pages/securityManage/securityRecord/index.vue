@@ -23,7 +23,7 @@
                     </div>
                  </div>
              </div>
-             <config-table :configColumns="{
+             <tsx-table :configColumns="{
                 tableModules: {
                    columns,
                    dataSource: [],
@@ -39,7 +39,7 @@
                 }
              }">
             
-            </config-table>
+            </tsx-table>
          </div>
     </div>
 </template>

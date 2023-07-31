@@ -8,7 +8,8 @@ import {
   sassTerminalTypeOptions,
   xcTerminalTypeOptions,
 } from "@/utils/config";
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
+import { getMenuIdList, filterParentNodeChecked } from '../../authorize-tenant/role/index'
 
 
 const searchRenderList: RenderFormItem[] = [
@@ -356,7 +357,10 @@ export default defineComponent({
         data: {
           menuPlatformReqList: state.allAuthorityList.filter(
             (item: any) => item.menuIds.length != 0
-          ),
+          ).map((item) => {
+            item.menuIds = getMenuIdList(state.authTreeData, [...item.menuIds], [])
+            return item
+          }),
           roleId: state.roleId,
         },
       }).then((res) => {

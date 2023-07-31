@@ -3,7 +3,7 @@
  */
 import { RouteRecordRaw, _RouteRecordBase } from "vue-router";
 import report from './report'; // 报表总览模块
-export const stAuthority = [
+export const stAuthority: any[] = [
 	{
 		level: 0,
 		path: "/stLogin",

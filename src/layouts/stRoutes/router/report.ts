@@ -64,8 +64,8 @@ const report=[
         icon: "",
         path: "/stPublic/report/staffManage",
         name: "staffReport",
-        title: "用工情况分析",
-        meta: { title: "用工情况分析" },
+        title: "用户数量分析",
+        meta: { title: "用户数量分析" },
         component: () =>
             import("@/layouts/stRoutes/pages/report/staffManage/index.vue"),
     },
@@ -198,6 +198,36 @@ const report=[
         meta: { title: "出入库明细" },
         component: () =>
             import("@/layouts/stRoutes/pages/report/storageManage/outinDetail.vue"),
+    },
+    { // 农资管理
+        level: 2,
+        icon: "",
+        path: "/stPublic/report/agriculturalManage",
+        name: "agriculturalReport",
+        title: "农资类型分析",
+        meta: { title: "农资类型分析" },
+        component: () =>
+            import("@/layouts/stRoutes/pages/report/agriculturalManage/index.vue"),
+    },
+    { // 设备管理
+        level: 2,
+        icon: "",
+        path: "/stPublic/report/deviceManage",
+        name: "adeviceReport",
+        title: "设备使用情况",
+        meta: { title: "设备使用情况" },
+        component: () =>
+            import("@/layouts/stRoutes/pages/report/deviceManage/index.vue"),
+    },
+    { // 内容管理
+        level: 2,
+        icon: "",
+        path: "/stPublic/report/contentManage",
+        name: "contentReport",
+        title: "内容数据分析",
+        meta: { title: "内容数据分析" },
+        component: () =>
+            import("@/layouts/stRoutes/pages/report/contentManage/index.vue"),
     },
     { // 实时监控-茶园监控
         level: 2,

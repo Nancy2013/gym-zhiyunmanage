@@ -44,7 +44,7 @@ export default defineComponent({
     const state = reactive({
       columns,
       search: {
-        timePicker: '',
+        timePicker: null,
       },
     });
     const search = toRef(state, 'search');

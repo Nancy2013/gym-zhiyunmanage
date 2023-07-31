@@ -1,6 +1,6 @@
 <template>
     <div style="height: 100%;">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -23,11 +23,11 @@
                     <a-button type="link" size="small" @click="handleSetAuthority(record)">权限配置</a-button>
                 </a-space>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
 
     <a-modal width="440px" v-model:visible="visible" :title="formData.id ? '编辑角色' : '添加角色' " @ok="handleSubmit()" @cancel="handleCancel">
-        <FcForm ref="formRef" :rules="rules" boxType="page" :renderList="renderFormList" v-model:formData="formData" labelAlign="right" :labelCol="{ style: {width: '72px'} }"></FcForm>
+        <tsx-form ref="formRef" :rules="rules" boxType="page" :renderList="renderFormList" v-model:formData="formData" labelAlign="right" :labelCol="{ style: {width: '72px'} }"></tsx-form>
     </a-modal>
 
     <a-modal v-model:visible="visibleAuth" title="配置权限" @ok="handleAuthSubmit" @cancel="handleAuthCancel">

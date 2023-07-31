@@ -10,6 +10,7 @@ export const tableColumns = [
 		dataIndex: "name",
 		key: "name",
 		title: "产品名称",
+		width: 140
 	},
 	{
 		dataIndex: "categoryName",
@@ -21,11 +22,13 @@ export const tableColumns = [
 		dataIndex: "productNo",
 		key: "productNo",
 		title: "产品编号",
+		width: 120
 	},
 	{
 		dataIndex: "barCode",
 		key: "barCode",
 		title: "产品条码",
+		width: 120
 	},
 	{
 		dataIndex: "unit",
@@ -44,6 +47,7 @@ export const tableColumns = [
 		key: "syncStatus",
 		title: "同步状态",
 		dataIndex: "syncStatus",
+		widh: 100
 	},
 	{
 		key: "creator",

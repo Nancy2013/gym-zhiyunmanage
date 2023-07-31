@@ -3,7 +3,7 @@ import request from "@/utils/axios";
 import { useRouter } from "vue-router";
 import { defineComponent, toRefs, reactive, onMounted, ref } from "vue";
 import { getPopupContainer } from '@/hooks'
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 const statusOptions = [
   {
@@ -65,25 +65,28 @@ const columns = [
     dataIndex: "businessObjectCategoryName",
     align: "center",
     title: "对象分类",
+    width: 120
   },
   {
     key: "boName",
     dataIndex: "boName",
     align: "center",
     title: "对象名称",
+    width: 120
   },
   {
     key: "createdTime",
     dataIndex: "createdTime",
     align: "center",
     title: "创建时间",
+    width: 140
   },
   {
     key: "action",
     title: "操作",
     align: "center",
     dataIndex: "action",
-    width: 200,
+    width: 120,
     fixed: "right",
   },
 ]; // 表格数据

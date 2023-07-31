@@ -3,8 +3,11 @@ import { Modal, message } from "ant-design-vue";
 import service from "@/service/stRoutes";
 import { useAction } from "@/hooks";
 import request from "@/utils/axios";
+import { useRoute, } from "vue-router";
+import exportToExcel from "@/utils/exportToExcel";
 export const usePage = (opts: any) => {
-  const { search, queryApi, exportApi, formatData } = opts;
+  const route = useRoute();
+  const { search, queryApi, exportApi,callback } = opts;
   const storeAction = useAction("stModule", ["asyncUpdateIsStBreamub"]);
   const state = reactive({
     loading: true,
@@ -12,7 +15,7 @@ export const usePage = (opts: any) => {
     pagination: {
       total: 0,
       current: 1,
-      pageSize: 2,
+      pageSize: 10,
     },
     count: {},
   });
@@ -44,8 +47,7 @@ export const usePage = (opts: any) => {
       ...search.value,
     };
     delete params.timePicker;
-    const { timePicker} = search.value;
-   
+    const { timePicker,} = search.value;
     if(Array.isArray(timePicker)){
       const [beginTime, endTime] = timePicker || [];
       if (beginTime) {
@@ -61,13 +63,14 @@ export const usePage = (opts: any) => {
       .then((res: any) => {
         const { code, rows, total = 0, data } = res;
         if (code === 200) {
-          const renderData = rows || data&&data.rows; // 兼容后端不同数据结构
-          state.dataSource = formatData ? formatData(renderData) : renderData;
+          const renderData = rows || data; // 兼容后端不同数据结构
+          state.dataSource = renderData;
           state.pagination = {
             total:total||data&&data.total,
             current,
             pageSize,
           };
+          callback&&callback();
         }
         state.loading = false;
       })
@@ -81,32 +84,19 @@ export const usePage = (opts: any) => {
    * 导出
    */
   const exportData = async () => {
-    let res: any = await request({
-      responseType: "blob",
-      url: import.meta.env.VITE_NODE_URL + "/code/down/excel",
-      method: "get",
-      params: { recordId: 150 },
-      isDownload: true,
-    });
-    let dis = decodeURI(res.headers[`content-disposition`]);
-    const fileName=dis.split("=")[1].split('"')[1];
-    download(res.data,fileName);
-  };
-
-  /**
-   * 下载文件
-   * @param data 数据
-   * @param fileName 文件名称
-   */
-  const download=(data:any,fileName:string)=>{
-    const url = window.URL.createObjectURL(new Blob([data]));
-    const link = document.createElement('a');
-    link.style.display = "none";
-    link.href = url;
-    link.setAttribute('download', fileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const header={
+      'tenantName':'企业名称',
+      'shortName':'企业简称',
+      'plantArea':'种植面积(亩)',
+      'annualOutput':'年产量(kg)'
+    };
+    const filename=route.meta.title;
+    const opts={
+      data:JSON.parse(JSON.stringify(state.dataSource)),
+      filename,
+      header,
+    };
+    exportToExcel(opts);
   };
 
   /**

@@ -1,7 +1,7 @@
 <template>
   <div class="salePage">
-    <Page :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination"
-       :paginationChange="paginationChange" @exportData="exportData" >
+    <Page :columns="columns" :dataSource="formatData(dataSource)" :loading="loading" :pagination="false"
+       @exportData="exportData" >
        <template #header>
         <div class="operate">
           <a-form layout="inline" :model="search">
@@ -27,8 +27,8 @@ import { pickerFormat } from '@/utils/common';
 import {getArray} from '@/utils/function';
 const columns = [
   {
-    key: "@index",
-    dataIndex: "@index",
+    key: "title",
+    dataIndex: "title",
     align: "center",
     title: "",
     width:200,
@@ -43,7 +43,7 @@ export default defineComponent({
     const state = reactive({
       columns,
       search: {
-        timePicker: '',
+        timePicker: null,
       },
     });
     const search = toRef(state, 'search');
@@ -52,7 +52,7 @@ export default defineComponent({
       search,
       exportApi:'',
     };
-    const { dataSource, loading, pagination, handleSearch, paginationChange, exportData } = usePage(opts);
+    const { dataSource, loading, handleSearch,exportData } = usePage(opts);
     onMounted(() => {
       setColumns();
     });
@@ -65,8 +65,8 @@ export default defineComponent({
       const date=getArray();
       date.forEach((item: any) => {
         columns.push({
-          key: `data${item}`,
-          dataIndex: `data${item}`,
+          key: `amount${item}`,
+          dataIndex: `amount${item}`,
           align: "center",
           title: `${item}月`,
           width:200,
@@ -74,15 +74,27 @@ export default defineComponent({
       });
       state.columns = columns;
     };
+
+    /**
+    * 格式化数据显示
+    * @param data 查询数据
+    */
+    const formatData = (data: any) => {
+      data.forEach((item: any,$index:number) => {
+        if($index===0){
+          item.title='金额(万元)'
+        }
+      });
+      return data;
+    };
     return {
       ...toRefs(state),
       dataSource,
       loading,
-      pagination,
       handleSearch,
-      paginationChange,
       exportData,
       pickerFormat,
+      formatData,
     };
   },
 });

@@ -5,11 +5,17 @@ import { Modal, message } from "ant-design-vue";
 import filterInputHook from '@/hooks/useFilterInput'
 import { tableColumns, formRules } from './config'
 import { objectAndProductDataTypeDict } from '@/utils/dict'
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
+import { isEmpty } from "@/utils/common";
 
 export default function () {
 	const dataType = objectAndProductDataTypeDict.object
 	const formRef = ref();
+	const storeState = useState("mainModule", [
+		"userInfo",
+	]);
+	// 如果为企业账号 不显示所属机构
+	
 	const state = reactive({
 		searchData: {} as any,
 		formData: { treeLevel: 1 } as any,
@@ -27,9 +33,10 @@ export default function () {
 		IdNameOptions: [] as any
 	});
 
-	const storeState = useState("mainModule", [
-		"userInfo",
-	]);
+	if (storeState.userInfo.value.enterpriseName) {
+		state.columns.splice(3, 1)
+	}
+
 
 	const searchRenderList = ref<RenderFormItem[]>([
 		{
@@ -43,7 +50,7 @@ export default function () {
 			key: 'enterpriseId',
 			type: 'select',
 			placeholder: '所属机构',
-			isHide: !storeState.userInfo.value.enterpriseName,
+			isHide: storeState.userInfo.value.enterpriseName,
 			options: []
 		},
 	])
@@ -111,10 +118,14 @@ export default function () {
 			url: import.meta.env.VITE_NODE_URL + "/businessObjectCategory/pageQuery",
 			type: "json",
 			method: "post",
-			data: { ...searchData, current, pageSize, dataType }
+			data: { ...searchData, pageNum: current, pageSize, dataType }
 		}).then((res) => {
 			state.loading = false
 			state.dataSource = res.rows.map((item: any, key: number) => {
+				if (isEmpty(item.parentCategoryName)) {
+					item.parentCategoryName = item.categoryName
+					delete item.categoryName
+				}
 				item.tableIndex = (current - 1) * pageSize + key + 1
 				return item
 			}) as any

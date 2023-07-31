@@ -1,6 +1,6 @@
 <template>
     <div class="aniFakeTemplate" style="height: 100%">
-        <FcTable  :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="handleSearch">
+        <vue-table  :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="handleSearch">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="handleSearch"> 查询 </a-button>
@@ -25,7 +25,7 @@
                     <a-button type="link" size="small" @click="handleDelete(record)">删除</a-button>
                 </div>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
 
     <a-modal width="640px" v-model:visible="visible" :title="`${formData.id ? '编辑扫码验证文字模板' : '添加扫码验证文字模板'}`" @ok="handleSubmit()" @cancel="handleCancel">

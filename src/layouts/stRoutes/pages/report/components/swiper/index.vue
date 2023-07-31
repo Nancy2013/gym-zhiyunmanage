@@ -1,21 +1,13 @@
 <template>
   <div class="swiper">
-    <swiper
-    :modules="modules"
-    :slides-per-view="2"
-    :space-between="10"
-    :speed="1200"
-    direction='vertical'
-    :navigation="navigation"
-    :centeredSlides="true"
-    @swiper="onSwiper"
-    @clickSwiper="clickSwiper"
-    @snapGridLengthChange='snapGridLengthChange'
-  >
-    <swiper-slide @click="clickSlide(item)" v-for="item in data" :key="item">{{item.id}}</swiper-slide>
-  </swiper>
-  <div class="swiper-button-prev"></div>
-  <div class="swiper-button-next"></div>
+    <swiper :modules="modules" slides-per-view="auto" :space-between="10" :speed="1200" direction='vertical'
+      :navigation="navigation" @swiper="onSwiper" @clickSwiper="onSwiperclick">
+      <template v-for="item in data" :key="item">
+        <swiper-slide  :class="`swiper-slide ${actived===item.id?'actived':''}`" @click="onSlideClick(item)" >{{ item.id }}</swiper-slide>
+      </template>
+    </swiper>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
   </div>
 </template>
 <script lang="ts">

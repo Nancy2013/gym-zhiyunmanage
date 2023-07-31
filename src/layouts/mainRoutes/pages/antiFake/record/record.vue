@@ -1,6 +1,6 @@
 <template>
     <div style="height: 100%;">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="handleSearch" :hideTable="tabIndex === 1">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="query" @search="handleSearch" :hideTable="tabIndex === 1">
             <template #headerBtnArea>
                 <a-button type="primary" @click="handleSearch"> 查询 </a-button>
             </template>
@@ -23,7 +23,7 @@
                     <div :class="`${tabIndex == 1 ? 'antiFake-record-show' : 'antiFake-record-hide'}`" style="width: 100%; height: 600px; margin-top: 16px;" id="container"></div>
                 </div>
             </template>
-        </FcTable>
+        </vue-table>
 
     </div>
 </template>

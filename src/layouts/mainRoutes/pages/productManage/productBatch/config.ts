@@ -1,4 +1,4 @@
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 import { Rules } from '@/shims'
 
 export const searchRenderList: RenderFormItem[] = [

@@ -1,7 +1,7 @@
 <template>
   <div class="orderPage">
     <Page :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination"
-      :paginationChange="paginationChange" @exportData="exportData" >
+      :paginationChange="paginationChange" @exportData="exportData" :scroll="1000">
       <template #header>
         <div class="operate">
           <a-form layout="inline" :model="search">
@@ -43,11 +43,25 @@ const columns = [
     title: "产品编码",
   },
   {
+    key: "price",
+    dataIndex: "price",
+    align: "center",
+    title: "产品单价",
+  },
+  {
     key: "productSaleVolume",
     dataIndex: "productSaleVolume",
     align: "center",
     title: "产品销量",
-    sorter:(a:any, b:any) => a.productSaleVolume - b.productSaleVolume,
+    sorter:(a:any, b:any) => {
+      if(a.productSaleVolume >b.productSaleVolume){
+        return 1;
+      }
+      if(a.productSaleVolume <b.productSaleVolume){
+        return -1;
+      }
+      return 0;
+    },
     defaultSortOrder: 'descend',
   },
   {
@@ -55,7 +69,15 @@ const columns = [
     dataIndex: "totalSales",
     align: "center",
     title: "总销售额(万元)",
-    sorter:(a:any, b:any) => a.totalSales - b.totalSales,
+    sorter:(a:any, b:any) => {
+      if(a.totalSales >b.totalSales){
+        return 1;
+      }
+      if(a.totalSales <b.totalSales){
+        return -1;
+      }
+      return 0;
+    },
   },
 ];
 

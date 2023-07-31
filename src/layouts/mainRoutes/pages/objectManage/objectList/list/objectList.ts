@@ -4,7 +4,7 @@ import request from "@/utils/axios";
 import { Modal, message } from "ant-design-vue";
 import { sourceFlagDict, syncStatusDict, objectAndProductDataTypeDict } from "@/utils/dict"
 import { tableColumns } from './config'
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 
 

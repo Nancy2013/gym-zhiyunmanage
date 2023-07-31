@@ -2,7 +2,7 @@ import { defineComponent, reactive, toRef,toRefs,onMounted } from "vue";
 import { usePage } from './../../composables/usePage';
 import moment from 'moment';
 import service from '@/service/mainRoutes'
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 export const searchRenderList: RenderFormItem[] = [
 	{

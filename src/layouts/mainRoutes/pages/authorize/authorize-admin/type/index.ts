@@ -3,7 +3,7 @@ import { convertTree } from "@/utils/function";
 import request from "@/utils/axios";
 import dayjs from "dayjs";
 import { Modal, message } from "ant-design-vue";
-import { RenderFormItem } from '@/components/form/form'
+import { RenderFormItem } from '@/components/tsx/form'
 
 const searchRenderList: RenderFormItem[] = [
   {

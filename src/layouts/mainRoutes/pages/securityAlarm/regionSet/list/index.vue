@@ -1,6 +1,6 @@
 <template>
     <div class="list" style="height: 100%;">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="search" @search="handleSearch">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="search" @search="handleSearch">
 
             <template #headerBtnArea>
                 <a-button class='left' type="primary" @click="handleSearch">搜索</a-button>
@@ -14,7 +14,7 @@
                     <a-button type="link" class='error' size="small" @click="handleDel(record)">删除</a-button>
                 </a-space>
             </template>
-        </FcTable>
+        </vue-table>
     </div>
 </template>
 <script lang="ts">

@@ -1,6 +1,6 @@
 <template>
     <div class="authorization-user" style="height: 100%">
-        <FcTable :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
+        <vue-table :columns="columns" :dataSource="dataSource" :paginationConfig="pagination" @pageChange="paginationChange" :loading="loading" :searchRenderList="searchRenderList" :searchData="searchData" @search="handleSearch">
 
             <template #headerBtnArea>
                 <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -22,10 +22,10 @@
                     <a-button type="link" size="small" @click="bindRole(record)"> 分配角色 </a-button>
                 </a-space>
             </template>
-        </FcTable>
+        </vue-table>
 
         <a-modal width="440px" v-model:visible="visible" :title="title" @ok="handleSubmit()" @cancel="handleCancel">
-            <FcForm ref="formRef" :rules="rules" :renderList="renderFormList" v-model:formData="formData" labelAlign="right" :labelCol="{ style: {width: '72px'} }"></FcForm>
+            <tsx-form ref="formRef" :rules="rules" :renderList="renderFormList" v-model:formData="formData" labelAlign="right" :labelCol="{ style: {width: '72px'} }"></tsx-form>
         </a-modal>
 
         <a-modal v-model:visible="visibleRole" title="角色分配" @ok="handleSubmitRole()" @cancel="handleCancelRole">

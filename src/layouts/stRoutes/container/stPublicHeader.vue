@@ -26,7 +26,7 @@
                         <template v-else-if="item.level == 1">
                             <a-menu-item :key="item.path">
                                 <template #icon>
-                                    <config-icon :name="item.icon" color="#fff" class="svgClass" />
+                                    <tsx-icon :name="item.icon" color="#fff" class="svgClass" />
                                 </template>
                                 <span>{{ item.title }}</span>
                                 <router-link :to="item.path" />
@@ -50,7 +50,7 @@
                     <span>{{ userInfo.name }}</span>
                 </div>
                 <a-popover>
-                    <config-icon name="user-filling" color="#fff" class="svgClass" />
+                    <tsx-icon name="user-filling" color="#fff" class="svgClass" />
                     <!-- <span style="color:#fff;padding: 0 10px;">{{ userInfo.name }}</span> -->
                     <template #content>
                        <p class="popover-p" @click="$router.push({ path: '/stPublic/dashboard' })"><span>个人中心</span></p>

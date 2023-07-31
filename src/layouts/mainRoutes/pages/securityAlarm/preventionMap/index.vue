@@ -1,6 +1,6 @@
 <template>
   <div class="prevention" style="height: 100%;">
-    <FcTable :loading="loading" hideTable :searchRenderList="searchRenderList" :searchData="search" @search="handleSearch">
+    <vue-table :loading="loading" hideTable :searchRenderList="searchRenderList" :searchData="search" @search="handleSearch">
 
       <template #headerBtnArea>
         <a-button class='left' type="primary" @click="handleSearch">搜索</a-button>
@@ -10,7 +10,7 @@
       <template #content>
         <Mapview :data="data"></Mapview>
       </template>
-    </FcTable>
+    </vue-table>
     <!-- <div class="operate">
       <a-form layout="inline">
         <a-form-item label="">
